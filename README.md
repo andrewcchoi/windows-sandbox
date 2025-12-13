@@ -407,100 +407,132 @@ Claude: Running security audit...
 
 ## Example Applications
 
-The plugin includes working example applications in the `examples/` directory that demonstrate real-world usage patterns and serve as validation tests.
+The plugin includes comprehensive working examples in the `examples/` directory, demonstrating all three experience tiers (Basic, Advanced, Pro) with real applications.
 
-### Basic Streamlit App (Quick Validation)
+### Example Structure
 
-**Location**: `examples/basic-streamlit/`
+```
+examples/
+├── README.md                        # Comprehensive examples guide
+├── docker-compose.yml               # Shared PostgreSQL + Redis services
+│
+├── streamlit-shared/                # Shared: Streamlit connection validator
+├── streamlit-sandbox-basic/         # Self-contained with Basic mode DevContainer
+│
+├── demo-app-shared/                 # Shared: Full-stack blog application
+├── demo-app-sandbox-basic/          # Demo app with Basic mode DevContainer
+├── demo-app-sandbox-advanced/       # Demo app with Advanced mode DevContainer
+└── demo-app-sandbox-pro/            # Demo app with Pro mode DevContainer
+```
 
-A minimal Streamlit application for quickly validating that your devcontainer is working correctly.
+### Quick Validation: Streamlit App
 
-**Features**:
+**Shared Code**: `examples/streamlit-shared/`
+**Sandbox Example**: `examples/streamlit-sandbox-basic/` (Basic mode)
+
+Minimal Python Streamlit app for 30-second environment validation:
 - PostgreSQL connection test with visual feedback
 - Redis connection test with visual feedback
-- Simple one-button testing interface
-- Perfect for quick environment validation
+- Perfect first step to verify sandbox setup
 
-**Usage**:
 ```bash
-cd examples/basic-streamlit
-uv pip install -r requirements.txt
+# Option 1: Use shared services
+cd examples && docker compose up -d
+cd streamlit-shared && pip install -r requirements.txt && streamlit run app.py
+
+# Option 2: Self-contained DevContainer
+code examples/streamlit-sandbox-basic  # Open in VS Code
+# Reopen in Container → Auto-starts all services
+```
+
+### Production Demo: Blog Application
+
+**Shared Code**: `examples/demo-app-shared/`
+
+A complete full-stack blogging platform with:
+- **Backend**: FastAPI + SQLAlchemy + PostgreSQL + Redis
+- **Frontend**: React + Vite
+- **Testing**: Pytest (backend) + Jest + React Testing Library (frontend)
+- **Features**: CRUD operations, caching, view counters, comprehensive tests
+
+**Three Sandbox Modes Available**:
+
+#### 1. Basic Mode - Quick Start
+**Location**: `examples/demo-app-sandbox-basic/`
+
+**What's included**:
+- Auto-detected Python + Node.js stack
+- Minimal configuration (4 files)
+- Essential VS Code extensions (2)
+- Strict firewall by default
+- Ready in < 3 minutes
+
+**Best for**: Prototypes, solo developers, quick start
+
+#### 2. Advanced Mode - Balanced
+**Location**: `examples/demo-app-sandbox-advanced/`
+
+**What's included**:
+- Configurable Python/Node.js versions (build args)
+- Curated VS Code extensions (10+)
+- User-controlled firewall (strict/permissive/disabled)
+- Enhanced developer experience (formatting on save, SQLTools)
+- Development tools (Black, Pylint, IPython)
+
+**Best for**: Team development, active projects, customization needs
+
+#### 3. Pro Mode - Production-Ready
+**Location**: `examples/demo-app-sandbox-pro/`
+
+**What's included**:
+- Multi-stage optimized Dockerfile (7 stages)
+- Comprehensive VS Code extensions (20+)
+- Complete development tooling (linters, formatters, profilers, security scanners)
+- Production patterns (resource limits, health checks, security hardening)
+- Database initialization scripts
+- Optional admin tools (pgAdmin, Redis Commander)
+- Full observability and debugging
+
+**Best for**: Large teams, production projects, comprehensive needs
+
+### Running the Examples
+
+**Quick validation** (Streamlit):
+```bash
+cd examples/streamlit-sandbox-basic
+# Open in VS Code → Reopen in Container
 streamlit run app.py
 ```
 
-**When to use**: After setting up a new devcontainer, run this app to verify that services are accessible.
-
-### Demo Blog Application (Full-Stack Showcase)
-
-**Location**: `examples/demo-app/`
-
-A complete full-stack blogging platform demonstrating production-ready patterns and best practices.
-
-**Tech Stack**:
-- **Backend**: FastAPI + SQLAlchemy + Alembic migrations
-- **Frontend**: React + Vite + Axios
-- **Database**: PostgreSQL with proper indexing
-- **Cache**: Redis with TTL-based caching and view counters
-- **Testing**: Pytest (backend) + Jest + React Testing Library (frontend)
-
-**Features Demonstrated**:
-- Complete CRUD API with RESTful endpoints
-- Database migrations with Alembic
-- Redis caching patterns (content caching + counters)
-- Async database operations
-- Comprehensive test coverage (28+ tests)
-- Error handling and validation
-- Modern React patterns (hooks, component composition)
-
-**Backend API**:
+**Full-stack demo** (any mode):
 ```bash
-cd examples/demo-app/backend
-uv pip install -r requirements.txt
-alembic upgrade head
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+cd examples/demo-app-sandbox-basic  # or -advanced or -pro
+# Open in VS Code → Reopen in Container
+
+# Terminal 1: Backend
+cd backend && uvicorn app.api:app --reload
+
+# Terminal 2: Frontend
+cd frontend && npm run dev
+
+# Visit: http://localhost:5173
 ```
 
-Access API docs at http://localhost:8000/docs
-
-**Frontend Application**:
+**Run tests**:
 ```bash
-cd examples/demo-app/frontend
-npm install
-npm run dev
+./run-tests.sh           # Linux/Mac/Git Bash
+.\run-tests.ps1          # Windows PowerShell
+./run-tests.sh --coverage  # With coverage reports
 ```
 
-Access app at http://localhost:5173
+### Learning Path
 
-**Running Tests**:
+1. **Start here**: `streamlit-sandbox-basic/` - 30-second validation
+2. **Learn basics**: `demo-app-sandbox-basic/` - Understand minimal setup
+3. **Explore features**: `demo-app-sandbox-advanced/` - See customization options
+4. **Study production**: `demo-app-sandbox-pro/` - Learn best practices
 
-From the `examples/demo-app` directory:
-
-```bash
-# All tests
-./run-tests.sh             # Linux/Mac
-.\run-tests.ps1            # Windows
-
-# With coverage reports
-./run-tests.sh --coverage
-.\run-tests.ps1 -Coverage
-
-# Backend only
-./run-tests.sh --backend-only
-
-# Frontend only
-./run-tests.sh --frontend-only
-```
-
-**Test Coverage**:
-- **Backend**: 8 tests covering API endpoints and Redis caching logic
-- **Frontend**: 20+ tests covering all components, user interactions, and edge cases
-
-**What You'll Learn**:
-- How to structure a full-stack application in a devcontainer
-- Redis caching patterns for performance optimization
-- Database migration workflows with Alembic
-- Testing strategies for both backend and frontend
-- Service orchestration with Docker Compose
+See `examples/README.md` for detailed comparison and customization guides
 
 ### Dogfooding Approach
 
