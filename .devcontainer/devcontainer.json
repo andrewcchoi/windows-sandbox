@@ -1,11 +1,36 @@
 {
-  "name": "Sandbox",
+  "name": "windows-sandbox-plugin",
   "build": {
     "dockerfile": "Dockerfile",
     "context": ".."
   },
-  "containerUser": "node",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "yzhang.markdown-all-in-one"
+      ],
+      "settings": {
+        "editor.formatOnSave": true,
+        "editor.defaultFormatter": "esbenp.prettier-vscode",
+        "python.defaultInterpreterPath": "/usr/bin/python3",
+        "[markdown]": {
+          "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+        }
+      }
+    }
+  },
   "remoteUser": "node",
-  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=delegated",
-  "workspaceFolder": "/workspace"
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "postCreateCommand": "echo '✓ Windows Sandbox Plugin development environment ready!'",
+
+  // Generated using windows-sandbox plugin Basic mode
+  // Detected: Documentation/Template repository (no database services needed)
+  // Languages: Python 3.12 + Node.js 20 (for examples and templates)
+  // Services: None (examples have separate docker-compose.yml)
+  "features": {}
 }

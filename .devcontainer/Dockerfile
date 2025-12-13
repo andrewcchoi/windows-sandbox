@@ -1,3 +1,7 @@
+# Generated using windows-sandbox plugin Basic mode
+# Minimal development container for plugin development (no services)
+# For testing examples, use examples/docker-compose.yml separately
+
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 # Install minimal system packages

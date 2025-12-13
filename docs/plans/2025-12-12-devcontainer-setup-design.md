@@ -2,7 +2,23 @@
 
 **Date:** 2025-12-12
 **Purpose:** Add devcontainer configuration for plugin development + showcase example
-**Status:** Approved Design
+**Status:** ✅ IMPLEMENTED (Minimal Approach)
+
+---
+
+## Implementation Note (2025-12-12)
+
+**Actual implementation deviated from original design - chose minimal approach:**
+
+- ✅ Created minimal devcontainer (Python + Node.js, no services)
+- ✅ Separated services into `examples/docker-compose.yml`
+- ✅ Updated documentation to reflect minimal approach
+- ✅ Created regeneration scripts for keeping devcontainer in sync
+
+**Rationale:** The plugin repository itself doesn't need database/cache services.
+The minimal approach keeps development fast and demonstrates smart project detection.
+
+**Original design below for reference:**
 
 ---
 

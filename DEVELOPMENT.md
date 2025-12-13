@@ -1,447 +1,361 @@
 # Development Guide
 
-This guide explains how to develop and test the Claude Code Sandbox Plugin using its own devcontainer configuration.
+This guide explains how to develop the Windows Sandbox Plugin using the minimal devcontainer setup.
 
 ## Overview
 
-This plugin uses itself for development (dogfooding approach). The devcontainer provides a complete isolated environment with all necessary services and tools.
+This plugin uses itself for development (dogfooding approach). The devcontainer provides a lightweight environment for editing plugin files - **no services included**. Example applications have a separate docker-compose file for optional testing.
 
 ## Prerequisites
 
 - **Docker Desktop** (Windows/Mac) or **Docker Engine** (Linux)
 - **Visual Studio Code** with the **Dev Containers** extension
-- **Claude Code CLI** installed and configured
+- **Claude Code CLI** (optional, for testing the plugin)
 
 ## Quick Start
 
-### Option 1: Using Claude Code (Recommended)
+### Option 1: VS Code DevContainer (Recommended)
 
-1. Open this repository in your terminal
-2. Start Claude Code:
+1. Clone the repository:
    ```bash
-   claude-code
+   git clone https://github.com/andrewcchoi/windows-sandbox
+   cd windows-sandbox
    ```
-3. Ask Claude to set up the development environment:
+
+2. Open in VS Code:
+   ```bash
+   code .
    ```
-   Please set up the devcontainer for development
-   ```
-4. Claude will generate and start the devcontainer using the plugin's templates
 
-### Option 2: Manual Setup
+3. Reopen in container:
+   - Press `F1`
+   - Select **Dev Containers: Reopen in Container**
+   - Wait ~2 minutes for first-time build
+   - Ready to edit plugin files!
 
-1. Open this repository in VS Code
-2. Press `F1` and select **Dev Containers: Reopen in Container**
-3. Wait for the container to build and start (first time takes 3-5 minutes)
-4. Once ready, you'll have a complete development environment
+### Option 2: Direct Docker Development
 
-## What's Included
+```bash
+# Clone repository
+git clone https://github.com/andrewcchoi/windows-sandbox
+cd windows-sandbox
 
-The devcontainer provides:
+# Build and run container
+docker build -f .devcontainer/Dockerfile -t windows-sandbox-dev .
+docker run -it -v $(pwd):/workspace windows-sandbox-dev bash
 
-### Services
-- **PostgreSQL 15**: Database for testing backend applications
-  - Host: `postgres`
-  - Port: `5432` (exposed to host)
-  - Database: `sandbox_dev`
-  - User: `sandbox_user`
-  - Password: `devpassword`
+# Now you can edit files with your favorite editor
+```
 
-- **Redis 7**: Cache and session store for testing
-  - Host: `redis`
-  - Port: `6379` (exposed to host)
+## What's Included in the Devcontainer
 
-### Development Tools
+The devcontainer is **intentionally minimal** for plugin development:
+
+### ✅ Included
 - **Python 3.12** with `uv` package manager
 - **Node.js 20** with `npm`
-- **Git** with bash history persistence
-- **PostgreSQL client tools** (`psql`)
-- **Redis client tools** (`redis-cli`)
+- **Git** and essential development tools
+- **VS Code extensions** for Python, JavaScript, and Markdown
+- **Claude Code CLI** for testing the plugin
 
-### VS Code Extensions
-- Python (ms-python.python)
-- Pylance (ms-python.vscode-pylance)
-- Python Debugger (ms-python.debugpy)
-- Jest (orta.vscode-jest)
-- ESLint (dbaeumer.vscode-eslint)
+### ❌ NOT Included (By Design)
+- No PostgreSQL (plugin doesn't use a database)
+- No Redis (plugin doesn't use caching)
+- No docker-compose services (kept separate)
+
+**Why minimal?** The plugin generates configurations for OTHER projects, but doesn't need those services itself. This keeps the development environment fast and lightweight.
 
 ## Project Structure
 
 ```
-windows-sandbox-plugin/
-├── .devcontainer/           # DevContainer configuration
-│   ├── Dockerfile           # Container image definition
-│   ├── devcontainer.json    # VS Code container settings
-│   └── init-firewall.sh     # Firewall initialization script
-├── docker-compose.yml       # Service orchestration
-├── examples/                # Example applications
-│   ├── basic-streamlit/     # Quick validation example
-│   │   ├── app.py          # Streamlit app with DB/Redis tests
-│   │   ├── requirements.txt
-│   │   └── README.md
-│   └── demo-app/           # Full-stack demo application
-│       ├── backend/        # FastAPI + SQLAlchemy + Redis
-│       │   ├── app/        # Application code
-│       │   └── tests/      # Pytest test suite
-│       ├── frontend/       # React + Vite
-│       │   └── src/        # Components and tests
-│       ├── run-tests.sh    # Test runner (bash)
-│       └── run-tests.ps1   # Test runner (PowerShell)
-├── templates/              # Devcontainer templates
-│   ├── python/            # Python project template
-│   ├── nodejs/            # Node.js project template
-│   └── fullstack/         # Full-stack template
-└── skills/                # Claude Code skills
-    ├── sandbox-setup.md
-    ├── sandbox-troubleshoot.md
-    └── sandbox-security.md
+windows-sandbox/
+├── .devcontainer/              # Generated using plugin Basic mode
+│   ├── devcontainer.json       # VS Code configuration
+│   ├── Dockerfile              # Python + Node.js only
+│   └── init-firewall.sh        # Disabled (not needed)
+│
+├── skills/                     # Plugin skills (main work here)
+│   ├── windows-sandbox-setup/
+│   ├── windows-sandbox-troubleshoot/
+│   └── windows-sandbox-security/
+│
+├── commands/                   # Slash commands
+│   ├── setup.md
+│   ├── troubleshoot.md
+│   └── audit.md
+│
+├── templates/                  # Configuration templates
+│   ├── python/
+│   ├── node/
+│   └── fullstack/
+│
+├── examples/                   # Demo applications
+│   ├── docker-compose.yml      # Services for examples ONLY
+│   ├── basic-streamlit/        # Quick validation
+│   └── demo-app/               # Full-stack demo
+│
+└── docs/                       # Documentation
 ```
 
 ## Development Workflow
 
-### 1. Quick Validation
+### 1. Plugin Development (No Services Needed)
 
-Test that services are running using the basic Streamlit example:
+Most development work doesn't require services:
 
 ```bash
-cd examples/basic-streamlit
+# Edit plugin skills
+code skills/windows-sandbox-setup/SKILL.md
+
+# Edit templates
+code templates/python/devcontainer.json
+
+# Edit documentation
+code README.md
+code DEVELOPMENT.md
+```
+
+### 2. Testing the Plugin Locally
+
+Install and test the plugin with Claude Code:
+
+```bash
+# Install plugin locally
+claude plugins add .
+
+# Verify installation
+claude plugins list
+
+# Test slash commands
+claude
+> /windows-sandbox:setup --basic
+> /windows-sandbox:troubleshoot
+> /windows-sandbox:audit
+```
+
+### 3. Running Example Applications (Optional)
+
+Only if you want to test the example apps, start services separately:
+
+```bash
+# Start PostgreSQL + Redis
+cd examples
+docker compose up -d
+
+# Verify services are running
+docker compose ps
+
+# Test basic example
+cd basic-streamlit
 uv pip install -r requirements.txt
 streamlit run app.py
-```
+# Open browser to http://localhost:8501
 
-Open the displayed URL and click the test buttons to verify PostgreSQL and Redis connectivity.
-
-### 2. Working with the Demo Application
-
-The demo app is a full-stack blogging platform showcasing real-world patterns.
-
-#### Backend Development
-
-```bash
-cd examples/demo-app/backend
-
-# Install dependencies
+# Test full demo app
+cd ../demo-app/backend
 uv pip install -r requirements.txt
-
-# Run database migrations
 alembic upgrade head
+uvicorn app.main:app --reload
+# API available at http://localhost:8000/docs
 
-# Start the API server
-uvicorn app.main:app --reload --host 0.0.0.0 --port 8000
+# Stop services when done
+cd ../../
+docker compose down
 ```
 
-The API will be available at http://localhost:8000
-- API docs: http://localhost:8000/docs
-- Alternative docs: http://localhost:8000/redoc
-
-#### Frontend Development
-
-```bash
-cd examples/demo-app/frontend
-
-# Install dependencies
-npm install
-
-# Start the dev server
-npm run dev
-```
-
-The frontend will be available at http://localhost:5173
-
-### 3. Running Tests
-
-#### All Tests (Recommended)
-
-From the `examples/demo-app` directory:
-
-**On Linux/Mac:**
-```bash
-./run-tests.sh
-```
-
-**On Windows:**
-```powershell
-.\run-tests.ps1
-```
-
-**With Coverage:**
-```bash
-./run-tests.sh --coverage
-# or
-.\run-tests.ps1 -Coverage
-```
-
-#### Backend Tests Only
-
-```bash
-cd examples/demo-app/backend
-pytest
-# or with coverage
-pytest --cov=app --cov-report=term-missing --cov-report=html
-```
-
-Coverage report: `backend/htmlcov/index.html`
-
-#### Frontend Tests Only
-
-```bash
-cd examples/demo-app/frontend
-npm test
-# or with coverage
-npm test -- --coverage
-```
-
-Coverage report: `frontend/coverage/index.html`
-
-### 4. Database Management
-
-#### Using psql
-
-```bash
-# Connect to the database
-psql -h postgres -U sandbox_user -d sandbox_dev
-
-# List tables
-\dt
-
-# View table structure
-\d posts
-
-# Run queries
-SELECT * FROM posts;
-
-# Exit
-\q
-```
-
-#### Using Alembic (Migrations)
-
-```bash
-cd examples/demo-app/backend
-
-# Create a new migration
-alembic revision --autogenerate -m "Description of changes"
-
-# Apply migrations
-alembic upgrade head
-
-# Rollback one version
-alembic downgrade -1
-
-# View migration history
-alembic history
-```
-
-### 5. Cache Management
-
-#### Using redis-cli
-
-```bash
-# Connect to Redis
-redis-cli -h redis
-
-# View all keys
-KEYS *
-
-# Get a value
-GET post:1:content
-
-# View view count
-GET post:1:views
-
-# Clear all data
-FLUSHALL
-
-# Exit
-exit
-```
-
-## Testing the Plugin
+## Testing
 
 ### Manual Testing
 
-1. **Template Generation**: Use the plugin skills to generate configurations for different project types
-2. **Service Verification**: Ensure PostgreSQL and Redis are accessible
-3. **Network Security**: Test firewall rules in different modes
-4. **Port Exposure**: Verify services are accessible from the host
+Test the plugin by using it to generate configurations:
 
-### Automated Testing
-
-The example applications include comprehensive test suites:
-
-- **Backend**: 8 tests covering API endpoints and caching logic
-- **Frontend**: 20+ tests covering component rendering, user interactions, and API calls
-
-Run all tests to validate the entire environment:
 ```bash
-cd examples/demo-app
-./run-tests.sh --coverage
+# Create a test directory
+mkdir /tmp/test-project
+cd /tmp/test-project
+
+# Use the plugin to generate configs
+claude
+> /windows-sandbox:setup --basic
+
+# Verify generated files
+ls -la .devcontainer/
+cat docker-compose.yml
+```
+
+### Example Application Tests
+
+The example applications include test suites:
+
+```bash
+# Start services first
+cd examples
+docker compose up -d
+
+# Run backend tests
+cd demo-app/backend
+pytest
+pytest --cov=app --cov-report=html
+
+# Run frontend tests
+cd ../frontend
+npm install
+npm test
+npm test -- --coverage
+
+# Stop services
+cd ../../
+docker compose down
+```
+
+## Dogfooding: How the Devcontainer Was Generated
+
+The `.devcontainer/` in this repository was created using the plugin itself:
+
+```bash
+# What was run (hypothetically, during setup)
+/windows-sandbox:setup --basic
+
+# Plugin detection output:
+# ✓ Scanning repository...
+# ✓ Found: 24 .md files (primary content)
+# ✓ Found: 9 .py files (in examples/)
+# ✓ Found: 4 .js files (in examples/)
+# ✓ No database imports in root code
+#
+# Assessment: Documentation/Template repository
+# Recommendation: Lightweight devcontainer with language runtimes
+#
+# Generating:
+# ✓ .devcontainer/devcontainer.json (Python + Node.js)
+# ✓ .devcontainer/Dockerfile (minimal tools)
+# ✓ .devcontainer/init-firewall.sh (disabled)
+# ✓ No docker-compose.yml (not needed for plugin development)
+```
+
+This demonstrates the plugin's smart detection - it generates configurations appropriate to the project, not generic templates.
+
+## Updating the Devcontainer
+
+When plugin templates change, regenerate the devcontainer to stay current:
+
+```bash
+# Use the regeneration script
+./scripts/regenerate-devcontainer.sh
+
+# Or manually:
+# 1. Backup current config
+mv .devcontainer .devcontainer.backup
+
+# 2. Regenerate using latest plugin
+/windows-sandbox:setup --basic
+
+# 3. Review changes
+diff -r .devcontainer.backup .devcontainer
+
+# 4. Keep or restore
+# If good: rm -rf .devcontainer.backup
+# If bad: rm -rf .devcontainer && mv .devcontainer.backup .devcontainer
+
+# 5. Commit
+git add .devcontainer
+git commit -m "chore: regenerate devcontainer with latest plugin version"
 ```
 
 ## Troubleshooting
 
-### Services Not Starting
+### Devcontainer Won't Build
 
-If PostgreSQL or Redis fail to start:
+```bash
+# Rebuild without cache
+docker build --no-cache -f .devcontainer/Dockerfile -t windows-sandbox-dev .
 
-1. Check Docker is running:
-   ```bash
-   docker ps
-   ```
+# Or in VS Code
+# F1 → Dev Containers: Rebuild Container Without Cache
+```
 
-2. View service logs:
-   ```bash
-   docker-compose logs postgres
-   docker-compose logs redis
-   ```
+### Examples Can't Connect to Services
 
-3. Restart services:
-   ```bash
-   docker-compose down
-   docker-compose up -d
-   ```
+```bash
+# Verify services are running
+cd examples
+docker compose ps
 
-### Database Connection Issues
+# Check logs
+docker compose logs postgres
+docker compose logs redis
 
-If you can't connect to PostgreSQL:
+# Restart services
+docker compose restart
 
-1. Verify the service is healthy:
-   ```bash
-   docker-compose ps
-   ```
-
-2. Test connection manually:
-   ```bash
-   psql -h postgres -U sandbox_user -d sandbox_dev
-   ```
-
-3. Check environment variables:
-   ```bash
-   echo $DATABASE_URL
-   ```
+# Or full rebuild
+docker compose down
+docker compose up -d --build
+```
 
 ### Port Conflicts
 
-If you see "port already in use" errors:
+If PostgreSQL or Redis ports are already in use:
 
-1. Check what's using the port:
-   ```bash
-   # Linux/Mac
-   lsof -i :5432
+```bash
+# Check what's using the ports
+# Windows
+netstat -ano | findstr :5432
+netstat -ano | findstr :6379
 
-   # Windows
-   netstat -ano | findstr :5432
-   ```
+# Linux/Mac
+lsof -i :5432
+lsof -i :6379
 
-2. Either stop the conflicting service or change the port in `docker-compose.yml`
+# Option 1: Stop conflicting service
+# Option 2: Change port in examples/docker-compose.yml
+```
 
-### Container Build Failures
+### Claude Code Plugin Not Loading
 
-If the container fails to build:
+```bash
+# Reinstall plugin
+claude plugins remove windows-sandbox
+claude plugins add .
 
-1. Rebuild without cache:
-   ```bash
-   docker-compose build --no-cache
-   ```
+# Verify installation
+claude plugins list
 
-2. Check Docker Desktop has sufficient resources (4GB+ RAM recommended)
-
-3. Clear Docker cache:
-   ```bash
-   docker system prune -a
-   ```
-
-### Test Failures
-
-If tests fail:
-
-1. Ensure all services are running:
-   ```bash
-   docker-compose ps
-   ```
-
-2. Check test output for specific errors
-
-3. For frontend tests, ensure dependencies are installed:
-   ```bash
-   cd examples/demo-app/frontend
-   npm install
-   ```
+# Check plugin.json is valid
+cat .claude-plugin/plugin.json | jq .
+```
 
 ## Environment Variables
 
-The devcontainer sets these environment variables:
+The devcontainer sets minimal environment variables:
 
 | Variable | Value | Purpose |
 |----------|-------|---------|
-| `DATABASE_URL` | `postgresql://sandbox_user:devpassword@postgres:5432/sandbox_dev` | PostgreSQL connection string |
-| `REDIS_URL` | `redis://redis:6379` | Redis connection string |
-| `FIREWALL_MODE` | `permissive` | Sandbox firewall mode |
-| `DEVELOPMENT_MODE` | `true` | Enable development features |
-| `HISTFILE` | `/home/node/.bash_history_dir/.bash_history` | Persistent bash history |
+| `NPM_CONFIG_PREFIX` | `/usr/local/share/npm-global` | Global npm packages location |
+| `UV_COMPILE_BYTECODE` | `1` | Speed up Python imports |
+| `UV_LINK_MODE` | `copy` | Ensure dependencies are copied |
+| `PATH` | Includes npm global and uv bins | Tool availability |
 
-## Advanced Topics
-
-### Customizing the Devcontainer
-
-To modify the devcontainer configuration:
-
-1. Edit `.devcontainer/devcontainer.json` for VS Code settings
-2. Edit `.devcontainer/Dockerfile` to add system packages
-3. Edit `docker-compose.yml` to add or modify services
-4. Rebuild the container:
-   ```
-   F1 → Dev Containers: Rebuild Container
-   ```
-
-### Adding New Services
-
-To add a service (e.g., MongoDB):
-
-1. Add to `docker-compose.yml`:
-   ```yaml
-   mongo:
-     image: mongo:latest
-     ports:
-       - "27017:27017"
-     networks:
-       - windows-sandbox-network
-   ```
-
-2. Update environment variables in `.devcontainer/devcontainer.json`
-
-3. Rebuild and restart the container
-
-### Testing Different Firewall Modes
-
-Change the `FIREWALL_MODE` environment variable:
-
-- `permissive`: All outbound traffic allowed (development)
-- `basic`: Restricted to common services (testing)
-- `advanced`: Strict allowlist (staging)
-- `pro`: Maximum restrictions (production)
+**No database variables** - these are only needed when running examples, set in `examples/docker-compose.yml`.
 
 ## Best Practices
 
-1. **Always run tests** before committing changes
-2. **Use the test runner scripts** for consistent results
-3. **Check coverage reports** to ensure adequate test coverage
-4. **Commit database migrations** with related code changes
-5. **Document new features** in the relevant README files
-6. **Test in different firewall modes** to ensure compatibility
-
-## Getting Help
-
-- Check the [main README](README.md) for plugin overview
-- Review [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
-- Use Claude Code's troubleshooting skill:
-  ```
-  /sandbox-troubleshoot
-  ```
-- Open an issue on GitHub for bugs or feature requests
+1. **Keep the devcontainer minimal** - Don't add services unless the plugin itself needs them
+2. **Use examples/docker-compose.yml** - Keep example services separate
+3. **Test with the plugin** - Use `/windows-sandbox:setup` to validate changes
+4. **Document changes** - Update this file when modifying the development workflow
+5. **Regenerate periodically** - Keep the devcontainer in sync with plugin templates
 
 ## Next Steps
 
-1. Explore the example applications to understand the plugin's capabilities
-2. Try generating devcontainer configurations for your own projects
-3. Experiment with different firewall modes
-4. Contribute improvements back to the plugin
+1. Read [CONTRIBUTING.md](CONTRIBUTING.md) for contribution guidelines
+2. Explore [examples/README.md](examples/README.md) for example applications
+3. Check [skills/README.md](skills/README.md) for skill documentation
+4. Review [ARCHITECTURE.md](docs/ARCHITECTURE.md) for plugin design
+
+## Getting Help
+
+- **Issues**: https://github.com/andrewcchoi/windows-sandbox/issues
+- **Documentation**: See `skills/*/references/` directories
+- **Claude Code**: https://claude.ai/code
+- **Plugin Development**: Use `/windows-sandbox:troubleshoot` for debugging
