@@ -1,0 +1,18 @@
+{
+  "name": "demo-app-sandbox-basic",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "ms-python.python",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+  "postStartCommand": ".devcontainer/init-firewall.sh",
+  "postCreateCommand": "cd backend && pip install -r requirements.txt && cd ../frontend && npm install",
+  "forwardPorts": [8000, 5173, 5432, 6379]
+}
