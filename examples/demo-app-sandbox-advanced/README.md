@@ -2,9 +2,9 @@
 
 This is a **self-contained** example demonstrating the Claude Code Sandbox DevContainer setup in **Advanced mode**. It includes a full-stack blog application with Python FastAPI backend and React frontend, configured with enhanced customization options.
 
-## What is Advanced Tier?
+## What is Advanced Mode?
 
-Advanced tier is designed for developers who want:
+Advanced mode is designed for developers who want:
 - **Balanced configuration** with 5-7 interactive prompts
 - **Strict firewall** with customizable allowlist (whitelist-based network access)
 - **Curated VS Code extensions** for productivity (10+ extensions)
@@ -12,7 +12,7 @@ Advanced tier is designed for developers who want:
 - **Resource limits** for containers
 - **Enhanced developer experience** with additional tools
 
-This example shows what the `windows-sandbox` plugin generates when run in Advanced tier on a full-stack application.
+This example shows what the `windows-sandbox` plugin generates when run in Advanced mode on a full-stack application.
 
 ## Features
 
@@ -29,7 +29,7 @@ This example shows what the `windows-sandbox` plugin generates when run in Advan
   - View counter with Redis caching
   - Component tests with React Testing Library
 
-### DevContainer Features (Advanced Tier)
+### DevContainer Features (Advanced Mode)
 - **Configurable stack**: Python 3.12 + Node.js 20 (customizable via build args)
 - **Database services**: PostgreSQL 15 + Redis 7 with persistence
 - **Network security**: Strict firewall with customizable allowlist (whitelist-based)
@@ -135,11 +135,11 @@ frontend/
 └── vite.config.js
 ```
 
-## DevContainer Configuration (Advanced Tier)
+## DevContainer Configuration (Advanced Mode)
 
 ### What the Plugin Generated
 
-**devcontainer.json** (Advanced Tier):
+**devcontainer.json** (Advanced Mode):
 - Curated VS Code extensions for full-stack development
 - Code formatting on save (Black for Python, Prettier for JS)
 - Port attributes with labels and auto-forward behaviors
@@ -148,14 +148,14 @@ frontend/
 - Docker extension for container management
 - Optional Dev Container features (Zsh/Oh My Zsh)
 
-**Dockerfile** (Advanced Tier):
+**Dockerfile** (Advanced Mode):
 - Configurable Python and Node.js versions via build args
 - Additional development tools (build-essential, vim, nano, less)
 - Pre-installed Python tools (black, pylint, pytest, ipython)
 - Enhanced shell prompt
 - Environment variables for development
 
-**docker-compose.yml** (Advanced Tier):
+**docker-compose.yml** (Advanced Mode):
 - Build args for version customization
 - Environment variables with defaults (FIREWALL_MODE=strict, DATABASE_URL)
 - Resource limits (CPU and memory) for containers
@@ -280,9 +280,9 @@ Edit `.devcontainer/devcontainer.json`:
 }
 ```
 
-## What Makes This "Advanced Tier"
+## What Makes This "Advanced Mode"
 
-According to the plan, Advanced tier is characterized by:
+According to the plan, Advanced mode is characterized by:
 
 1. **More Interactive Setup (5-7 questions)**
    - Firewall mode selection
@@ -321,7 +321,7 @@ According to the plan, Advanced tier is characterized by:
    - Production-ready patterns
    - Development-friendly defaults
 
-## Comparing Tiers
+## Comparing Modes
 
 | Feature | Basic | Intermediate | Advanced | YOLO |
 |---------|-------|--------------|----------|------|
@@ -440,9 +440,9 @@ alembic init migrations
 ## Related Examples
 
 - `examples/demo-app-shared/` - Uses shared Docker Compose services
-- `examples/demo-app-sandbox-basic/` - Basic tier (no firewall, minimal config)
-- `examples/demo-app-sandbox-intermediate/` - Intermediate tier (permissive firewall, message queue)
-- `examples/demo-app-sandbox-yolo/` - YOLO tier (full customization)
+- `examples/demo-app-sandbox-basic/` - Basic mode (no firewall, minimal config)
+- `examples/demo-app-sandbox-intermediate/` - Intermediate mode (permissive firewall, message queue)
+- `examples/demo-app-sandbox-yolo/` - YOLO mode (full customization)
 - `examples/streamlit-sandbox-basic/` - Simpler Python-only app
 
 ## Learn More

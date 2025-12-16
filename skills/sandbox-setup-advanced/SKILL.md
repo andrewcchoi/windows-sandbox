@@ -7,7 +7,7 @@ description: Use when user wants security-focused development setup with strict 
 
 ## Overview
 
-Advanced Mode provides security-focused development environments with strict firewall controls and customizable domain allowlists. This tier balances security and usability by asking 7-10 configuration questions with brief explanations, using strict firewall defaults with configurable allowlists, and generating production-like configurations.
+Advanced Mode provides security-focused development environments with strict firewall controls and customizable domain allowlists. This mode balances security and usability by asking 7-10 configuration questions with brief explanations, using strict firewall defaults with configurable allowlists, and generating production-like configurations.
 
 ## When to Use This Skill
 
@@ -31,7 +31,7 @@ Do NOT use this skill when:
 
 - **Base Images**: Official Docker images (python, node, etc.) as starting point
 - **Dockerfile**: Language-specific templates provided as starting point (fully editable)
-- **Firewall**: STRICT mode with default allowlist from `tier_defaults.advanced` (customizable)
+- **Firewall**: STRICT mode with default allowlist from `mode_defaults.advanced` (customizable)
 - **Services**: Full selection available with production-like configurations
 - **User Interaction**: 7-10 questions with brief explanations of trade-offs
 - **Customization**: Offers to review and customize domain allowlist before generation
@@ -50,11 +50,11 @@ Advanced Mode uses **STRICT firewall** by default with a curated allowlist of do
 
 ### Default Allowlist
 
-The default allowlist is defined in `${CLAUDE_PLUGIN_ROOT}/data/allowable-domains.json` under `tier_defaults.advanced`:
+The default allowlist is defined in `${CLAUDE_PLUGIN_ROOT}/data/allowable-domains.json` under `mode_defaults.advanced`:
 
 ```json
 {
-  "tier_defaults": {
+  "mode_defaults": {
     "advanced": [
       "pypi.org",           // [PKG] Python packages
       "files.pythonhosted.org",  // [PKG] Python package files
@@ -90,7 +90,7 @@ During setup, the wizard will:
 ### Example Customization
 
 ```bash
-# Default allowlist (Advanced tier)
+# Default allowlist (Advanced mode)
 ALLOWABLE_DOMAINS=(
     "pypi.org"              # [PKG] Python packages
     "files.pythonhosted.org" # [PKG] Python package files
@@ -139,7 +139,7 @@ Ask these questions with brief explanations:
    - Options: Elasticsearch, RabbitMQ, Kafka, Ollama (AI), Custom
    - Brief: "Ollama requires GPU support for local AI models"
 
-6. **Firewall mode confirmation**: "Use STRICT firewall mode (recommended for Advanced tier)?"
+6. **Firewall mode confirmation**: "Use STRICT firewall mode (recommended for Advanced mode)?"
    - Options: Yes (strict with allowlist), Switch to Permissive
    - Brief: "Strict blocks all except allowlist; Permissive allows all except blocklist"
 
@@ -251,7 +251,7 @@ Advanced Mode uses these template sources:
    - Customized with base image and pre-install options
 
 2. **Firewall Script**: `templates/firewall/advanced-strict.sh`
-   - Starts with `tier_defaults.advanced` allowlist
+   - Starts with `mode_defaults.advanced` allowlist
    - Customized with user-provided additional domains
    - Category markers added for documentation
 
@@ -281,7 +281,7 @@ For detailed information, refer to embedded documentation in `references/`:
 
 - **Security by default** - Always recommend STRICT firewall with minimal allowlist
 - **Brief explanations** - One sentence per decision to inform without overwhelming
-- **Curated allowlist** - Start with tier-appropriate defaults, customize as needed
+- **Curated allowlist** - Start with mode-appropriate defaults, customize as needed
 - **Production-like configs** - Include health checks, resource limits, restart policies
 - **Verify before overwriting** - Always check for existing files and offer backup
 - **Balance automation and control** - Ask key questions but automate the rest
@@ -291,7 +291,7 @@ For detailed information, refer to embedded documentation in `references/`:
 
 **Via slash command**:
 ```
-/sandbox:setup --advanced
+/sandbox:advanced
 ```
 
 **Via natural language**:
@@ -301,7 +301,7 @@ For detailed information, refer to embedded documentation in `references/`:
 - "Set up production-like development environment with security controls"
 - "Create Docker sandbox with PostgreSQL and strict network rules"
 
-## Comparison with Other Tiers
+## Comparison with Other Modes
 
 **vs. Basic Mode**:
 - Advanced asks 7-10 questions (Basic asks 1-3)
@@ -309,7 +309,7 @@ For detailed information, refer to embedded documentation in `references/`:
 - Advanced provides brief explanations (Basic minimizes interaction)
 - Advanced offers allowlist review (Basic auto-generates)
 
-**vs. YOLO Tier**:
+**vs. YOLO Mode**:
 - Advanced asks 7-10 questions (YOLO asks 10-15+)
 - Advanced provides brief explanations (YOLO provides detailed education)
 - Advanced uses template-based generation (YOLO walks through each file)

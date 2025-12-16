@@ -1,5 +1,5 @@
 # ============================================================================
-# BASIC TIER - Docker Compose Template
+# BASIC MODE - Docker Compose Template
 # ============================================================================
 # Minimal services for basic development: database + cache only
 # Simple configuration without resource limits or advanced features

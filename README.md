@@ -1,15 +1,15 @@
 # Claude Code Sandbox Plugin
 
-Interactive assistant for setting up, troubleshooting, and securing Claude Code Docker sandbox environments with a four-tier system (Basic, Intermediate, Advanced, YOLO).
+Interactive assistant for setting up, troubleshooting, and securing Claude Code Docker sandbox environments with a four-mode system (Basic, Intermediate, Advanced, YOLO).
 
 ## Features
 
-- **🚀 Four-Tier Setup System** - Choose your experience level: Basic (quick auto), Intermediate (balanced), Advanced (secure minimal), or YOLO (full control)
+- **🚀 Four-Mode Setup System** - Choose your experience level: Basic (quick auto), Intermediate (balanced), Advanced (secure minimal), or YOLO (full control)
 - **📊 Data-Driven Templates** - Configurations generated from curated registries of official Docker images and allowable domains
 - **🔧 Troubleshooting Assistant** - Diagnose and fix common sandbox issues automatically
 - **🔒 Security Auditor** - Review and harden sandbox configurations against best practices
-- **🛡️ Smart Firewall Management** - Tier-specific domain whitelists with 30-100+ curated domains
-- **🎯 Intelligent Detection** - Auto-detects project type and suggests appropriate tier
+- **🛡️ Smart Firewall Management** - Mode-specific domain whitelists with 30-100+ curated domains
+- **🎯 Intelligent Detection** - Auto-detects project type and suggests appropriate mode
 
 ## Quick Start
 
@@ -26,17 +26,17 @@ claude plugins list
 ### Basic Usage
 
 ```bash
-# Quick setup with auto-detection (Basic tier)
-/sandbox:setup-basic
+# Quick setup with auto-detection (Basic mode)
+/sandbox:basic
 
-# Balanced control and convenience (Intermediate tier)
-/sandbox:setup-intermediate
+# Balanced control and convenience (Intermediate mode)
+/sandbox:intermediate
 
-# Security-focused minimal setup (Advanced tier)
-/sandbox:setup-advanced
+# Security-focused minimal setup (Advanced mode)
+/sandbox:advanced
 
-# Full customization and control (YOLO tier)
-/sandbox:setup-yolo
+# Full customization and control (YOLO mode)
+/sandbox:yolo
 
 # Troubleshoot existing sandbox
 /sandbox:troubleshoot
@@ -45,11 +45,11 @@ claude plugins list
 /sandbox:audit
 ```
 
-## Four-Tier System
+## Four-Mode System
 
-See [TIERS.md](docs/TIERS.md) for comprehensive comparison guide.
+See [MODES.md](docs/MODES.md) for comprehensive comparison guide.
 
-### Basic Tier - Zero Configuration
+### Basic Mode - Zero Configuration
 
 **Best for**: Beginners, rapid prototyping, learning projects
 
@@ -63,7 +63,7 @@ See [TIERS.md](docs/TIERS.md) for comprehensive comparison guide.
 
 **Example**:
 ```
-You: /sandbox:setup-basic
+You: /sandbox:basic
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
@@ -72,7 +72,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
         Generating configs... Done!
 ```
 
-### Intermediate Tier - Balanced Control
+### Intermediate Mode - Balanced Control
 
 **Best for**: Regular development, team projects, customization needs
 
@@ -86,7 +86,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
 
 **Example**:
 ```
-You: /sandbox:setup-intermediate
+You: /sandbox:intermediate
 Claude: What's your primary language?
         • Python • Node.js • Ruby • Go • PHP
 You: Python
@@ -98,7 +98,7 @@ Claude: What database?
 ...
 ```
 
-### Advanced Tier - Security-First Minimal
+### Advanced Mode - Security-First Minimal
 
 **Best for**: Security-conscious development, production prep, compliance
 
@@ -112,7 +112,7 @@ Claude: What database?
 
 **Example**:
 ```
-You: /sandbox:setup-advanced
+You: /sandbox:advanced
 Claude: This mode creates security-hardened configurations.
 
         **Step 1: Base Configuration**
@@ -127,7 +127,7 @@ Claude: This mode creates security-hardened configurations.
 ...
 ```
 
-### YOLO Tier - Maximum Flexibility
+### YOLO Mode - Maximum Flexibility
 
 **Best for**: Experts, experimental setups, custom requirements
 
@@ -141,7 +141,7 @@ Claude: This mode creates security-hardened configurations.
 
 **Example**:
 ```
-You: /sandbox:setup-yolo
+You: /sandbox:yolo
 Claude: YOLO mode - You're in control!
 
         ⚠️  Warning: Maximum flexibility, minimal safety rails.
@@ -159,14 +159,15 @@ Claude: sandbox-templates tag?
 
 ## Slash Commands
 
-| Command | Description | Tier |
-|---------|-------------|------|
-| `/sandbox:setup-basic` | Quick automatic setup with auto-detection | Basic |
-| `/sandbox:setup-intermediate` | Balanced control and convenience | Intermediate |
-| `/sandbox:setup-advanced` | Security-focused minimal setup | Advanced |
-| `/sandbox:setup-yolo` | Full customization and control | YOLO |
-| `/sandbox:troubleshoot` | Diagnose and fix sandbox issues | All |
-| `/sandbox:audit` | Security audit and recommendations | All |
+| Command                 | Description                                                           | Mode         |
+| ----------------------- | --------------------------------------------------------------------- | ------------ |
+| `/sandbox:basic`        | Quick automatic setup with auto-detection                             | Basic        |
+| `/sandbox:intermediate` | Balanced control and convenience                                      | Intermediate |
+| `/sandbox:advanced`     | Security-focused minimal setup                                        | Advanced     |
+| `/sandbox:yolo`         | Full customization and control                                        | YOLO         |
+| `/sandbox:setup`        | Interactive mode selection (or use `--basic`, `--intermediate`, etc.) | All          |
+| `/sandbox:troubleshoot` | Diagnose and fix sandbox issues                                       | All          |
+| `/sandbox:audit`        | Security audit and recommendations                                    | All          |
 
 ## Auto-Detection
 
@@ -180,7 +181,7 @@ The plugin automatically activates when you:
 ```
 You: I need to set up a Docker development environment for my Python project
 Claude: [Automatically uses sandbox-setup skill]
-      What tier would you like?
+      What mode would you like?
       • Basic (Zero config, 1-2 min)
       • Intermediate (Balanced, 3-5 min)
       • Advanced (Secure minimal, 8-12 min)
@@ -278,7 +279,7 @@ Claude: Let me diagnose...
 - `.devcontainer/init-firewall.sh` - Firewall configuration
 - `docker-compose.yml` - Services configuration
 
-### Pro Mode
+### YOLO Mode
 - `.devcontainer/devcontainer.json` - Optimized for your stack
 - `.devcontainer/Dockerfile` - Technology-specific optimizations
 - `.devcontainer/init-firewall.sh` - Customized allowed domains
@@ -298,7 +299,7 @@ Templates use these placeholders:
 ## Skills Reference
 
 ### sandbox-setup
-Interactive setup wizard with three experience tiers.
+Interactive setup wizard with four experience modes.
 
 **Triggers**:
 - User mentions "devcontainer", "docker sandbox"
@@ -306,7 +307,7 @@ Interactive setup wizard with three experience tiers.
 - User wants to configure firewalls for development
 
 **Workflow**:
-1. Mode selection (Basic/Advanced/YOLO)
+1. Mode selection (Basic/Intermediate/Advanced/YOLO)
 2. Project detection
 3. Configuration wizard
 4. Template generation
@@ -378,14 +379,18 @@ windows-sandbox/
 │   ├── official-images.json     # Docker Hub official images registry
 │   └── allowable-domains.json   # Firewall domain whitelists
 ├── skills/
-│   ├── windows-sandbox-setup/   # Four-tier setup wizard
-│   ├── windows-sandbox-troubleshoot/  # Troubleshooting assistant
-│   └── windows-sandbox-security/      # Security auditor
+│   ├── sandbox-setup-basic/     # Basic mode setup
+│   ├── sandbox-setup-intermediate/  # Intermediate mode setup
+│   ├── sandbox-setup-advanced/  # Advanced mode setup
+│   ├── sandbox-setup-yolo/      # YOLO mode setup
+│   ├── sandbox-troubleshoot/    # Troubleshooting assistant
+│   └── sandbox-security/        # Security auditor
 ├── commands/
-│   ├── setup-basic.md           # /sandbox:setup-basic
-│   ├── setup-intermediate.md    # /sandbox:setup-intermediate
-│   ├── setup-advanced.md        # /sandbox:setup-advanced
-│   ├── setup-yolo.md            # /sandbox:setup-yolo
+│   ├── basic.md                 # /sandbox:basic
+│   ├── intermediate.md          # /sandbox:intermediate
+│   ├── advanced.md              # /sandbox:advanced
+│   ├── yolo.md                  # /sandbox:yolo
+│   ├── setup.md                 # /sandbox:setup (router)
 │   ├── troubleshoot.md          # /sandbox:troubleshoot
 │   └── audit.md                 # /sandbox:audit
 ├── templates/
@@ -396,7 +401,7 @@ windows-sandbox/
 │   │   └── init-firewall.master.sh
 │   ├── compose/                 # Service-specific docker-compose sections
 │   ├── dockerfiles/            # Language-specific Dockerfile sections
-│   ├── firewall/               # Tier-specific firewall configs
+│   ├── firewall/               # Mode-specific firewall configs
 │   └── legacy/                 # Deprecated monolithic templates
 └── examples/                    # Working example applications
     ├── streamlit-sandbox-basic/
@@ -407,10 +412,10 @@ windows-sandbox/
 
 ## Examples
 
-### Example 1: Quick Python Setup (Basic Tier)
+### Example 1: Quick Python Setup (Basic Mode)
 
 ```
-You: /sandbox:setup-basic
+You: /sandbox:basic
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
@@ -429,10 +434,10 @@ Claude: I detected a Python FastAPI project. Setting up with:
         3. Reopen in Container
 ```
 
-### Example 2: Node.js with Customization (Intermediate Tier)
+### Example 2: Node.js with Customization (Intermediate Mode)
 
 ```
-You: /sandbox:setup-intermediate
+You: /sandbox:intermediate
 Claude: What's your primary language?
 You: Node.js
 Claude: Node.js version?
@@ -482,7 +487,7 @@ Claude: Running security audit...
 
 ## Example Applications
 
-The plugin includes comprehensive working examples in the `examples/` directory, demonstrating all three experience tiers (Basic, Advanced, Pro) with real applications.
+The plugin includes comprehensive working examples in the `examples/` directory, demonstrating all four experience modes (Basic, Intermediate, Advanced, YOLO) with real applications.
 
 ### Example Structure
 
@@ -497,7 +502,7 @@ examples/
 ├── demo-app-shared/                 # Shared: Full-stack blog application
 ├── demo-app-sandbox-basic/          # Demo app with Basic mode DevContainer
 ├── demo-app-sandbox-advanced/       # Demo app with Advanced mode DevContainer
-└── demo-app-sandbox-yolo/            # Demo app with YOLO tier DevContainer
+└── demo-app-sandbox-yolo/            # Demo app with YOLO mode DevContainer
 ```
 
 ### Quick Validation: Streamlit App
@@ -530,7 +535,7 @@ A complete full-stack blogging platform with:
 - **Testing**: Pytest (backend) + Jest + React Testing Library (frontend)
 - **Features**: CRUD operations, caching, view counters, comprehensive tests
 
-**Three Sandbox Modes Available**:
+**Four Example Sandbox Modes Available**:
 
 #### 1. Basic Mode - Quick Start
 **Location**: `examples/demo-app-sandbox-basic/`
@@ -556,7 +561,7 @@ A complete full-stack blogging platform with:
 
 **Best for**: Team development, active projects, customization needs
 
-#### 3. Pro Mode - Production-Ready
+#### 3. YOLO Mode - Full Control
 **Location**: `examples/demo-app-sandbox-yolo/`
 
 **What's included**:
@@ -581,7 +586,7 @@ streamlit run app.py
 
 **Full-stack demo** (any mode):
 ```bash
-cd examples/demo-app-sandbox-basic  # or -advanced or -pro
+cd examples/demo-app-sandbox-basic  # or -advanced or -yolo
 # Open in VS Code → Reopen in Container
 
 # Terminal 1: Backend
@@ -663,20 +668,20 @@ MIT License - See LICENSE file for details
 ## Changelog
 
 ### v2.0.0 (2025-12-16)
-- **Major Release**: Four-tier system (Basic, Intermediate, Advanced, YOLO)
+- **Major Release**: Four-mode system (Basic, Intermediate, Advanced, YOLO)
 - Data-driven configuration with JSON registries
   - `sandbox-templates.json`: Official Docker sandbox images
   - `official-images.json`: Docker Hub official images
-  - `allowable-domains.json`: Tier-specific firewall whitelists
+  - `allowable-domains.json`: Mode-specific firewall whitelists
 - Modular template system with section markers
-- Enhanced firewall with tier-specific domain sets (30-100+ domains)
-- Updated slash commands: `/sandbox:setup-basic`, `/sandbox:setup-intermediate`, etc.
-- Comprehensive tier comparison guide (TIERS.md)
-- Migration from Basic/Advanced/YOLO to new four-tier system
+- Enhanced firewall with mode-specific domain sets (30-100+ domains)
+- Updated slash commands: `/sandbox:basic`, `/sandbox:intermediate`, `/sandbox:advanced`, `/sandbox:yolo`
+- Comprehensive mode comparison guide (MODES.md)
+- Migration from Basic/Advanced/YOLO to new four-mode system
 
 ### v1.0.0 (2025-01-XX)
 - Initial release
-- Interactive setup wizard with Basic/Advanced/YOLO tiers
+- Interactive setup wizard with Basic/Advanced/YOLO modes
 - Troubleshooting assistant
 - Security auditor
 - Templates for Python, Node.js, and Full-stack projects

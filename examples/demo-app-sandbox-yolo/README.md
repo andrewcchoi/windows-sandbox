@@ -1,10 +1,10 @@
-# Demo Blog Application - YOLO Tier Sandbox
+# Demo Blog Application - YOLO Mode Sandbox
 
-This is a **self-contained** example demonstrating the Claude Code Sandbox DevContainer setup in **YOLO tier**. It includes a production-ready full-stack blog application with Python FastAPI backend and React frontend, configured with comprehensive tooling and optimizations.
+This is a **self-contained** example demonstrating the Claude Code Sandbox DevContainer setup in **YOLO mode**. It includes a production-ready full-stack blog application with Python FastAPI backend and React frontend, configured with comprehensive tooling and optimizations.
 
-## What is YOLO Tier?
+## What is YOLO Mode?
 
-YOLO tier is designed for teams and production-ready projects that require:
+YOLO mode is designed for teams and production-ready projects that require:
 - **Comprehensive setup** with 10-15+ configuration prompts
 - **Fully explicit configuration** with no hidden defaults
 - **Technology-optimized Dockerfile** with multi-stage builds
@@ -13,7 +13,7 @@ YOLO tier is designed for teams and production-ready projects that require:
 - **Full observability** with debugging and profiling tools
 - **Complete documentation** of all configuration options
 
-This example shows what the `windows-sandbox` plugin generates when run in YOLO tier on a full-stack application.
+This example shows what the `windows-sandbox` plugin generates when run in YOLO mode on a full-stack application.
 
 ## Features
 
@@ -32,7 +32,7 @@ This example shows what the `windows-sandbox` plugin generates when run in YOLO 
   - Component tests with React Testing Library
   - Modern build tooling with Vite
 
-### DevContainer Features (YOLO Tier)
+### DevContainer Features (YOLO Mode)
 - **Multi-stage Dockerfile**: Optimized layers for minimal image size and fast builds
 - **Comprehensive tooling**:
   - Python: Black, isort, flake8, pylint, ruff, mypy, pytest, ipdb, IPython
@@ -177,7 +177,7 @@ npm run lint              # ESLint
 npm run format            # Prettier
 ```
 
-## DevContainer Configuration (YOLO Tier)
+## DevContainer Configuration (YOLO Mode)
 
 ### Multi-Stage Dockerfile
 
@@ -394,9 +394,9 @@ my_function() {
 }
 ```
 
-## What Makes This "YOLO Tier"
+## What Makes This "YOLO Mode"
 
-According to the plan, YOLO tier is characterized by:
+According to the plan, YOLO mode is characterized by:
 
 ### 1. Comprehensive Setup (10-15+ questions)
 The plugin would ask about:
@@ -461,38 +461,38 @@ The plugin would ask about:
 
 ## Comparing Modes
 
-| Feature | Basic | Advanced | Pro |
-|---------|-------|----------|-----|
+| Feature | Basic | Intermediate | Advanced | YOLO |
+|---------|-------|--------------|----------|------|
 | **Setup** |
-| Questions asked | 1-2 | 5-7 | 10-15+ |
-| Configuration time | <1 min | 2-3 min | 5-10 min |
+| Questions asked | 1-2 | 3-5 | 5-7 | 10-15+ |
+| Configuration time | <1 min | 2 min | 2-3 min | 5-10 min |
 | **Dockerfile** |
-| Build stages | Single | Single | Multi-stage (7) |
-| Image optimization | No | Partial | Full |
-| Build args | No | 2 | 5+ |
+| Build stages | Single | Single | Single | Multi-stage (7) |
+| Image optimization | No | No | Partial | Full |
+| Build args | No | 2 | 2 | 5+ |
 | **VS Code** |
-| Extensions | 2 | 10 | 20+ |
-| Pre-configured | Minimal | Moderate | Comprehensive |
-| Settings | Basic | Curated | Complete |
+| Extensions | 2 | 5 | 10 | 20+ |
+| Pre-configured | Minimal | Basic | Moderate | Comprehensive |
+| Settings | Basic | Basic | Curated | Complete |
 | **Services** |
-| Health checks | Basic | Standard | Comprehensive |
-| Resource limits | No | No | Yes |
-| Security hardening | Partial | Partial | Full |
-| Admin tools | No | No | Optional |
+| Health checks | Basic | Standard | Standard | Comprehensive |
+| Resource limits | No | No | Yes | Yes |
+| Security hardening | Partial | Partial | Good | Full |
+| Admin tools | No | No | No | Optional |
 | **Development** |
-| Dev dependencies | No | Some | All |
-| Code quality tools | No | Basic | Comprehensive |
-| Debugging tools | No | Some | Full suite |
-| Profiling | No | No | Yes |
+| Dev dependencies | No | No | Some | All |
+| Code quality tools | No | No | Basic | Comprehensive |
+| Debugging tools | No | No | Some | Full suite |
+| Profiling | No | No | No | Yes |
 | **Production Readiness** |
-| Config documentation | Minimal | Moderate | Complete |
-| Environment variables | Few | Some | Comprehensive |
-| Customization options | Limited | Good | Extensive |
-| Best practices | Basic | Good | Industry-standard |
+| Config documentation | Minimal | Basic | Moderate | Complete |
+| Environment variables | Few | Some | Some | Comprehensive |
+| Customization options | Limited | Moderate | Good | Extensive |
+| Best practices | Basic | Basic | Good | Industry-standard |
 | **Best For** |
-| Use case | Quick start | Balanced dev | Production teams |
-| Team size | Solo | Small team | Large team |
-| Project phase | Prototype | Development | Production |
+| Use case | Quick start | Learning | Balanced dev | Production teams |
+| Team size | Solo | Solo/Small | Small team | Large team |
+| Project phase | Prototype | Learning | Development | Production |
 
 ## Advanced Usage
 
@@ -636,7 +636,7 @@ sudo /usr/local/bin/init-firewall.sh
 docker-compose exec app sh -c 'cat /proc/self/status | grep Cap'
 
 # Verify NET_ADMIN is present
-docker inspect demo-app-pro | grep -A 10 CapAdd
+docker inspect demo-app-yolo | grep -A 10 CapAdd
 ```
 
 ### Performance Issues
@@ -721,8 +721,8 @@ npm update
 ## Related Examples
 
 - `examples/demo-app-shared/` - Shared application code
-- `examples/demo-app-sandbox-basic/` - Basic tier (quick start)
-- `examples/demo-app-sandbox-advanced/` - Advanced tier (balanced)
+- `examples/demo-app-sandbox-basic/` - Basic mode (quick start)
+- `examples/demo-app-sandbox-advanced/` - Advanced mode (balanced)
 - `examples/streamlit-sandbox-basic/` - Python-only example
 
 ## Learn More
@@ -738,4 +738,4 @@ MIT
 
 ---
 
-**YOLO Tier** - Production-ready development environments with comprehensive tooling and best practices.
+**YOLO Mode** - Production-ready development environments with comprehensive tooling and best practices.

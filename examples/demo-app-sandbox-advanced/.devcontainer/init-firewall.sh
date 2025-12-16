@@ -1,8 +1,8 @@
 #!/bin/bash
 # ============================================================================
-# CLAUDE CODE SANDBOX - Advanced Tier Firewall Configuration
+# CLAUDE CODE SANDBOX - Advanced Mode Firewall Configuration
 # ============================================================================
-# Advanced tier implements strict network restrictions with a curated allowlist
+# Advanced mode implements strict network restrictions with a curated allowlist
 # of essential development domains. This provides strong security while
 # maintaining functionality for common development workflows.
 #
@@ -25,7 +25,7 @@ IFS=$'\n\t'       # Stricter word splitting
 # CONFIGURATION
 # ----------------------------------------------------------------------------
 
-# Mode is always strict for Advanced tier
+# Mode is always strict for Advanced mode
 FIREWALL_MODE="strict"
 
 # CUSTOMIZE: Add your project-specific domains to this array
@@ -301,7 +301,7 @@ echo ""
 echo "=========================================="
 echo "FIREWALL CONFIGURED SUCCESSFULLY"
 echo "=========================================="
-echo "Mode: $FIREWALL_MODE (Advanced tier)"
+echo "Mode: $FIREWALL_MODE (Advanced mode)"
 echo "Allowed domains: ${#ALLOWED_DOMAINS[@]}"
 echo "Host network: $HOST_NETWORK"
 echo ""

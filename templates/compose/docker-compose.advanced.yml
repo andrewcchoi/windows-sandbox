@@ -1,5 +1,5 @@
 # ============================================================================
-# ADVANCED TIER - Docker Compose Template
+# ADVANCED MODE - Docker Compose Template
 # ============================================================================
 # Production-like configuration with security hardening and resource limits
 # Includes: postgres, redis with optional mysql/mongodb (commented out)

@@ -154,4 +154,4 @@ When adding new features:
 1. Add to master template with appropriate section markers
 2. Update this README with the new section name
 3. Update generator scripts to handle the new section
-4. Test with all sandbox modes (Basic, Advanced, Pro, Shared)
+4. Test with all sandbox modes (Basic, Intermediate, Advanced, YOLO)

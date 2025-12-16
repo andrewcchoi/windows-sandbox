@@ -1,12 +1,12 @@
 # Examples
 
-Example applications demonstrating the Claude Code Sandbox plugin's capabilities across four experience tiers: **Basic**, **Intermediate**, **Advanced**, and **YOLO** tiers.
+Example applications demonstrating the Claude Code Sandbox plugin's capabilities across four experience modes: **Basic**, **Intermediate**, **Advanced**, and **YOLO** modes.
 
 ## Overview
 
 This directory contains:
 - **Shared application code** - Reusable backend and frontend implementations
-- **Sandbox examples** - Self-contained DevContainer configurations demonstrating each tier
+- **Sandbox examples** - Self-contained DevContainer configurations demonstrating each mode
 - **Two application stacks** - Full-stack demo app (Python + Node.js) and Streamlit (Python-only)
 
 ## Quick Start Guide
@@ -32,13 +32,13 @@ examples/
 ├── docker-compose.yml               # Shared PostgreSQL + Redis services
 │
 ├── streamlit-shared/                # Shared Streamlit application code
-├── streamlit-sandbox-basic/         # Streamlit with Basic tier DevContainer
+├── streamlit-sandbox-basic/         # Streamlit with Basic mode DevContainer
 │
 ├── demo-app-shared/                 # Shared full-stack application code
-├── demo-app-sandbox-basic/          # Demo app with Basic tier DevContainer
-├── demo-app-sandbox-intermediate/   # Demo app with Intermediate tier DevContainer
-├── demo-app-sandbox-advanced/       # Demo app with Advanced tier DevContainer
-└── demo-app-sandbox-yolo/           # Demo app with YOLO tier DevContainer
+├── demo-app-sandbox-basic/          # Demo app with Basic mode DevContainer
+├── demo-app-sandbox-intermediate/   # Demo app with Intermediate mode DevContainer
+├── demo-app-sandbox-advanced/       # Demo app with Advanced mode DevContainer
+└── demo-app-sandbox-yolo/           # Demo app with YOLO mode DevContainer
 ```
 
 ## Application Examples
@@ -52,7 +52,7 @@ examples/
 - Perfect for quick validation
 
 **Sandbox Examples**:
-- `streamlit-sandbox-basic/` - Basic tier configuration
+- `streamlit-sandbox-basic/` - Basic mode configuration
 
 ### 2. Demo Blog App (Full-stack Python + Node.js)
 
@@ -71,14 +71,14 @@ examples/
 - Component tests with React Testing Library
 
 **Sandbox Examples**:
-- `demo-app-sandbox-basic/` - Basic tier (quick start, no firewall)
-- `demo-app-sandbox-intermediate/` - Intermediate tier (permissive firewall, message queue)
-- `demo-app-sandbox-advanced/` - Advanced tier (strict firewall, balanced)
-- `demo-app-sandbox-yolo/` - YOLO tier (full customization)
+- `demo-app-sandbox-basic/` - Basic mode (quick start, no firewall)
+- `demo-app-sandbox-intermediate/` - Intermediate mode (permissive firewall, message queue)
+- `demo-app-sandbox-advanced/` - Advanced mode (strict firewall, balanced)
+- `demo-app-sandbox-yolo/` - YOLO mode (full customization)
 
-## DevContainer Tiers Explained
+## DevContainer Modes Explained
 
-### Basic Tier - Quick Start
+### Basic Mode - Quick Start
 
 **Best for**: Prototypes, first-time users, solo developers
 
@@ -96,7 +96,7 @@ examples/
 
 **Examples**: `streamlit-sandbox-basic/`, `demo-app-sandbox-basic/`
 
-### Intermediate Tier - Learning & Experimentation
+### Intermediate Mode - Learning & Experimentation
 
 **Best for**: Learning, experimentation, small projects
 
@@ -114,7 +114,7 @@ examples/
 
 **Example**: `demo-app-sandbox-intermediate/`
 
-### Advanced Tier - Production Development
+### Advanced Mode - Production Development
 
 **Best for**: Small teams, active development, production-ready projects
 
@@ -132,7 +132,7 @@ examples/
 
 **Example**: `demo-app-sandbox-advanced/`
 
-### YOLO Tier - Maximum Customization
+### YOLO Mode - Maximum Customization
 
 **Best for**: Large teams, production projects, comprehensive tooling, full control
 
@@ -191,7 +191,7 @@ examples/
 
 ### Prerequisites
 
-- **Docker Desktop** (with BuildKit enabled for Pro mode)
+- **Docker Desktop** (with BuildKit enabled for YOLO mode)
 - **Visual Studio Code** with Dev Containers extension
 - **Git** (for version control)
 
@@ -281,25 +281,25 @@ npm test
 
 ## Customization
 
-### Basic Tier
+### Basic Mode
 - Add VS Code extensions
 - Change ports in `devcontainer.json`
-- Upgrade to higher tier for more features
+- Upgrade to higher mode for more features
 
-### Intermediate Tier
+### Intermediate Mode
 - Set Python/Node.js versions via build args
 - Add more services to `docker-compose.yml`
 - Customize VS Code extensions
 - Firewall is permissive by default (no restrictions)
 
-### Advanced Tier
+### Advanced Mode
 - Set Python/Node.js versions via build args
 - Configure resource limits
 - Customize strict firewall allowlist
 - Customize VS Code settings and extensions
 - Override environment variables
 
-### YOLO Tier
+### YOLO Mode
 - Full environment variable configuration via `.env`
 - Optional firewall (strict/permissive/disabled)
 - Resource limits and reservations
@@ -330,7 +330,7 @@ docker compose logs postgres
 
 **Build failures**:
 ```bash
-# Enable BuildKit (Pro mode)
+# Enable BuildKit (YOLO mode)
 export DOCKER_BUILDKIT=1
 # Rebuild without cache
 docker-compose build --no-cache
@@ -364,30 +364,30 @@ sudo /usr/local/bin/init-firewall.sh
 
 ### Sandbox Examples (With DevContainer)
 
-**streamlit-sandbox-basic/**: Self-contained Streamlit with Basic tier
+**streamlit-sandbox-basic/**: Self-contained Streamlit with Basic mode
 - Python-only stack
 - Embedded PostgreSQL and Redis
 - Quickest way to validate sandbox setup
 
-**demo-app-sandbox-basic/**: Full-stack with Basic tier
+**demo-app-sandbox-basic/**: Full-stack with Basic mode
 - Auto-detected Python + Node.js
 - Minimal configuration
 - No firewall (hypervisor isolation)
 - Perfect for quick start
 
-**demo-app-sandbox-intermediate/**: Full-stack with Intermediate tier
+**demo-app-sandbox-intermediate/**: Full-stack with Intermediate mode
 - Platform-specific templates
 - Permissive firewall
 - Message queue (RabbitMQ)
 - Learning and experimentation
 
-**demo-app-sandbox-advanced/**: Full-stack with Advanced tier
+**demo-app-sandbox-advanced/**: Full-stack with Advanced mode
 - Customizable versions and settings
 - Strict firewall with allowlist
 - Resource limits
 - Balanced for team development
 
-**demo-app-sandbox-yolo/**: Full-stack with YOLO tier
+**demo-app-sandbox-yolo/**: Full-stack with YOLO mode
 - Multi-stage optimized build
 - Optional firewall (configurable)
 - Comprehensive tooling (20+ extensions)
@@ -396,11 +396,11 @@ sudo /usr/local/bin/init-firewall.sh
 
 ## Next Steps
 
-- ✅ Try Basic tier for quick start
-- ✅ Explore Intermediate tier for learning with additional services
-- ✅ Use Advanced tier for production development with strict security
-- ✅ Try YOLO tier for maximum customization
-- 📖 Read tier-specific READMEs for detailed guides
+- ✅ Try Basic mode for quick start
+- ✅ Explore Intermediate mode for learning with additional services
+- ✅ Use Advanced mode for production development with strict security
+- ✅ Try YOLO mode for maximum customization
+- 📖 Read mode-specific READMEs for detailed guides
 - 🔒 Review `docs/SECURITY.md` for security best practices
 - 🚀 Customize examples for your project needs
 

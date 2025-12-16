@@ -1,8 +1,8 @@
 #!/bin/bash
 # ============================================================================
-# CLAUDE CODE SANDBOX - Basic Tier Firewall Configuration
+# CLAUDE CODE SANDBOX - Basic Mode Firewall Configuration
 # ============================================================================
-# Basic tier relies on Windows Sandbox isolation for security rather than
+# Basic mode relies on Windows Sandbox isolation for security rather than
 # network-level restrictions. This approach minimizes complexity while
 # leveraging the hypervisor-based isolation provided by Windows Sandbox.
 #
@@ -14,9 +14,9 @@
 # ============================================================================
 
 echo "=========================================="
-echo "FIREWALL: BASIC TIER"
+echo "FIREWALL: BASIC MODE"
 echo "=========================================="
-echo "No firewall configured (Basic tier - relies on sandbox isolation)"
+echo "No firewall configured (Basic mode - relies on sandbox isolation)"
 echo ""
 echo "Security model:"
 echo "  - Windows Sandbox hypervisor isolation"

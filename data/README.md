@@ -5,14 +5,14 @@ This directory contains reference data used by the Docker Sandbox Plugin skills 
 ## Files
 
 ### `sandbox-templates.json`
-Docker sandbox-templates image registry with available tags, architectures, and recommended tiers.
+Docker sandbox-templates image registry with available tags, architectures, and recommended modes.
 
 **Structure:**
 - `metadata`: Registry information and update date
 - `tags`: Array of available sandbox template tags with:
   - Image details (OS, architectures, sizes)
   - Descriptions
-  - Recommended tiers
+  - Recommended modes
   - Pull commands
 
 **Usage in skills:**
@@ -51,24 +51,24 @@ Reference: `${CLAUDE_PLUGIN_ROOT}/data/official-images.json`
 5. Test pull commands are valid
 
 ### `allowable-domains.json`
-Firewall domain allowlist organized by category for different tier defaults.
+Firewall domain allowlist organized by category for different mode defaults.
 
 **Structure:**
 - `metadata`: Usage information and update date
 - `categories`: Domain categories with:
   - Description
-  - Minimum tier requirement
+  - Minimum mode requirement
   - Domain lists
   - Wildcard patterns (where applicable)
   - Sub-categories for complex categories
-- `tier_defaults`: Which categories are included per tier
+- `mode_defaults`: Which categories are included per mode
 
 **Usage in skills:**
 ```markdown
 Reference: `${CLAUDE_PLUGIN_ROOT}/data/allowable-domains.json`
 
-# Extract domains for specific tier
-Use `tier_defaults.<tier_name>` to get included categories
+# Extract domains for specific mode
+Use `mode_defaults.<mode_name>` to get included categories
 ```
 
 **Update procedure:**
@@ -76,15 +76,15 @@ Use `tier_defaults.<tier_name>` to get included categories
 2. Test domain accessibility from sandbox
 3. Update category lists as needed
 4. Update `metadata.last_updated` date
-5. Document any new categories in tier_defaults
+5. Document any new categories in mode_defaults
 
-## Tier-Specific Domain Usage
+## Mode-Specific Domain Usage
 
-| Tier | Domain Strategy | Reference |
+| Mode | Domain Strategy | Reference |
 |------|----------------|-----------|
 | **Basic** | No firewall - relies on sandbox isolation | N/A |
 | **Intermediate** | Permissive - all traffic allowed | N/A |
-| **Advanced** | Strict allowlist from `tier_defaults.advanced` | `allowable-domains.json` |
+| **Advanced** | Strict allowlist from `mode_defaults.advanced` | `allowable-domains.json` |
 | **YOLO** | User-configurable | `allowable-domains.json` (optional) |
 
 ## File Format
@@ -106,7 +106,7 @@ Skills reference these files using the `${CLAUDE_PLUGIN_ROOT}` variable which re
 
 Reference: `${CLAUDE_PLUGIN_ROOT}/data/sandbox-templates.json`
 
-**Sandbox Templates** (recommended for Basic tier):
+**Sandbox Templates** (recommended for Basic mode):
 - `docker/sandbox-templates:latest` - Default choice
 - `docker/sandbox-templates:claude-code` - Optimized for Claude Code
 ```
@@ -129,4 +129,4 @@ These data files are tracked in git. When updating:
 
 For questions about data file structure or usage, see:
 - Plugin documentation: `/workspace/docs/ARCHITECTURE.md`
-- Tier guide: `/workspace/docs/TIERS.md`
+- Mode guide: `/workspace/docs/MODES.md`

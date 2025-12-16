@@ -1,17 +1,17 @@
-# Demo Blog Application - Intermediate Tier Sandbox
+# Demo Blog Application - Intermediate Mode Sandbox
 
-This is a **self-contained** example demonstrating the Claude Code Sandbox DevContainer setup in **Intermediate tier**. It includes a full-stack blog application with Python FastAPI backend, React frontend, and RabbitMQ message queue.
+This is a **self-contained** example demonstrating the Claude Code Sandbox DevContainer setup in **Intermediate mode**. It includes a full-stack blog application with Python FastAPI backend, React frontend, and RabbitMQ message queue.
 
-## What is Intermediate Tier?
+## What is Intermediate Mode?
 
-Intermediate tier is designed for developers who want:
+Intermediate mode is designed for developers who want:
 - **Platform-specific configuration** using templates (Python, Node.js, etc.)
 - **Permissive firewall** for flexibility with audit logging
 - **Build arguments** for version customization
 - **Additional services** like message queues
 - **More VS Code extensions** for enhanced productivity (5 essential extensions)
 
-This example shows what the `windows-sandbox` plugin generates when run in Intermediate tier on a full-stack application.
+This example shows what the `windows-sandbox` plugin generates when run in Intermediate mode on a full-stack application.
 
 ## Features
 
@@ -28,7 +28,7 @@ This example shows what the `windows-sandbox` plugin generates when run in Inter
   - View counter with Redis caching
   - Component tests with React Testing Library
 
-### DevContainer Features (Intermediate Tier)
+### DevContainer Features (Intermediate Mode)
 - **Configurable stack**: Python 3.12 + Node.js 20 (customizable via build args)
 - **Database services**: PostgreSQL 15 + Redis 7
 - **Message queue**: RabbitMQ 3 with management UI
@@ -97,7 +97,7 @@ npm test
 ./run-tests.sh --coverage
 ```
 
-## DevContainer Configuration (Intermediate Tier)
+## DevContainer Configuration (Intermediate Mode)
 
 ### What the Plugin Generated
 
@@ -151,11 +151,11 @@ Then rebuild: \`Dev Containers: Rebuild Container\`
 
 If you need network-level restrictions:
 
-**Advanced Tier**: Add strict firewall with customizable allowlist
+**Advanced Mode**: Add strict firewall with customizable allowlist
 - Copy configuration from \`demo-app-sandbox-advanced/\`
 - Provides whitelist-based network access control
 
-**YOLO Tier**: Full customization with optional firewall
+**YOLO Mode**: Full customization with optional firewall
 - Copy configuration from \`demo-app-sandbox-yolo/\`
 - Maximum flexibility with all available options
 
@@ -170,7 +170,7 @@ Edit \`.devcontainer/devcontainer.json\`:
         "ms-python.python",
         "ms-python.vscode-pylance",
         "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
+        "esbenp.pretmode-vscode",
         "ms-azuretools.vscode-docker",
         "eamodio.gitlens"  // Add more here
       ]
@@ -201,7 +201,7 @@ docker-compose exec rabbitmq rabbitmq-diagnostics ping
 \`\`\`
 
 ### Firewall Issues
-Intermediate tier uses permissive mode (no restrictions), but if you experience issues:
+Intermediate mode uses permissive mode (no restrictions), but if you experience issues:
 \`\`\`bash
 # Check firewall status
 sudo iptables -L -v
@@ -219,7 +219,7 @@ docker-compose down
 "forwardPorts": [8001, 5174, 5433, 6380, 5673, 15673]
 \`\`\`
 
-## Comparing to Other Tiers
+## Comparing to Other Modes
 
 | Feature | Basic | Intermediate | Advanced | YOLO |
 |---------|-------|--------------|----------|------|
@@ -235,9 +235,9 @@ docker-compose down
 ## Related Examples
 
 - \`examples/demo-app-shared/\` - Uses shared Docker Compose services
-- \`examples/demo-app-sandbox-basic/\` - Basic tier (no firewall, minimal config)
-- \`examples/demo-app-sandbox-advanced/\` - Advanced tier with strict firewall
-- \`examples/demo-app-sandbox-yolo/\` - YOLO tier with full customization
+- \`examples/demo-app-sandbox-basic/\` - Basic mode (no firewall, minimal config)
+- \`examples/demo-app-sandbox-advanced/\` - Advanced mode with strict firewall
+- \`examples/demo-app-sandbox-yolo/\` - YOLO mode with full customization
 - \`examples/streamlit-sandbox-basic/\` - Simpler Python-only app
 
 ## Learn More

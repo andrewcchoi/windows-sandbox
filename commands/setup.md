@@ -1,14 +1,14 @@
 ---
-description: Set up a new Claude Code Docker sandbox environment - routes to tier-specific setup
+description: Set up a new Claude Code Docker sandbox environment - routes to mode-specific setup
 ---
 
 # Sandbox Setup Router
 
-This command helps you choose the right setup tier for your needs.
+This command helps you choose the right setup mode for your needs.
 
 ## Quick Selection
 
-Use flags to skip tier selection:
+Use flags to skip mode selection:
 - `--basic` → Fastest setup, sandbox templates, no firewall
 - `--intermediate` → Standard Dockerfile, permissive firewall
 - `--advanced` → Customizable, strict firewall with allowlist
@@ -18,7 +18,7 @@ Use flags to skip tier selection:
 
 Ask the user:
 
-"Which setup tier do you prefer?
+"Which setup mode do you prefer?
 
 **Basic** - Fastest setup
 - Uses sandbox templates or official images
@@ -40,7 +40,7 @@ Ask the user:
 - Optional firewall
 - All options available (extensive questions)"
 
-## Route to Tier Skill
+## Route to Mode Skill
 
 Based on selection, invoke the appropriate skill using the Skill tool:
 - Basic → Use sandbox-setup-basic skill

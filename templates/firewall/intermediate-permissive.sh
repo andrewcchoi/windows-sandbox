@@ -1,8 +1,8 @@
 #!/bin/bash
 # ============================================================================
-# CLAUDE CODE SANDBOX - Intermediate Tier Firewall Configuration
+# CLAUDE CODE SANDBOX - Intermediate Mode Firewall Configuration
 # ============================================================================
-# Intermediate tier uses permissive mode with no network restrictions.
+# Intermediate mode uses permissive mode with no network restrictions.
 # This provides maximum flexibility for development while still maintaining
 # container-level isolation.
 #
@@ -48,13 +48,13 @@ echo ""
 echo "=========================================="
 echo "FIREWALL CONFIGURED SUCCESSFULLY"
 echo "=========================================="
-echo "Mode: Permissive (Intermediate tier)"
+echo "Mode: Permissive (Intermediate mode)"
 echo "Network restrictions: None"
 echo ""
 echo "Security considerations:"
 echo "  - Container isolation is your primary protection"
 echo "  - Be cautious about running untrusted code"
-echo "  - Consider upgrading to Advanced tier for network-level restrictions"
+echo "  - Consider upgrading to Advanced mode for network-level restrictions"
 echo "=========================================="
 
 exit 0

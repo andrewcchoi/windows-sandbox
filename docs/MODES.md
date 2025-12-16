@@ -1,6 +1,6 @@
-# Sandbox Tier Comparison Guide
+# Sandbox Mode Comparison Guide
 
-This guide helps you choose the right sandbox tier for your project and understand the differences between Basic, Intermediate, Advanced, and YOLO tiers.
+This guide helps you choose the right sandbox mode for your project and understand the differences between Basic, Intermediate, Advanced, and YOLO modes.
 
 ## Quick Reference Table
 
@@ -21,9 +21,9 @@ This guide helps you choose the right sandbox tier for your project and understa
 | **Learning Curve** | Easy | Easy-Moderate | Moderate-Hard | Expert |
 | **Maintenance** | Low | Low-Medium | Medium-High | High |
 
-## Tier Details
+## Mode Details
 
-### Basic Tier - Zero Configuration Development
+### Basic Mode - Zero Configuration Development
 
 **Philosophy**: Get started in minutes with sensible defaults.
 
@@ -36,7 +36,7 @@ This guide helps you choose the right sandbox tier for your project and understa
 
 **Setup Experience**:
 ```
-You: /sandbox:setup-basic
+You: /sandbox:basic
 
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
@@ -82,7 +82,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
 
 ---
 
-### Intermediate Tier - Balanced Control
+### Intermediate Mode - Balanced Control
 
 **Philosophy**: Convenience with flexibility where it matters.
 
@@ -95,7 +95,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
 
 **Setup Experience**:
 ```
-You: /sandbox:setup-intermediate
+You: /sandbox:intermediate
 
 Claude: What's your primary language?
         • Python • Node.js • Ruby • Go • PHP
@@ -177,7 +177,7 @@ You: Expanded
 
 ---
 
-### Advanced Tier - Security-First Minimal
+### Advanced Mode - Security-First Minimal
 
 **Philosophy**: Production-ready with minimal attack surface.
 
@@ -191,7 +191,7 @@ You: Expanded
 
 **Setup Experience**:
 ```
-You: /sandbox:setup-advanced
+You: /sandbox:advanced
 
 Claude: This mode creates security-hardened configurations.
 
@@ -305,7 +305,7 @@ services:
 
 ---
 
-### YOLO Tier - Maximum Flexibility
+### YOLO Mode - Maximum Flexibility
 
 **Philosophy**: You know what you're doing. We'll get out of your way.
 
@@ -315,21 +315,21 @@ services:
 - Research and development
 - Testing bleeding-edge features
 - Environments with unique requirements
-- When none of the other tiers fit
+- When none of the other modes fit
 
 **Setup Experience**:
 ```
-You: /sandbox:setup-yolo
+You: /sandbox:yolo
 
 Claude: YOLO mode - You're in control!
 
-        This tier allows:
+        This mode allows:
         - Any base image (including nightly/experimental)
         - Optional firewall (can disable entirely)
         - Custom everything
         - Full VS Code extension control
 
-        ⚠️  Warning: YOLO tier provides maximum flexibility but minimal
+        ⚠️  Warning: YOLO mode provides maximum flexibility but minimal
         safety rails. Ensure you understand the security implications.
 
 [15-20+ questions with full customization options...]
@@ -377,7 +377,7 @@ You: Disabled
   - Can disable completely
   - Can use empty whitelist
   - Can provide custom domain list
-  - Can mix tier defaults with custom
+  - Can mix mode defaults with custom
 - **Network Mode**: Your choice
 - **Questions**: As many as needed for full customization
 
@@ -430,7 +430,7 @@ You: Disabled
 - May not work with future plugin versions
 
 **When to Use YOLO**:
-- You have specific requirements none of the other tiers meet
+- You have specific requirements none of the other modes meet
 - You're testing experimental features
 - You need to disable safety features temporarily
 - You're an expert and know the risks
@@ -505,7 +505,7 @@ START: What's your primary goal?
 
 ### File Sizes (typical)
 
-| Tier | devcontainer.json | Dockerfile | docker-compose.yml | init-firewall.sh | Total Lines |
+| Mode | devcontainer.json | Dockerfile | docker-compose.yml | init-firewall.sh | Total Lines |
 |------|-------------------|------------|-------------------|-----------------|-------------|
 | Basic | 80 lines | 50 lines | 60 lines | 100 lines | ~290 |
 | Intermediate | 120 lines | 80 lines | 100 lines | 200 lines | ~500 |
@@ -544,7 +544,7 @@ START: What's your primary goal?
 
 **Scenario**: Building first FastAPI app, following tutorial, needs database.
 
-**Recommended Tier**: **Basic**
+**Recommended Mode**: **Basic**
 
 **Rationale**:
 - Tutorial likely uses PostgreSQL
@@ -554,7 +554,7 @@ START: What's your primary goal?
 
 **Setup**:
 ```bash
-/sandbox:setup-basic
+/sandbox:basic
 # Auto-detects Python + FastAPI
 # Creates PostgreSQL + Redis
 # Ready in 90 seconds
@@ -566,7 +566,7 @@ START: What's your primary goal?
 
 **Scenario**: 3-person team, React + Node.js + MongoDB, iterating fast.
 
-**Recommended Tier**: **Intermediate**
+**Recommended Mode**: **Intermediate**
 
 **Rationale**:
 - Team needs consistent environment
@@ -577,7 +577,7 @@ START: What's your primary goal?
 
 **Setup**:
 ```bash
-/sandbox:setup-intermediate
+/sandbox:intermediate
 # Choose: Node.js 20
 # Choose: MongoDB
 # Choose: Expanded firewall (for AWS)
@@ -590,7 +590,7 @@ START: What's your primary goal?
 
 **Scenario**: Existing app, preparing for SOC2 audit, handling customer data.
 
-**Recommended Tier**: **Advanced**
+**Recommended Mode**: **Advanced**
 
 **Rationale**:
 - Security is critical (customer data)
@@ -601,7 +601,7 @@ START: What's your primary goal?
 
 **Setup**:
 ```bash
-/sandbox:setup-advanced
+/sandbox:advanced
 # Answer security questions
 # Review firewall whitelist
 # Document choices for audit
@@ -614,7 +614,7 @@ START: What's your primary goal?
 
 **Scenario**: PhD student testing Ollama + custom embeddings + experimental features.
 
-**Recommended Tier**: **YOLO**
+**Recommended Mode**: **YOLO**
 
 **Rationale**:
 - Need Ollama (not in standard templates)
@@ -625,7 +625,7 @@ START: What's your primary goal?
 
 **Setup**:
 ```bash
-/sandbox:setup-yolo
+/sandbox:yolo
 # Base: docker/sandbox-templates:gemini
 # Firewall: Disabled
 # Services: Ollama + ChromaDB + PostgreSQL
@@ -638,7 +638,7 @@ START: What's your primary goal?
 
 **Scenario**: Public GitHub repo, accepting contributions, running CI/CD.
 
-**Recommended Tier**: **Intermediate** or **Advanced**
+**Recommended Mode**: **Intermediate** or **Advanced**
 
 **Rationale**:
 - Contributors need easy setup (Intermediate)
@@ -651,10 +651,10 @@ START: What's your primary goal?
 ## Development Setup
 
 ### Quick Start (Recommended for Contributors)
-/sandbox:setup-intermediate
+/sandbox:intermediate
 
 ### Security-Focused Setup (For Maintainers)
-/sandbox:setup-advanced
+/sandbox:advanced
 ```
 
 ---
@@ -663,17 +663,17 @@ START: What's your primary goal?
 
 **Scenario**: Internal Python tool, custom corporate registry, specific compliance requirements.
 
-**Recommended Tier**: **YOLO**
+**Recommended Mode**: **YOLO**
 
 **Rationale**:
 - Must use corporate registry
 - Has specific firewall rules (corporate domains)
-- Unique requirements don't fit tiers
+- Unique requirements don't fit modes
 - Expert team maintaining it
 
 **Setup**:
 ```bash
-/sandbox:setup-yolo
+/sandbox:yolo
 # Base: internal.company.com/python-dev:latest
 # Firewall: Custom corporate whitelist
 # Extensions: Company-standard set
@@ -682,7 +682,7 @@ START: What's your primary goal?
 
 ---
 
-## Tier Migration Paths
+## Mode Migration Paths
 
 ### Upgrading: Basic → Intermediate
 
@@ -690,7 +690,7 @@ START: What's your primary goal?
 
 **Steps**:
 1. Note your current config (PostgreSQL version, etc.)
-2. Run `/sandbox:setup-intermediate`
+2. Run `/sandbox:intermediate`
 3. Choose same services but with version control
 4. Migrate data from old volumes to new
 5. Test thoroughly
@@ -706,7 +706,7 @@ START: What's your primary goal?
 **Steps**:
 1. Audit current setup (what's actually needed?)
 2. Document security requirements
-3. Run `/sandbox:setup-advanced`
+3. Run `/sandbox:advanced`
 4. Review firewall whitelist (add project-specific domains)
 5. Test with strict firewall (may need iterations)
 6. Update CI/CD to use new config
@@ -724,7 +724,7 @@ START: What's your primary goal?
 1. List all current functionality
 2. Document data that must be preserved
 3. Review security requirements
-4. Run `/sandbox:setup-advanced`
+4. Run `/sandbox:advanced`
 5. Methodically test each feature (firewall may block)
 6. Add domains as needed (one by one, document each)
 7. Performance test
@@ -736,13 +736,13 @@ START: What's your primary goal?
 
 ### Lateral Move: Any → YOLO
 
-**When**: Standard tiers don't meet unique requirements
+**When**: Standard modes don't meet unique requirements
 
 **Steps**:
 1. Export current config
 2. Document what works and what doesn't
 3. List exact customizations needed
-4. Run `/sandbox:setup-yolo`
+4. Run `/sandbox:yolo`
 5. Replicate working config
 6. Add customizations
 7. Extensive testing
@@ -762,7 +762,7 @@ START: What's your primary goal?
 
 **A**: Speed. If you're prototyping or learning and the defaults work for you, Basic gets you running in under 2 minutes. Intermediate asks 5-8 questions which slows you down. Use Basic when you want to focus on your app, not the environment.
 
-### Q: Is Advanced tier actually "production-ready"?
+### Q: Is Advanced mode actually "production-ready"?
 
 **A**: It's production-ready from a security standpoint, but you still need:
 - Proper secrets management (not in docker-compose.yml)
@@ -771,9 +771,9 @@ START: What's your primary goal?
 - Scaling configuration
 - Load balancing
 
-Advanced tier gives you a secure foundation, not a complete production system.
+Advanced mode gives you a secure foundation, not a complete production system.
 
-### Q: What if I need a service not in the tier?
+### Q: What if I need a service not in the mode?
 
 **A**:
 - **Basic**: You can manually add to docker-compose.yml after generation
@@ -781,12 +781,12 @@ Advanced tier gives you a secure foundation, not a complete production system.
 - **Advanced**: You'll be asked about each service specifically
 - **YOLO**: Full control, add anything
 
-### Q: Can I mix tier features?
+### Q: Can I mix mode features?
 
 **A**: Not directly through the plugin, but you can:
-1. Generate config in one tier
-2. Manually copy features from another tier's example
-3. Use YOLO tier and manually implement what you want
+1. Generate config in one mode
+2. Manually copy features from another mode's example
+3. Use YOLO mode and manually implement what you want
 
 ### Q: How do I add a firewall domain after setup?
 
@@ -798,21 +798,21 @@ iptables -A OUTPUT -d example.com -j ACCEPT
 
 Then rebuild container: `docker compose down && docker compose up -d`
 
-### Q: Which tier for Kubernetes development?
+### Q: Which mode for Kubernetes development?
 
 **A**: **Intermediate** (includes k8s.io domains) or **Advanced** (if you want minimal and will add k8s domains explicitly).
 
-### Q: Which tier for GitHub Actions?
+### Q: Which mode for GitHub Actions?
 
 **A**: **Intermediate** or **Advanced**. Both work with CI/CD. Use Intermediate for convenience, Advanced for security-critical projects.
 
-### Q: Can I change tiers without losing data?
+### Q: Can I change modes without losing data?
 
 **A**: Yes, use Docker volumes:
 1. Note volume names from current `docker-compose.yml`
-2. Generate new config in different tier
+2. Generate new config in different mode
 3. Update new `docker-compose.yml` to use same volume names
-4. Data persists across tier changes
+4. Data persists across mode changes
 
 ### Q: What's the difference between Advanced and YOLO for security?
 
@@ -852,6 +852,6 @@ For most users wanting security: Use Advanced.
 - Unique requirements
 - Experimental features
 - Research project
-- None of the other tiers fit
+- None of the other modes fit
 
 **Still unsure?** Start with Basic. You can always upgrade later.
