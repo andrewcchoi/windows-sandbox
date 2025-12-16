@@ -190,3 +190,8 @@ Skills can invoke each other and share context:
 - Old Basic mode → New Basic mode (similar)
 - Old Advanced mode → New Intermediate mode (similar functionality)
 - Old YOLO mode → New Advanced mode (security-focused) or YOLO mode (flexibility-focused)
+
+---
+
+**Last Updated:** 2025-12-16
+**Version:** 2.2.0
