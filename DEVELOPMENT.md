@@ -150,7 +150,7 @@ docker compose up -d
 docker compose ps
 
 # Test basic example
-cd basic-streamlit
+cd streamlit-sandbox-basic
 uv pip install -r requirements.txt
 streamlit run app.py
 # Open browser to http://localhost:8501

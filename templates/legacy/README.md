@@ -4,7 +4,7 @@ This directory contains deprecated monolithic templates from version 1.x of the 
 
 ## What's Here
 
-These templates were used in the original three-tier system (Basic/Advanced/YOLO):
+These templates were used in the original three-mode system (Basic/Advanced/YOLO):
 
 - **base/** - Flexible templates for Basic/Advanced modes
 - **python/** - Python-optimized templates with FastAPI + PostgreSQL + Redis
@@ -24,7 +24,7 @@ The new system generates templates dynamically by:
 - Reading JSON data files for available options
 - Extracting sections from master templates
 - Combining sections based on user choices
-- Customizing per tier requirements
+- Customizing per mode requirements
 
 ## Migration
 
@@ -36,7 +36,7 @@ If you have custom modifications to these legacy templates:
    - `data/allowable-domains.json` - for firewall domains
    - `templates/master/` - for template structure
 3. If not available, file an issue or:
-   - Use YOLO tier for full customization
+   - Use YOLO mode for full customization
    - Manually modify generated configs after setup
 
 ## Should I Delete These?
