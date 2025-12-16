@@ -1,5 +1,8 @@
 # Claude Code Sandbox Plugin
 
+> **Repository:** [andrewcchoi/windows-sandbox](https://github.com/andrewcchoi/windows-sandbox)
+> **Short Name:** "sandbox" (used in documentation)
+
 Interactive assistant for setting up, troubleshooting, and securing Claude Code Docker sandbox environments with a four-mode system (Basic, Intermediate, Advanced, YOLO).
 
 ## Features
@@ -55,9 +58,9 @@ See [MODES.md](docs/MODES.md) for comprehensive comparison guide.
 
 **Key Features**:
 - Auto-detects project type (2-3 questions max)
-- Sensible defaults (PostgreSQL + Redis, strict firewall)
+- Sensible defaults (PostgreSQL + Redis)
 - Base images: `docker/sandbox-templates:latest` or `claude-code`
-- Firewall: 40-50 essential domains
+- Firewall: None (relies on container isolation)
 - VS Code: 5-8 essential extensions
 - Ready in 1-2 minutes
 
@@ -80,7 +83,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
 - Some customization (5-8 questions)
 - Build args for version flexibility
 - Base images: Official images (`python:3.12-slim`, `node:20-bookworm-slim`)
-- Firewall: 100+ domains (includes cloud platforms)
+- Firewall: Permissive (no restrictions, for convenience)
 - VS Code: 10-15 curated extensions
 - Ready in 3-5 minutes
 
@@ -106,7 +109,7 @@ Claude: What database?
 - Detailed configuration (10-15 questions)
 - Multi-stage optimized Dockerfiles
 - Base images: Security-hardened official images
-- Firewall: 30-40 minimal domains (explicit additions required)
+- Firewall: Strict (customizable allowlist, explicit additions)
 - VS Code: 20+ comprehensive extensions (including security scanners)
 - Ready in 8-12 minutes
 
@@ -300,6 +303,12 @@ Templates use these placeholders:
 
 ### sandbox-setup
 Interactive setup wizard with four experience modes.
+
+**Note:** This is a router skill that delegates to mode-specific skills:
+- `sandbox-setup-basic` - Basic mode setup
+- `sandbox-setup-intermediate` - Intermediate mode setup
+- `sandbox-setup-advanced` - Advanced mode setup
+- `sandbox-setup-yolo` - YOLO mode setup
 
 **Triggers**:
 - User mentions "devcontainer", "docker sandbox"

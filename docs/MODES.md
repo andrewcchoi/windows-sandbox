@@ -913,3 +913,9 @@ For most users wanting security: Use Advanced.
 - None of the other modes fit
 
 **Still unsure?** Start with Basic. You can always upgrade later.
+
+
+---
+
+**Last Updated:** 2025-12-16
+**Version:** 2.2.0

@@ -797,3 +797,9 @@ secrets:
 - `data/secrets.json` - Complete secrets catalog
 - `templates/env/*.template` - Environment templates with secret placeholders
 - `templates/variables/*.json` - Variable configurations per mode
+
+
+---
+
+**Last Updated:** 2025-12-16
+**Version:** 2.2.0

@@ -55,9 +55,14 @@ Note: Without the devcontainer, you won't be able to fully test the example appl
 ### Working on Skills
 
 Skills are located in the `skills/` directory:
-- `sandbox-setup.md` - Interactive setup wizard
-- `sandbox-troubleshoot.md` - Troubleshooting assistant
-- `sandbox-security.md` - Security auditor
+- `sandbox-setup-basic/SKILL.md` - Basic mode setup
+- `sandbox-setup-intermediate/SKILL.md` - Intermediate mode setup
+- `sandbox-setup-advanced/SKILL.md` - Advanced mode setup
+- `sandbox-setup-yolo/SKILL.md` - YOLO mode setup
+- `sandbox-troubleshoot/SKILL.md` - Troubleshooting assistant
+- `sandbox-security/SKILL.md` - Security auditor
+
+See [skills/README.md](skills/README.md) for detailed skill documentation.
 
 When modifying skills:
 1. Make changes to the skill markdown file

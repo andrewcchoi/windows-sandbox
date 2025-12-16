@@ -571,3 +571,9 @@ RUN --mount=type=secret,id=npm_token \
 - `data/variables.json` - Complete variable catalog
 - `templates/env/*.template` - Environment file templates per mode
 - `templates/variables/*.json` - Variable configurations per mode
+
+
+---
+
+**Last Updated:** 2025-12-16
+**Version:** 2.2.0
