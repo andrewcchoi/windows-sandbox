@@ -28,7 +28,7 @@ This plugin uses itself for development (dogfooding approach), which ensures the
 4. **Verify setup**:
    ```bash
    # Test basic example
-   cd examples/basic-streamlit
+   cd examples/streamlit-sandbox-basic
    uv pip install -r requirements.txt
    streamlit run app.py
    ```
@@ -55,9 +55,14 @@ Note: Without the devcontainer, you won't be able to fully test the example appl
 ### Working on Skills
 
 Skills are located in the `skills/` directory:
-- `sandbox-setup.md` - Interactive setup wizard
-- `sandbox-troubleshoot.md` - Troubleshooting assistant (TODO)
-- `sandbox-security.md` - Security auditor (TODO)
+- `sandbox-setup-basic/SKILL.md` - Basic mode setup
+- `sandbox-setup-intermediate/SKILL.md` - Intermediate mode setup
+- `sandbox-setup-advanced/SKILL.md` - Advanced mode setup
+- `sandbox-setup-yolo/SKILL.md` - YOLO mode setup
+- `sandbox-troubleshoot/SKILL.md` - Troubleshooting assistant
+- `sandbox-security/SKILL.md` - Security auditor
+
+See [skills/README.md](skills/README.md) for detailed skill documentation.
 
 When modifying skills:
 1. Make changes to the skill markdown file
@@ -95,6 +100,7 @@ The `examples/` directory contains working applications that validate the plugin
 #### Demo Blog Application
 - **Shared**: `examples/demo-app-shared/` - Full-stack application code
 - **Basic Mode**: `examples/demo-app-sandbox-basic/` - Minimal DevContainer configuration
+- **Intermediate Mode**: `examples/demo-app-sandbox-intermediate/` - Standard DevContainer with permissive firewall
 - **Advanced Mode**: `examples/demo-app-sandbox-advanced/` - Balanced DevContainer with customization
 - **YOLO Mode**: `examples/demo-app-sandbox-yolo/` - Full-control DevContainer with comprehensive tooling
 
@@ -136,7 +142,7 @@ If you modify the templates and want to regenerate this repository's devcontaine
    # Press F1 → Dev Containers: Rebuild Container
 
    # Verify services
-   cd examples/basic-streamlit
+   cd examples/streamlit-sandbox-basic
    streamlit run app.py
    ```
 
@@ -186,3 +192,8 @@ Run all tests before submitting:
 - Comment complex logic
 - Follow existing patterns
 - Keep skills focused and modular
+
+---
+
+**Last Updated:** 2025-12-16
+**Version:** 2.2.0

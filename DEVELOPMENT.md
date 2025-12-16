@@ -150,7 +150,7 @@ docker compose up -d
 docker compose ps
 
 # Test basic example
-cd basic-streamlit
+cd streamlit-sandbox-basic
 uv pip install -r requirements.txt
 streamlit run app.py
 # Open browser to http://localhost:8501
@@ -363,3 +363,8 @@ The devcontainer sets minimal environment variables:
 - **Documentation**: See `skills/*/references/` directories
 - **Claude Code**: https://claude.ai/code
 - **Plugin Development**: Use `/sandbox:troubleshoot` for debugging
+
+---
+
+**Last Updated:** 2025-12-16
+**Version:** 2.2.0

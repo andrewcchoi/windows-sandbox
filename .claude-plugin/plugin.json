@@ -1,6 +1,6 @@
 {
   "name": "windows-sandbox",
-  "version": "2.1.0",
+  "version": "2.2.0",
   "description": "Interactive assistant for setting up, troubleshooting, and securing Claude Code Docker sandbox environments with four-mode system (Basic, Intermediate, Advanced, YOLO)",
   "author": {
     "name": "Sandbox Team"
