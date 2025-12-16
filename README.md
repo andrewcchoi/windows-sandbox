@@ -350,9 +350,9 @@ Performs comprehensive security audits.
 ## Reference Documentation
 
 The plugin includes comprehensive reference documentation:
-- `skills/sandbox-setup/references/customization.md` - Customization guide
-- `skills/sandbox-setup/references/security.md` - Security model and best practices
-- `skills/sandbox-setup/references/troubleshooting.md` - Detailed troubleshooting guide
+- `skills/sandbox-setup-advanced/references/customization.md` - Customization guide
+- `skills/sandbox-setup-advanced/references/security.md` - Security model and best practices
+- `skills/sandbox-setup-advanced/references/troubleshooting.md` - Detailed troubleshooting guide
 
 ## Development
 
@@ -501,6 +501,7 @@ examples/
 │
 ├── demo-app-shared/                 # Shared: Full-stack blog application
 ├── demo-app-sandbox-basic/          # Demo app with Basic mode DevContainer
+├── demo-app-sandbox-intermediate/   # Demo app with Intermediate mode DevContainer
 ├── demo-app-sandbox-advanced/       # Demo app with Advanced mode DevContainer
 └── demo-app-sandbox-yolo/            # Demo app with YOLO mode DevContainer
 ```

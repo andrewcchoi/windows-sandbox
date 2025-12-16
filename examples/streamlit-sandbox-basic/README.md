@@ -71,10 +71,11 @@ streamlit-sandbox-basic/
 
 ## Compare with Other Modes
 
+- **Intermediate mode**: 4-6 questions, standard Dockerfile, permissive firewall, common services
 - **Advanced mode**: 5-7 questions, configurable Dockerfile with build args, 5 VS Code extensions
 - **YOLO mode**: 10-15+ questions, technology-optimized Dockerfile, 11 extensions, production-ready configs
 
-See `examples/demo-app-sandbox-advanced/` and `examples/demo-app-sandbox-yolo/` for comparisons.
+See `examples/demo-app-sandbox-intermediate/`, `examples/demo-app-sandbox-advanced/`, and `examples/demo-app-sandbox-yolo/` for comparisons.
 
 ## Next Steps
 
