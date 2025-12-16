@@ -1,4 +1,4 @@
-# Generated using sandbox plugin Intermediate tier
+# Generated using windows-sandbox plugin Intermediate mode
 # Development container for plugin development with services
 # Includes PostgreSQL, Redis, RabbitMQ for testing examples
 

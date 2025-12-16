@@ -11,7 +11,7 @@ description: Use when user wants full customization with no restrictions - unoff
 ╔═══════════════════════════════════════════════════════════════╗
 ║                    YOLO MODE ACTIVATED                        ║
 ║                                                               ║
-║  You are in full control. This tier:                         ║
+║  You are in full control. This mode:                         ║
 ║  • Allows unofficial Docker images (security risk)           ║
 ║  • Does not enforce firewall restrictions                    ║
 ║  • Provides no security guardrails                           ║
@@ -47,8 +47,8 @@ Use YOLO mode when:
 - User wants to use unofficial/custom Docker images
 - User wants to disable security features like firewall
 - User wants experimental versions (nightly, alpha, beta)
-- User needs configurations not possible in other tiers
-- User is experienced and rejects simpler tier suggestions
+- User needs configurations not possible in other modes
+- User is experienced and rejects simpler mode suggestions
 
 Do NOT use YOLO mode when:
 - User is a beginner → Suggest **Basic** mode instead
@@ -58,19 +58,19 @@ Do NOT use YOLO mode when:
 
 ## Key Characteristics
 
-| Feature | YOLO Mode |
-|---------|-----------|
-| **Base Images** | ANY (official, unofficial, custom registries) |
-| **Dockerfile** | Full customization from master template |
-| **Firewall** | OPTIONAL - strict/permissive/disabled/custom |
-| **Services** | All possible services (postgres, redis, mysql, mongo, rabbitmq, nginx, ollama, etc.) |
-| **Build Args** | All exposed (timezone, versions, custom args) |
-| **VS Code Extensions** | All language extensions available |
-| **Environment Variables** | Complete control over all env vars |
-| **Port Forwarding** | Full control over all port mappings |
-| **User Interaction** | Extensive - every option presented |
-| **Validation** | Minimal - assumes user knows what they're doing |
-| **Documentation** | Comprehensive with all commands and implications |
+| Feature                   | YOLO Mode                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| **Base Images**           | ANY (official, unofficial, custom registries)                                        |
+| **Dockerfile**            | Full customization from master template                                              |
+| **Firewall**              | OPTIONAL - strict/permissive/disabled/custom                                         |
+| **Services**              | All possible services (postgres, redis, mysql, mongo, rabbitmq, nginx, ollama, etc.) |
+| **Build Args**            | All exposed (timezone, versions, custom args)                                        |
+| **VS Code Extensions**    | All language extensions available                                                    |
+| **Environment Variables** | Complete control over all env vars                                                   |
+| **Port Forwarding**       | Full control over all port mappings                                                  |
+| **User Interaction**      | Extensive - every option presented                                                   |
+| **Validation**            | Minimal - assumes user knows what they're doing                                      |
+| **Documentation**         | Comprehensive with all commands and implications                                     |
 
 ## Available Images
 
@@ -623,7 +623,7 @@ All services available:
 
 **Via slash command**:
 ```
-/sandbox:setup --yolo
+/sandbox:yolo
 ```
 
 **Via natural language**:
@@ -647,7 +647,7 @@ Assistant: I'll set up your sandbox in YOLO mode.
 ╔═══════════════════════════════════════════════════════════════╗
 ║                    YOLO MODE ACTIVATED                        ║
 ║                                                               ║
-║  You are in full control. This tier:                         ║
+║  You are in full control. This mode:                         ║
 ║  • Allows unofficial Docker images (security risk)           ║
 ║  • Does not enforce firewall restrictions                    ║
 ║  • Provides no security guardrails                           ║

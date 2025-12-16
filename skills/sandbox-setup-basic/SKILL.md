@@ -3,11 +3,11 @@ name: sandbox-setup-basic
 description: Use when user wants the simplest sandbox setup - uses sandbox templates or official images only, docker-compose when appropriate, no firewall (relies on sandbox isolation)
 ---
 
-# Sandbox Setup: Basic Tier
+# Sandbox Setup: Basic Mode
 
 ## Overview
 
-The Basic tier provides the fastest path to a working sandbox environment. This tier is optimized for:
+The Basic mode provides the fastest path to a working sandbox environment. This mode is optimized for:
 
 - Quick setup with minimal configuration
 - Pre-built templates and official Docker images
@@ -15,11 +15,11 @@ The Basic tier provides the fastest path to a working sandbox environment. This 
 - Automatic project detection and sensible defaults
 - 1-2 user questions maximum
 
-Basic tier gets developers up and running in minutes using battle-tested base images without custom security layers.
+Basic mode gets developers up and running in minutes using battle-tested base images without custom security layers.
 
 ## When to Use This Skill
 
-### Use Basic Tier When
+### Use Basic Mode When
 
 - User wants the simplest, fastest setup
 - User is a beginner or prototyping
@@ -28,15 +28,15 @@ Basic tier gets developers up and running in minutes using battle-tested base im
 - User doesn't need custom network restrictions
 - Getting started quickly is the priority
 
-### Do NOT Use Basic Tier When
+### Do NOT Use Basic Mode When
 
 - User needs custom firewall rules or network restrictions
 - User wants full control over Dockerfile and build process
 - User is troubleshooting an existing setup (use `sandbox-troubleshoot` instead)
-- User explicitly requests advanced features or YOLO tier
+- User explicitly requests advanced features or YOLO mode
 - Project requires complex multi-service orchestration with custom networking
 
-**Important**: If user mentions firewall, iptables, network policies, or security hardening, recommend Advanced or YOLO tier instead.
+**Important**: If user mentions firewall, iptables, network policies, or security hardening, recommend Advanced or YOLO mode instead.
 
 ## Key Characteristics
 
@@ -78,7 +78,7 @@ Basic tier gets developers up and running in minutes using battle-tested base im
 
 Reference: `${CLAUDE_PLUGIN_ROOT}/data/sandbox-templates.json`
 
-**Recommended for Basic Tier:**
+**Recommended for Basic Mode:**
 
 1. **claude-code** (366 MB)
    - Optimized for Claude Code workflows
@@ -403,8 +403,8 @@ Inform user about upgrade options:
 Your Basic sandbox is ready!
 
 Need more control?
-- Advanced tier: Custom Dockerfile + firewall rules
-- YOLO tier: Full security hardening + network policies
+- Advanced mode: Custom Dockerfile + firewall rules
+- YOLO mode: Full security hardening + network policies
 
 Run `/sandbox:advanced` or `/sandbox:yolo` to upgrade.
 ```
@@ -416,9 +416,9 @@ If setup fails or user encounters issues:
 ```
 Encountered an error during setup. For troubleshooting assistance, invoke:
 
-/sandbox-troubleshoot
+/sandbox:troubleshoot
 
-Or switch to Advanced/YOLO tier for more control:
+Or switch to Advanced/YOLO mode for more control:
 
 /sandbox:advanced
 /sandbox:yolo
@@ -481,7 +481,7 @@ END
 
 - Don't ask unnecessary questions
 - Don't create custom Dockerfiles unless absolutely required
-- Don't add firewall configuration (that's Advanced/YOLO tier)
+- Don't add firewall configuration (that's Advanced/YOLO mode)
 - Don't overcomplicate docker-compose.yml
 - Don't use `latest` tag for official images (use specific versions)
 - Don't proceed with stale/unverified images
@@ -501,12 +501,12 @@ END
    - Check Docker Desktop is running
 
 3. **Permission errors**
-   - Remind user that Basic tier uses `root` user
-   - Suggest Advanced/YOLO tier if custom user needed
+   - Remind user that Basic mode uses `root` user
+   - Suggest Advanced/YOLO mode if custom user needed
 
 ## Security Note
 
-Basic tier relies on Docker sandbox isolation only. No firewall rules are configured.
+Basic mode relies on Docker sandbox isolation only. No firewall rules are configured.
 
 **Security features:**
 - Docker container isolation
@@ -518,11 +518,11 @@ Basic tier relies on Docker sandbox isolation only. No firewall rules are config
 - Custom network policies
 - Outbound traffic restrictions
 
-For production-like security, recommend Advanced or YOLO tier.
+For production-like security, recommend Advanced or YOLO mode.
 
 ## Summary
 
-Basic tier is optimized for speed and simplicity:
+Basic mode is optimized for speed and simplicity:
 
 1. Auto-detect project type
 2. Ask 1 question maximum

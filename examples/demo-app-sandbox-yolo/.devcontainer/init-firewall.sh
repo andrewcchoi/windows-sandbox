@@ -1,10 +1,10 @@
 #!/bin/bash
 # ============================================================================
-# CLAUDE CODE SANDBOX - YOLO Tier Firewall Configuration
+# CLAUDE CODE SANDBOX - YOLO Mode Firewall Configuration
 # ============================================================================
-# YOLO tier provides complete flexibility with optional firewall modes:
+# YOLO mode provides complete flexibility with optional firewall modes:
 # - DISABLED: No firewall (relies on container isolation only)
-# - PERMISSIVE: Allow all traffic (like Intermediate tier)
+# - PERMISSIVE: Allow all traffic (like Intermediate mode)
 # - STRICT: Whitelist-based firewall with comprehensive domain categories
 #
 # This template includes all available domain categories from the standard
@@ -561,7 +561,7 @@ echo ""
 echo "=========================================="
 echo "FIREWALL CONFIGURED SUCCESSFULLY"
 echo "=========================================="
-echo "Mode: $FIREWALL_MODE (YOLO tier)"
+echo "Mode: $FIREWALL_MODE (YOLO mode)"
 echo "Allowed domains: ${#ALLOWED_DOMAINS[@]}"
 echo "Host network: $HOST_NETWORK"
 echo ""

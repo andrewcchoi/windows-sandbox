@@ -1,9 +1,9 @@
 # ============================================================================
-# INTERMEDIATE TIER - Docker Compose Template
+# INTERMEDIATE MODE - Docker Compose Template
 # ============================================================================
 # Common services with standard configuration for typical development needs
 # Includes: postgres, redis, rabbitmq with healthchecks
-# No resource limits - simpler than advanced tier
+# No resource limits - simpler than advanced mode
 # ============================================================================
 
 services:

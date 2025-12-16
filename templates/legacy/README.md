@@ -58,5 +58,5 @@ They may be removed in a future major version (3.0+).
 
 See:
 - [ARCHITECTURE.md](/workspace/docs/ARCHITECTURE.md) - New template system
-- [TIERS.md](/workspace/docs/TIERS.md) - Four-tier comparison
+- [MODES.md](/workspace/docs/MODES.md) - Four-mode comparison
 - [CHANGELOG.md](/workspace/CHANGELOG.md) - Version history

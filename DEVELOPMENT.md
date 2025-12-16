@@ -1,6 +1,6 @@
 # Development Guide
 
-This guide explains how to develop the Windows Sandbox Plugin using the minimal devcontainer setup.
+This guide explains how to develop the Sandbox Plugin using the minimal devcontainer setup.
 
 ## Overview
 
@@ -18,8 +18,8 @@ This plugin uses itself for development (dogfooding approach). The devcontainer 
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/andrewcchoi/sandbox
-   cd sandbox
+   git clone https://github.com/andrewcchoi/windows-sandbox
+   cd windows-sandbox
    ```
 
 2. Open in VS Code:
@@ -37,8 +37,8 @@ This plugin uses itself for development (dogfooding approach). The devcontainer 
 
 ```bash
 # Clone repository
-git clone https://github.com/andrewcchoi/sandbox
-cd sandbox
+git clone https://github.com/andrewcchoi/windows-sandbox
+cd windows-sandbox
 
 # Build and run container
 docker build -f .devcontainer/Dockerfile -t sandbox-dev .
@@ -96,7 +96,7 @@ sandbox/
 │   ├── demo-app-shared/        # Full-stack demo (shared services)
 │   ├── demo-app-sandbox-basic/  # Full-stack demo (Basic mode)
 │   ├── demo-app-sandbox-advanced/ # Full-stack demo (Advanced mode)
-│   └── demo-app-sandbox-yolo/   # Full-stack demo (YOLO tier)
+│   └── demo-app-sandbox-yolo/   # Full-stack demo (YOLO mode)
 │
 └── docs/                       # Documentation
 ```
@@ -218,7 +218,7 @@ The `.devcontainer/` in this repository was created using the plugin itself:
 
 ```bash
 # What was run (hypothetically, during setup)
-/sandbox:setup --basic
+/sandbox:basic
 
 # Plugin detection output:
 # ✓ Scanning repository...
@@ -252,7 +252,7 @@ When plugin templates change, regenerate the devcontainer to stay current:
 mv .devcontainer .devcontainer.backup
 
 # 2. Regenerate using latest plugin
-/sandbox:setup --basic
+/sandbox:basic
 
 # 3. Review changes
 diff -r .devcontainer.backup .devcontainer
@@ -319,7 +319,7 @@ lsof -i :6379
 
 ```bash
 # Reinstall plugin
-claude plugins remove sandbox
+claude plugins remove windows-sandbox
 claude plugins add .
 
 # Verify installation
@@ -333,12 +333,12 @@ cat .claude-plugin/plugin.json | jq .
 
 The devcontainer sets minimal environment variables:
 
-| Variable | Value | Purpose |
-|----------|-------|---------|
-| `NPM_CONFIG_PREFIX` | `/usr/local/share/npm-global` | Global npm packages location |
-| `UV_COMPILE_BYTECODE` | `1` | Speed up Python imports |
-| `UV_LINK_MODE` | `copy` | Ensure dependencies are copied |
-| `PATH` | Includes npm global and uv bins | Tool availability |
+| Variable              | Value                           | Purpose                        |
+| --------------------- | ------------------------------- | ------------------------------ |
+| `NPM_CONFIG_PREFIX`   | `/usr/local/share/npm-global`   | Global npm packages location   |
+| `UV_COMPILE_BYTECODE` | `1`                             | Speed up Python imports        |
+| `UV_LINK_MODE`        | `copy`                          | Ensure dependencies are copied |
+| `PATH`                | Includes npm global and uv bins | Tool availability              |
 
 **No database variables** - these are only needed when running examples, set in `examples/docker-compose.yml`.
 
@@ -346,7 +346,7 @@ The devcontainer sets minimal environment variables:
 
 1. **Keep the devcontainer minimal** - Don't add services unless the plugin itself needs them
 2. **Use examples/docker-compose.yml** - Keep example services separate
-3. **Test with the plugin** - Use `/sandbox:setup` to validate changes
+3. **Test with the plugin** - Use `/sandbox:basic` to validate changes
 4. **Document changes** - Update this file when modifying the development workflow
 5. **Regenerate periodically** - Keep the devcontainer in sync with plugin templates
 
@@ -359,7 +359,7 @@ The devcontainer sets minimal environment variables:
 
 ## Getting Help
 
-- **Issues**: https://github.com/andrewcchoi/sandbox/issues
+- **Issues**: https://github.com/andrewcchoi/windows-sandbox/issues
 - **Documentation**: See `skills/*/references/` directories
 - **Claude Code**: https://claude.ai/code
 - **Plugin Development**: Use `/sandbox:troubleshoot` for debugging

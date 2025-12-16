@@ -10,7 +10,7 @@ REPO_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 
 cd "$REPO_ROOT"
 
-echo "🔄 Regenerating devcontainer using sandbox plugin..."
+echo "🔄 Regenerating devcontainer using windows-sandbox plugin..."
 echo ""
 
 # Check if .devcontainer exists
@@ -38,7 +38,7 @@ echo "1. Start Claude Code:"
 echo "   claude"
 echo ""
 echo "2. Run the setup command:"
-echo "   /windows-sandbox:setup --basic"
+echo "   /sandbox:basic"
 echo ""
 echo "3. After generation, review changes:"
 echo "   diff -r $BACKUP_DIR .devcontainer"

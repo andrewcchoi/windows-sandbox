@@ -2,16 +2,16 @@
 
 This is a **self-contained** example demonstrating the Claude Code Sandbox DevContainer setup in **Basic mode**. It includes a full-stack blog application with Python FastAPI backend and React frontend.
 
-## What is Basic Tier?
+## What is Basic Mode?
 
-Basic tier is designed for developers who want:
+Basic mode is designed for developers who want:
 - **Quick setup** with minimal configuration (using sandbox templates or official images)
 - **No firewall** - relies on hypervisor-level Windows Sandbox isolation
 - **Sensible defaults** automatically applied
 - **Auto-detection** of project type and dependencies
 - **Minimal configuration files** for fastest setup
 
-This example shows what the `windows-sandbox` plugin generates when run in Basic tier on a full-stack application.
+This example shows what the `windows-sandbox` plugin generates when run in Basic mode on a full-stack application.
 
 ## Features
 
@@ -28,7 +28,7 @@ This example shows what the `windows-sandbox` plugin generates when run in Basic
   - View counter with Redis caching
   - Component tests with React Testing Library
 
-### DevContainer Features (Basic Tier)
+### DevContainer Features (Basic Mode)
 - **Auto-detected stack**: Python 3.12 + Node.js 20
 - **Database services**: PostgreSQL 15 + Redis 7
 - **Network security**: No firewall (relies on Windows Sandbox hypervisor isolation)
@@ -131,7 +131,7 @@ frontend/
 └── vite.config.js
 ```
 
-## DevContainer Configuration (Basic Tier)
+## DevContainer Configuration (Basic Mode)
 
 ### What the Plugin Generated
 
@@ -140,7 +140,7 @@ frontend/
 - Auto-detected Python + Node.js stack
 - Essential VS Code extensions (Python, ESLint)
 - Simple post-create command for dependency installation
-- No firewall initialization (Basic tier relies on sandbox isolation)
+- No firewall initialization (Basic mode relies on sandbox isolation)
 
 **Dockerfile**:
 - Flexible base image: `python:3.12-slim-bookworm`
@@ -158,24 +158,24 @@ frontend/
 - No NET_ADMIN/NET_RAW capabilities (not needed without firewall)
 
 **init-firewall.sh**:
-- No firewall configured (Basic tier)
+- No firewall configured (Basic mode)
 - Outputs informational message about security model
 - Relies on Windows Sandbox hypervisor-level isolation
 - Ephemeral environment provides security
 
 ## Customization
 
-### Upgrade to Higher Tier
+### Upgrade to Higher Mode
 
 If you need network-level security controls:
 
-**Intermediate Tier**: Add permissive firewall (no restrictions, but audit logging)
+**Intermediate Mode**: Add permissive firewall (no restrictions, but audit logging)
 - Copy configuration from `demo-app-sandbox-intermediate/`
 
-**Advanced Tier**: Add strict firewall with customizable allowlist
+**Advanced Mode**: Add strict firewall with customizable allowlist
 - Copy configuration from `demo-app-sandbox-advanced/`
 
-**YOLO Tier**: Full customization with optional firewall
+**YOLO Mode**: Full customization with optional firewall
 - Copy configuration from `demo-app-sandbox-yolo/`
 
 ### Add VS Code Extensions
@@ -205,7 +205,7 @@ docker-compose logs postgres
 ```
 
 ### Network Access Issues
-Basic tier has no firewall restrictions. If you experience network issues:
+Basic mode has no firewall restrictions. If you experience network issues:
 ```bash
 # Check DNS resolution
 nslookup example.com
@@ -226,7 +226,7 @@ docker-compose down
 "forwardPorts": [8001, 5174, 5433, 6380]
 ```
 
-## Comparing to Other Tiers
+## Comparing to Other Modes
 
 | Feature | Basic | Intermediate | Advanced | YOLO |
 |---------|-------|--------------|----------|------|
@@ -241,9 +241,9 @@ docker-compose down
 ## Related Examples
 
 - `examples/demo-app-shared/` - Uses shared Docker Compose services
-- `examples/demo-app-sandbox-intermediate/` - Intermediate tier with permissive firewall
-- `examples/demo-app-sandbox-advanced/` - Advanced tier with strict firewall
-- `examples/demo-app-sandbox-yolo/` - YOLO tier with full customization
+- `examples/demo-app-sandbox-intermediate/` - Intermediate mode with permissive firewall
+- `examples/demo-app-sandbox-advanced/` - Advanced mode with strict firewall
+- `examples/demo-app-sandbox-yolo/` - YOLO mode with full customization
 - `examples/streamlit-sandbox-basic/` - Simpler Python-only app
 
 ## Learn More

@@ -3,12 +3,12 @@
   "description": "Standard allowable domains for firewall configuration in sandbox environments",
   "metadata": {
     "last_updated": "2025-12-16",
-    "usage": "Skills reference this file to generate firewall configurations. Categories can be included or excluded per tier."
+    "usage": "Skills reference this file to generate firewall configurations. Categories can be included or excluded per mode."
   },
   "categories": {
     "anthropic_services": {
       "description": "Anthropic API and services",
-      "tier_minimum": "basic",
+      "mode_minimum": "basic",
       "domains": [
         "api.anthropic.com",
         "statsig.anthropic.com",
@@ -17,7 +17,7 @@
     },
     "version_control": {
       "description": "Git hosting platforms",
-      "tier_minimum": "basic",
+      "mode_minimum": "basic",
       "domains": [
         "github.com",
         "www.github.com",
@@ -38,7 +38,7 @@
     },
     "container_registries": {
       "description": "Docker and container registries",
-      "tier_minimum": "basic",
+      "mode_minimum": "basic",
       "domains": [
         "registry-1.docker.io",
         "auth.docker.io",
@@ -57,7 +57,7 @@
     },
     "cloud_platforms": {
       "description": "Major cloud provider APIs and services",
-      "tier_minimum": "intermediate",
+      "mode_minimum": "intermediate",
       "sub_categories": {
         "google": {
           "domains": [
@@ -100,7 +100,7 @@
     },
     "package_managers": {
       "description": "Language package registries",
-      "tier_minimum": "basic",
+      "mode_minimum": "basic",
       "sub_categories": {
         "npm": {
           "description": "JavaScript/Node.js packages",
@@ -249,7 +249,7 @@
     },
     "linux_distributions": {
       "description": "Linux package repositories",
-      "tier_minimum": "basic",
+      "mode_minimum": "basic",
       "domains": [
         "archive.ubuntu.com",
         "security.ubuntu.com",
@@ -263,7 +263,7 @@
     },
     "development_tools": {
       "description": "Development infrastructure and tools",
-      "tier_minimum": "intermediate",
+      "mode_minimum": "intermediate",
       "domains": [
         "dl.k8s.io",
         "pkgs.k8s.io",
@@ -294,7 +294,7 @@
     },
     "vscode": {
       "description": "VS Code extensions and updates",
-      "tier_minimum": "basic",
+      "mode_minimum": "basic",
       "domains": [
         "marketplace.visualstudio.com",
         "vscode.blob.core.windows.net",
@@ -303,7 +303,7 @@
     },
     "analytics_telemetry": {
       "description": "Analytics and telemetry services",
-      "tier_minimum": "intermediate",
+      "mode_minimum": "intermediate",
       "domains": [
         "statsig.com",
         "www.statsig.com",
@@ -313,7 +313,7 @@
     },
     "content_delivery": {
       "description": "CDNs and mirrors",
-      "tier_minimum": "intermediate",
+      "mode_minimum": "intermediate",
       "wildcard_domains": [
         "*.sourceforge.net"
       ],
@@ -324,7 +324,7 @@
     },
     "schema_configuration": {
       "description": "Schema and configuration repositories",
-      "tier_minimum": "intermediate",
+      "mode_minimum": "intermediate",
       "domains": [
         "json-schema.org",
         "www.json-schema.org",
@@ -333,7 +333,7 @@
       ]
     }
   },
-  "tier_defaults": {
+  "mode_defaults": {
     "basic": {
       "description": "Essential domains for basic development",
       "included_categories": [
@@ -375,12 +375,12 @@
       "included_subcategories": {
         "package_managers": ["npm", "python"]
       },
-      "notes": "Advanced tier uses strict whitelist. Add project-specific domains as needed."
+      "notes": "Advanced mode uses strict whitelist. Add project-specific domains as needed."
     },
     "yolo": {
       "description": "No default restrictions - user configures everything",
       "included_categories": [],
-      "notes": "YOLO tier allows full customization with optional firewall. No defaults applied."
+      "notes": "YOLO mode allows full customization with optional firewall. No defaults applied."
     }
   }
 }

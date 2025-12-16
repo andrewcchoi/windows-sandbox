@@ -15,8 +15,8 @@ This plugin uses itself for development (dogfooding approach), which ensures the
 
 2. **Clone and open**:
    ```bash
-   git clone https://github.com/andrewcchoi/windows-sandbox-plugin
-   cd windows-sandbox-plugin
+   git clone https://github.com/andrewcchoi/windows-sandbox
+   cd windows-sandbox
    code .
    ```
 
@@ -96,7 +96,7 @@ The `examples/` directory contains working applications that validate the plugin
 - **Shared**: `examples/demo-app-shared/` - Full-stack application code
 - **Basic Mode**: `examples/demo-app-sandbox-basic/` - Minimal DevContainer configuration
 - **Advanced Mode**: `examples/demo-app-sandbox-advanced/` - Balanced DevContainer with customization
-- **Pro Mode**: `examples/demo-app-sandbox-yolo/` - Production-ready DevContainer with comprehensive tooling
+- **YOLO Mode**: `examples/demo-app-sandbox-yolo/` - Full-control DevContainer with comprehensive tooling
 
 When modifying examples:
 1. Make your changes
@@ -168,7 +168,7 @@ See `tests/README.md` for manual test procedures.
 Run all tests before submitting:
 - Basic mode test
 - Advanced mode test
-- YOLO tier test
+- YOLO mode test
 - Troubleshooting test
 - Security audit test
 
