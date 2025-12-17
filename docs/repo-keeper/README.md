@@ -29,12 +29,29 @@ Repo-Keeper is a comprehensive system for maintaining the sandbox-maxxing reposi
 
 ### ✅ Phase 2: Automation Scripts
 
+**Tier 1: Structural Validation** (Fast, ~10 seconds)
 | File | Purpose | Platform |
 |------|---------|----------|
-| `scripts/check-version-sync.ps1` | Validates version consistency across 50+ files | PowerShell (Windows) |
-| `scripts/check-version-sync.sh` | Bash version of version checker | Bash (Linux/macOS) |
-| `scripts/check-links.ps1` | Scans markdown files for broken internal links | PowerShell |
-| `scripts/validate-inventory.ps1` | Verifies inventory matches filesystem | PowerShell |
+| `scripts/check-version-sync.sh/.ps1` | Validates version consistency across 50+ files | Bash / PowerShell |
+| `scripts/check-links.sh/.ps1` | Scans markdown files for broken internal links | Bash / PowerShell |
+| `scripts/validate-inventory.sh/.ps1` | Verifies inventory matches filesystem | Bash / PowerShell |
+| `scripts/validate-relationships.sh/.ps1` | Validates skill ↔ command ↔ template relationships | Bash / PowerShell |
+| `scripts/validate-schemas.sh/.ps1` | Validates JSON files against JSON schemas | Bash / PowerShell |
+
+**Tier 2: Completeness Validation** (Medium, ~30 seconds)
+| File | Purpose | Platform |
+|------|---------|----------|
+| `scripts/validate-completeness.sh/.ps1` | Ensures all features have documentation, all modes complete | Bash / PowerShell |
+
+**Tier 3: Content Validation** (Thorough, ~2-5 minutes)
+| File | Purpose | Platform |
+|------|---------|----------|
+| `scripts/validate-content.sh/.ps1` | Checks required sections, mode consistency, step sequences | Bash / PowerShell |
+
+**Orchestrators**
+| File | Purpose | Platform |
+|------|---------|----------|
+| `scripts/run-all-checks.sh/.ps1` | Runs all validation scripts in tiers with progress tracking | Bash / PowerShell |
 
 ### ✅ Phase 3: GitHub Integration
 
@@ -62,10 +79,17 @@ docs/repo-keeper/
 ├── ORGANIZATION_CHECKLIST.md          # 18-category checklist
 ├── INVENTORY.json                     # Entity inventory
 ├── scripts/
-│   ├── check-version-sync.ps1         # Version validation (PowerShell)
-│   ├── check-version-sync.sh          # Version validation (Bash)
-│   ├── check-links.ps1                # Link checker
-│   └── validate-inventory.ps1         # Inventory validator
+│   ├── run-all-checks.sh/.ps1         # Orchestrator - runs all checks in tiers
+│   ├── check-version-sync.sh/.ps1     # Tier 1: Version validation
+│   ├── check-links.sh/.ps1            # Tier 1: Link integrity
+│   ├── validate-inventory.sh/.ps1     # Tier 1: Inventory accuracy
+│   ├── validate-relationships.sh/.ps1 # Tier 1: Relationship validation
+│   ├── validate-schemas.sh/.ps1       # Tier 1: Schema validation
+│   ├── validate-completeness.sh/.ps1  # Tier 2: Feature coverage
+│   └── validate-content.sh/.ps1       # Tier 3: Content validation
+├── schemas/
+│   ├── inventory.schema.json          # JSON schema for INVENTORY.json
+│   └── data-file.schema.json          # JSON schema for data/*.json files
 ├── workflows/
 │   ├── validate-versions.yml          # GitHub Action for versions
 │   └── validate-links.yml             # GitHub Action for links
@@ -116,37 +140,80 @@ docs/repo-keeper/
 
 ### 1. Run Local Validation
 
-Before committing changes, run these scripts:
+**Option A: Use the Orchestrator (Recommended)**
 
-```powershell
-# PowerShell (Windows)
-cd D:\!wip\sandbox-maxxing
-
-# Check version consistency
-.\docs\repo-keeper\scripts\check-version-sync.ps1
-
-# Check for broken links
-.\docs\repo-keeper\scripts\check-links.ps1
-
-# Validate inventory against filesystem
-.\docs\repo-keeper\scripts\validate-inventory.ps1
-
-# Find orphaned files not in inventory
-.\docs\repo-keeper\scripts\validate-inventory.ps1 -FindOrphans
-
-# Verbose output
-.\docs\repo-keeper\scripts\check-version-sync.ps1 -Verbose
-```
+Run all checks in tiers with a single command:
 
 ```bash
 # Bash (Linux/macOS/WSL)
 cd /workspace  # or your repo location
 
-# Check version consistency
+# Quick check (Tier 1 only - ~10 seconds)
+./docs/repo-keeper/scripts/run-all-checks.sh --quick
+
+# Standard check (Tier 1 + 2 - ~30 seconds) - DEFAULT
+./docs/repo-keeper/scripts/run-all-checks.sh
+
+# Full check (All tiers including external links - ~2-5 minutes)
+./docs/repo-keeper/scripts/run-all-checks.sh --full
+
+# With verbose output
+./docs/repo-keeper/scripts/run-all-checks.sh --verbose
+
+# Auto-fix line endings
+./docs/repo-keeper/scripts/run-all-checks.sh --fix-crlf
+```
+
+```powershell
+# PowerShell (Windows)
+cd D:\!wip\sandbox-maxxing
+
+# Quick check (Tier 1 only)
+.\docs\repo-keeper\scripts\run-all-checks.ps1 -Quick
+
+# Standard check (Tier 1 + 2) - DEFAULT
+.\docs\repo-keeper\scripts\run-all-checks.ps1
+
+# Full check (All tiers)
+.\docs\repo-keeper\scripts\run-all-checks.ps1 -Full
+
+# With verbose output
+.\docs\repo-keeper\scripts\run-all-checks.ps1 -Verbose
+
+# Auto-fix line endings
+.\docs\repo-keeper\scripts\run-all-checks.ps1 -FixCrlf
+```
+
+**Option B: Run Individual Scripts**
+
+For targeted validation:
+
+```bash
+# Bash
 ./docs/repo-keeper/scripts/check-version-sync.sh
+./docs/repo-keeper/scripts/check-links.sh
+./docs/repo-keeper/scripts/validate-inventory.sh
+./docs/repo-keeper/scripts/validate-relationships.sh
+./docs/repo-keeper/scripts/validate-schemas.sh
+./docs/repo-keeper/scripts/validate-completeness.sh
+./docs/repo-keeper/scripts/validate-content.sh
 
 # With verbose output
 ./docs/repo-keeper/scripts/check-version-sync.sh --verbose
+```
+
+```powershell
+# PowerShell
+.\docs\repo-keeper\scripts\check-version-sync.ps1
+.\docs\repo-keeper\scripts\check-links.ps1
+.\docs\repo-keeper\scripts\validate-inventory.ps1 -FindOrphans
+.\docs\repo-keeper\scripts\validate-relationships.ps1
+.\docs\repo-keeper\scripts\validate-schemas.ps1
+.\docs\repo-keeper\scripts\validate-completeness.ps1
+.\docs\repo-keeper\scripts\validate-content.ps1 -CheckExternal
+
+# With verbose output
+.\docs\repo-keeper\scripts\check-version-sync.ps1 -Verbose
 ```
 
 ### 2. Activate GitHub Workflows (Optional)
@@ -244,8 +311,9 @@ The [`INVENTORY.json`](./INVENTORY.json) tracks:
 ## Maintenance Schedule
 
 ### On Every Commit
-- Run link checker (if CI/CD active)
+- Run `./docs/repo-keeper/scripts/run-all-checks.sh --quick` before pushing
 - Verify no broken references
+- Fix any Tier 1 failures immediately
 
 ### On Every Version Bump
 1. Update `CHANGELOG.md` with new version header
@@ -253,24 +321,32 @@ The [`INVENTORY.json`](./INVENTORY.json) tracks:
 3. Update `plugin.json` and `marketplace.json`
 4. Update `INVENTORY.json` version
 5. Update `data/secrets.json` and `variables.json` versions
-6. Run `scripts/check-version-sync.ps1` to verify
+6. Run `./docs/repo-keeper/scripts/run-all-checks.sh` (standard) to verify
+7. Fix any validation failures before releasing
+
+### Weekly
+- Run `./docs/repo-keeper/scripts/run-all-checks.sh` (standard check)
+- Address any Tier 2 completeness issues
 
 ### Monthly
+- Run `./docs/repo-keeper/scripts/run-all-checks.sh --full` (comprehensive)
 - Review and update `data/official-images.json` tags
 - Check for security updates in dependencies
-- Scan for broken external links
+- Address any Tier 3 content issues
 
 ### Quarterly
 - Run full consistency audit
 - Review consolidation opportunities
 - Check for new redundancy
 - Update domain allowlists
+- Verify JSON schemas are current
 
 ### Before Each Release
 - Review ORGANIZATION_CHECKLIST.md
 - Review `docs/RELEASE_CHECKLIST.md`
-- Run all validation scripts
+- Run `./docs/repo-keeper/scripts/run-all-checks.sh --full`
 - Test manual procedures
+- All validation checks must pass
 
 ---
 
@@ -403,5 +479,5 @@ For general plugin support:
 ---
 
 **Version:** 2.2.1
-**Last Updated:** 2025-12-16
-**Status:** ✅ Implemented and tested
+**Last Updated:** 2025-12-17
+**Status:** ✅ Implemented and tested with comprehensive validation suite
