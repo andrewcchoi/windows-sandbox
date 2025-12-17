@@ -3,6 +3,11 @@
 # Multi-stage build for optimal image size and security
 
 # ============================================================================
+# Stage 0: Get Node.js from official image (Issue #29)
+# ============================================================================
+FROM node:20-slim AS node-source
+
+# ============================================================================
 # Stage 1: Base Python Image with System Dependencies
 # ============================================================================
 FROM python:3.12-slim-bookworm AS python-base
@@ -53,12 +58,11 @@ FROM python-base AS nodejs-added
 ARG NODE_VERSION=20
 ENV NODE_VERSION=${NODE_VERSION}
 
-# Install Node.js (official repository)
-RUN mkdir -p /etc/apt/keyrings \
-    && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
-    && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_${NODE_VERSION}.x nodistro main" | tee /etc/apt/sources.list.d/nodesource.list \
-    && apt-get update && apt-get install -y nodejs \
-    && rm -rf /var/lib/apt/lists/*
+# Copy Node.js from official image (Issue #29 - avoids NodeSource SSL issues)
+COPY --from=node-source /usr/local/bin/node /usr/local/bin/
+COPY --from=node-source /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 # Verify installations
 RUN node --version && npm --version && python --version

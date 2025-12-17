@@ -20,4 +20,4 @@ if [ -f "$HOST_CLAUDE/settings.json" ]; then
     echo "✓ Claude settings copied"
 fi
 
-echo "✓ Sandbox Plugin development environment ready!"
+echo "✓ Demo app development environment ready!"
