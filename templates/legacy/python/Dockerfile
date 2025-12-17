@@ -1,3 +1,7 @@
+# Stage 1: Get Node.js from official image (Issue #29)
+FROM node:20-slim AS node-source
+
+# Stage 2: Main build
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim
 
 ARG TZ=America/Los_Angeles
@@ -9,16 +13,17 @@ ENV TZ="$TZ"
 
 # Install system packages
 RUN apt-get update && apt-get install -y --no-install-recommends \
-  git vim nano less procps sudo unzip wget curl ca-certificates gnupg gnupg2 \
+  git vim nano less procps sudo unzip wget ca-certificates \
   jq man-db zsh fzf gh \
   iptables ipset iproute2 dnsutils \
   python3-venv python3-pip build-essential libpq-dev \
   && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-# Install Node.js (for Claude Code CLI)
-RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - && \
-  apt-get install -y nodejs && \
-  apt-get clean && rm -rf /var/lib/apt/lists/*
+# Copy Node.js from official image (Issue #29 - avoids NodeSource SSL issues)
+COPY --from=node-source /usr/local/bin/node /usr/local/bin/
+COPY --from=node-source /usr/local/lib/node_modules /usr/local/lib/node_modules
+RUN ln -s /usr/local/lib/node_modules/npm/bin/npm-cli.js /usr/local/bin/npm && \
+    ln -s /usr/local/lib/node_modules/npm/bin/npx-cli.js /usr/local/bin/npx
 
 # Create node user
 RUN groupadd --gid 1000 node && \

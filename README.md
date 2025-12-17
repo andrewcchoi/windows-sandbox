@@ -387,7 +387,6 @@ The plugin includes comprehensive reference documentation:
 - `skills/sandbox-setup-advanced/references/customization.md` - Customization guide
 - `skills/sandbox-setup-advanced/references/security.md` - Security model and best practices
 - `skills/sandbox-setup-advanced/references/troubleshooting.md` - Detailed troubleshooting guide
-<<<<<<< HEAD
 
 ## Naming Convention
 
@@ -404,8 +403,6 @@ This plugin uses consistent naming across different contexts:
 - **sandbox-maxxing**: Official repository name (reflects Windows WSL 2 compatibility)
 - **sandbox**: Shorthand used in commands and skills for brevity
 - **Claude Code Sandbox Plugin**: Full descriptive name for user-facing documentation
-=======
->>>>>>> dc2424c2457c6bf1fc281678bfedb2e3930d7a62
 
 ## Development
 
@@ -460,7 +457,8 @@ sandbox-maxxing/
     ├── streamlit-sandbox-basic/
     ├── demo-app-sandbox-basic/
     ├── demo-app-sandbox-intermediate/
-    └── demo-app-sandbox-advanced/
+    ├── demo-app-sandbox-advanced/
+    └── demo-app-sandbox-yolo/
 ```
 
 ## Examples
@@ -743,9 +741,4 @@ MIT License - See LICENSE file for details
 ---
 
 **Last Updated:** 2025-12-16
-**Version:** 2.2.0
-
----
-
-**Last Updated:** 2025-12-16
-**Version:** 2.2.0
+**Version:** 2.2.1

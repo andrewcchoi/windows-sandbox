@@ -12,6 +12,6 @@
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": "pip install -r requirements.txt",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
   "forwardPorts": [8501, 5432, 6379]
 }
