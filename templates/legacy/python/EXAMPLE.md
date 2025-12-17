@@ -327,6 +327,9 @@ from sqlalchemy.ext.asyncio import create_async_engine, AsyncSession, async_sess
 from sqlalchemy.orm import declarative_base
 import os
 
+# NOTE: For passwords with special characters (@, :, /, etc.), use urllib.parse.quote()
+# from urllib.parse import quote
+# DATABASE_URL = f"postgresql+asyncpg://{quote(user, safe='')}:{quote(password, safe='')}@host:port/db"
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql+asyncpg://myapp:devpass@postgres:5432/myapp_db")
 
 engine = create_async_engine(DATABASE_URL, echo=True)
@@ -536,3 +539,8 @@ sudo /usr/local/bin/init-firewall.sh
 - [SQLAlchemy 2.0 Documentation](https://docs.sqlalchemy.org/en/20/)
 - [Alembic Tutorial](https://alembic.sqlalchemy.org/en/latest/tutorial.html)
 - [Redis Python Client](https://redis-py.readthedocs.io/)
+
+---
+
+**Last Updated:** 2025-12-16
+**Version:** 2.2.0
