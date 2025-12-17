@@ -1,6 +1,6 @@
 # Claude Code Sandbox Plugin
 
-> **Repository:** [andrewcchoi/windows-sandbox](https://github.com/andrewcchoi/windows-sandbox)
+> **Repository:** [andrewcchoi/sandbox-maxxing](https://github.com/andrewcchoi/sandbox-maxxing)
 > **Short Name:** "sandbox" (used in documentation)
 
 Interactive assistant for setting up, troubleshooting, and securing Claude Code Docker sandbox environments with a four-mode system (Basic, Intermediate, Advanced, YOLO).
@@ -20,7 +20,7 @@ Interactive assistant for setting up, troubleshooting, and securing Claude Code 
 
 ```bash
 # Install the plugin
-claude plugins add https://github.com/andrewcchoi/windows-sandbox
+claude plugins add https://github.com/andrewcchoi/sandbox-maxxing
 
 # Verify installation
 claude plugins list
@@ -387,6 +387,7 @@ The plugin includes comprehensive reference documentation:
 - `skills/sandbox-setup-advanced/references/customization.md` - Customization guide
 - `skills/sandbox-setup-advanced/references/security.md` - Security model and best practices
 - `skills/sandbox-setup-advanced/references/troubleshooting.md` - Detailed troubleshooting guide
+<<<<<<< HEAD
 
 ## Naming Convention
 
@@ -394,15 +395,17 @@ This plugin uses consistent naming across different contexts:
 
 | Context | Name | Example |
 |---------|------|---------|
-| GitHub repository | windows-sandbox | github.com/andrewcchoi/windows-sandbox |
+| GitHub repository | sandbox-maxxing | github.com/andrewcchoi/sandbox-maxxing |
 | Slash commands | /sandbox:* | /sandbox:basic, /sandbox:yolo |
 | Skills | sandbox-* | sandbox-setup-basic |
 | User-facing title | Claude Code Sandbox Plugin | In documentation headers |
 
 **Why different names?**
-- **windows-sandbox**: Official repository name (reflects Windows WSL 2 compatibility)
+- **sandbox-maxxing**: Official repository name (reflects Windows WSL 2 compatibility)
 - **sandbox**: Shorthand used in commands and skills for brevity
 - **Claude Code Sandbox Plugin**: Full descriptive name for user-facing documentation
+=======
+>>>>>>> dc2424c2457c6bf1fc281678bfedb2e3930d7a62
 
 ## Development
 
@@ -410,8 +413,8 @@ This plugin uses consistent naming across different contexts:
 
 ```bash
 # Clone the repository
-git clone https://github.com/andrewcchoi/windows-sandbox
-cd windows-sandbox
+git clone https://github.com/andrewcchoi/sandbox-maxxing
+cd sandbox-maxxing
 
 # Install locally
 claude plugins add .
@@ -420,7 +423,7 @@ claude plugins add .
 ### Plugin Structure
 
 ```
-windows-sandbox/
+sandbox-maxxing/
 ├── .claude-plugin/
 │   ├── plugin.json              # Plugin manifest
 │   └── marketplace.json         # Marketplace configuration
@@ -712,7 +715,7 @@ MIT License - See LICENSE file for details
 
 ## Support
 
-- **Issues**: https://github.com/andrewcchoi/windows-sandbox/issues
+- **Issues**: https://github.com/andrewcchoi/sandbox-maxxing/issues
 - **Documentation**: See `skills/*/references/` directories
 - **Claude Code Docs**: https://claude.ai/code
 
