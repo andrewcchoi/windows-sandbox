@@ -355,6 +355,71 @@ NODEOF
     rm -f "$TMP_FILE"
 fi
 
+# Check for duplicate paths
+echo ""
+echo -e "${CYAN}=== Duplicate Path Check ===${NC}"
+
+DUPLICATES=$(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+const paths = [];
+
+// Collect all paths from all sections
+(data.skills || []).forEach(s => {
+    paths.push({path: s.path, type: 'Skill'});
+    (s.references || []).forEach(r => paths.push({path: r, type: 'Skill Reference'}));
+});
+(data.commands || []).forEach(c => paths.push({path: c.path, type: 'Command'}));
+Object.entries(data.templates || {}).forEach(([category, templates]) => {
+    (templates || []).forEach(t => paths.push({path: t.path, type: \`Template (\${category})\`}));
+});
+(data.examples || []).forEach(e => {
+    paths.push({path: e.path, type: 'Example'});
+    if (e.devcontainer_path) paths.push({path: e.devcontainer_path, type: 'Example DevContainer'});
+    if (e.dockerfile_path) paths.push({path: e.dockerfile_path, type: 'Example Dockerfile'});
+    if (e.compose_path) paths.push({path: e.compose_path, type: 'Example Compose'});
+});
+(data.data_files || []).forEach(d => paths.push({path: d.path, type: 'Data File'}));
+Object.entries(data.documentation || {}).forEach(([category, docs]) => {
+    (docs || []).forEach(d => paths.push({path: d.path, type: \`Documentation (\${category})\`}));
+});
+(data.devcontainers || []).forEach(d => {
+    paths.push({path: d.path, type: 'DevContainer'});
+    if (d.dockerfile_path) paths.push({path: d.dockerfile_path, type: 'DevContainer Dockerfile'});
+    if (d.firewall_path) paths.push({path: d.firewall_path, type: 'Firewall Script'});
+});
+
+// Find duplicates
+const pathMap = {};
+paths.forEach(({path, type}) => {
+    if (!pathMap[path]) pathMap[path] = [];
+    pathMap[path].push(type);
+});
+
+const duplicates = [];
+Object.entries(pathMap).forEach(([path, types]) => {
+    if (types.length > 1) {
+        duplicates.push(\`\${path}|\${types.join(', ')}\`);
+    }
+});
+
+if (duplicates.length > 0) {
+    console.log(duplicates.join('\n'));
+}
+")
+
+if [ -n "$DUPLICATES" ]; then
+    echo -e "${RED}Found duplicate paths in INVENTORY.json:${NC}"
+    echo ""
+    while IFS='|' read -r path types; do
+        echo -e "  ${RED}[DUPLICATE] $path${NC}"
+        echo -e "    ${YELLOW}Used in: $types${NC}"
+    done <<< "$DUPLICATES"
+    echo ""
+    echo -e "${RED}Each path should appear only once in INVENTORY.json${NC}"
+else
+    echo -e "${GREEN}✓ No duplicate paths found${NC}"
+fi
+
 # Check version consistency
 echo ""
 echo -e "${CYAN}=== Version Checks ===${NC}"

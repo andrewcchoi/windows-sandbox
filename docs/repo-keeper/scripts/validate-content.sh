@@ -44,6 +44,28 @@ echo -e "${CYAN}=== Content Validator ===${NC}"
 echo ""
 
 ERROR_COUNT=0
+WARNING_COUNT=0
+
+# Check for UTF-8 BOM
+echo -e "${CYAN}Checking for UTF-8 BOM...${NC}"
+
+BOM_COUNT=0
+while IFS= read -r -d '' file; do
+    if head -c3 "$file" 2>/dev/null | grep -q $'\xef\xbb\xbf'; then
+        RELATIVE_PATH="${file#$REPO_ROOT/}"
+        echo -e "  ${YELLOW}[WARNING] UTF-8 BOM detected: $RELATIVE_PATH${NC}"
+        ((BOM_COUNT++))
+        ((WARNING_COUNT++))
+    fi
+done < <(find "$REPO_ROOT" \( -name "*.md" -o -name "*.json" -o -name "*.sh" \) ! -path "*/node_modules/*" ! -path "*/.git/*" -print0 2>/dev/null)
+
+if [ $BOM_COUNT -eq 0 ]; then
+    echo -e "  ${GREEN}[OK] No UTF-8 BOM detected in files${NC}"
+elif [ "$VERBOSE" = false ]; then
+    echo -e "  ${YELLOW}Total files with BOM: $BOM_COUNT${NC}"
+fi
+
+echo ""
 
 # Check SKILL.md files for required sections
 echo -e "${CYAN}Checking required sections in SKILL.md files...${NC}"
@@ -188,9 +210,15 @@ echo -e "${CYAN}=== Summary ===${NC}"
 if [ $ERROR_COUNT -eq 0 ]; then
     echo -e "${GREEN}✓ All content checks passed!${NC}"
     echo -e "${GREEN}Total errors: $ERROR_COUNT${NC}"
+    if [ $WARNING_COUNT -gt 0 ]; then
+        echo -e "${YELLOW}Total warnings: $WARNING_COUNT${NC}"
+    fi
     exit 0
 else
     echo -e "${RED}✗ Content validation failed!${NC}"
     echo -e "${RED}Total errors: $ERROR_COUNT${NC}"
+    if [ $WARNING_COUNT -gt 0 ]; then
+        echo -e "${YELLOW}Total warnings: $WARNING_COUNT${NC}"
+    fi
     exit 1
 fi
