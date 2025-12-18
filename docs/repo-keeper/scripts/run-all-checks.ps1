@@ -7,6 +7,7 @@ param(
     [switch]$Verbose,
     [switch]$FixCrlf,
     [switch]$Quiet,
+    [switch]$FailFast,
     [string]$Log
 )
 
@@ -119,6 +120,7 @@ function Run-Check {
             $exitCode = $LASTEXITCODE
         }
     } catch {
+        Write-Host "[ERROR] $($_.Exception.Message)" -ForegroundColor Red
         $output = $_.Exception.Message
         $exitCode = 1
     }
@@ -166,6 +168,17 @@ function Run-Check {
                 Write-Host "    $line" -ForegroundColor Red
             }
         }
+
+        # Exit immediately if fail-fast is enabled
+        if ($script:FailFast) {
+            if (-not $script:Quiet) {
+                Write-Host ""
+                Write-Host "Exiting due to --FailFast flag" -ForegroundColor Red
+                Write-Host ""
+            }
+            if ($script:Log) { Stop-Transcript | Out-Null }
+            exit 1
+        }
     }
 
     # Always show full output in verbose mode
@@ -208,7 +221,7 @@ if ($tier -eq "quick") {
     }
 
     if ($Log) { Stop-Transcript | Out-Null }
-    exit $failedChecks
+    exit $(if ($failedChecks -gt 0) { 1 } else { 0 })
 }
 
 # Tier 2: Completeness Validation
@@ -240,7 +253,7 @@ if ($tier -eq "standard") {
     }
 
     if ($Log) { Stop-Transcript | Out-Null }
-    exit $failedChecks
+    exit $(if ($failedChecks -gt 0) { 1 } else { 0 })
 }
 
 # Tier 3: Content Validation (full mode only)
@@ -283,4 +296,4 @@ if (-not $Quiet) {
 }
 
 if ($Log) { Stop-Transcript | Out-Null }
-exit $failedChecks
+exit $(if ($failedChecks -gt 0) { 1 } else { 0 })

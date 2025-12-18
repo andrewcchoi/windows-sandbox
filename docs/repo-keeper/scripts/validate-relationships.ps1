@@ -45,6 +45,7 @@ foreach ($skill in $inventory.skills) {
     $skillPath = Join-Path $repoRoot $skill.path
     if (-not (Test-Path $skillPath)) {
         Write-Host "  [ERROR] $($skill.name): Skill file not found: $($skill.path)" -ForegroundColor Red
+        Write-Host "    How to fix: Create skill file at $($skill.path) or update path in INVENTORY.json" -ForegroundColor Yellow
         $errorCount++
     } elseif ($Verbose) {
         Write-Host "  [OK] $($skill.name): skill file exists" -ForegroundColor Gray
@@ -58,6 +59,7 @@ foreach ($skill in $inventory.skills) {
 
             if (-not (Test-Path $templatePath)) {
                 Write-Host "  [ERROR] $($skill.name) → $template (NOT FOUND)" -ForegroundColor Red
+                Write-Host "    How to fix: Create template file at $template or remove from related_templates in INVENTORY.json" -ForegroundColor Yellow
                 $errorCount++
             } elseif ($Verbose) {
                 Write-Host "  [OK] $($skill.name) → $template" -ForegroundColor Gray
@@ -83,6 +85,7 @@ foreach ($skill in $inventory.skills) {
 
         if (-not (Test-Path $commandPath)) {
             Write-Host "  [ERROR] $($skill.name) → $($skill.related_command) (NOT FOUND)" -ForegroundColor Red
+            Write-Host "    How to fix: Create command file at $($skill.related_command) or update related_command in INVENTORY.json" -ForegroundColor Yellow
             $errorCount++
         } else {
             # Check bidirectional
@@ -116,6 +119,7 @@ foreach ($command in $inventory.commands) {
 
     if (-not $skillExists -and $command.invokes_skill -ne "interactive") {
         Write-Host "  [ERROR] $($command.name) invokes non-existent skill: $($command.invokes_skill)" -ForegroundColor Red
+        Write-Host "    How to fix: Add skill '$($command.invokes_skill)' to INVENTORY.json or update invokes_skill field for command" -ForegroundColor Yellow
         $errorCount++
     } elseif ($Verbose) {
         Write-Host "  [OK] $($command.name) → $($command.invokes_skill)" -ForegroundColor Gray
@@ -139,6 +143,7 @@ foreach ($skill in $inventory.skills) {
 
         if (-not (Test-Path $examplePath)) {
             Write-Host "  [ERROR] $($skill.name) → $($skill.related_example) (NOT FOUND)" -ForegroundColor Red
+            Write-Host "    How to fix: Create example at $($skill.related_example) or update related_example in INVENTORY.json" -ForegroundColor Yellow
             $errorCount++
         } elseif ($Verbose) {
             Write-Host "  [OK] $($skill.name) → $($skill.related_example)" -ForegroundColor Gray

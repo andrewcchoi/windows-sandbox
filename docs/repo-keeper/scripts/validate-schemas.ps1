@@ -42,9 +42,11 @@ if (Test-Path $inventoryPath) {
         # Check required fields
         if (-not $inventory.version) {
             Write-Host "  [ERROR] Missing required field: version" -ForegroundColor Red
+            Write-Host "    How to fix: Add version field to INVENTORY.json (e.g., ""version"": ""1.0.0"")" -ForegroundColor Yellow
             $errorCount++
         } elseif (-not (Test-VersionFormat $inventory.version)) {
             Write-Host "  [ERROR] Invalid version format: $($inventory.version)" -ForegroundColor Red
+            Write-Host "    How to fix: Update version field in INVENTORY.json to semver format (e.g., 1.0.0)" -ForegroundColor Yellow
             $errorCount++
         } elseif (-not $Quiet) {
             Write-Host "  [OK] version: $($inventory.version)" -ForegroundColor Green
@@ -52,9 +54,11 @@ if (Test-Path $inventoryPath) {
 
         if (-not $inventory.last_updated) {
             Write-Host "  [ERROR] Missing required field: last_updated" -ForegroundColor Red
+            Write-Host "    How to fix: Add last_updated field to INVENTORY.json (e.g., ""last_updated"": ""2025-01-15"")" -ForegroundColor Yellow
             $errorCount++
         } elseif ($inventory.last_updated -notmatch '^\d{4}-\d{2}-\d{2}$') {
             Write-Host "  [ERROR] Invalid date format: $($inventory.last_updated) (expected YYYY-MM-DD)" -ForegroundColor Red
+            Write-Host "    How to fix: Update last_updated field in INVENTORY.json to YYYY-MM-DD format (e.g., 2025-01-15)" -ForegroundColor Yellow
             $errorCount++
         } elseif (-not $Quiet) {
             Write-Host "  [OK] last_updated: $($inventory.last_updated)" -ForegroundColor Green
@@ -62,6 +66,7 @@ if (Test-Path $inventoryPath) {
 
         if (-not $inventory.repository) {
             Write-Host "  [ERROR] Missing required field: repository" -ForegroundColor Red
+            Write-Host "    How to fix: Add repository field to INVENTORY.json (e.g., ""repository"": ""owner/repo"")" -ForegroundColor Yellow
             $errorCount++
         } elseif (-not $Quiet) {
             Write-Host "  [OK] repository: $($inventory.repository)" -ForegroundColor Green
@@ -86,10 +91,12 @@ if (Test-Path $inventoryPath) {
 
     } catch {
         Write-Host "  [ERROR] Invalid JSON syntax: $_" -ForegroundColor Red
+        Write-Host "    How to fix: Check JSON syntax in INVENTORY.json, ensure all brackets/braces match and commas are correct" -ForegroundColor Yellow
         $errorCount++
     }
 } else {
     Write-Host "  [ERROR] INVENTORY.json not found" -ForegroundColor Red
+    Write-Host "    How to fix: Create INVENTORY.json in docs/repo-keeper/ directory" -ForegroundColor Yellow
     $errorCount++
 }
 
@@ -117,6 +124,7 @@ foreach ($file in $dataFiles) {
                 }
             } else {
                 Write-Host "  [ERROR] $($file.Name): Invalid version format: $($data.version)" -ForegroundColor Red
+                Write-Host "    How to fix: Update version in $($file.Name) to semver format (e.g., 1.0.0)" -ForegroundColor Yellow
                 $errorCount++
             }
         } else {
@@ -126,6 +134,7 @@ foreach ($file in $dataFiles) {
         }
     } catch {
         Write-Host "  [ERROR] $($file.Name): Invalid JSON syntax" -ForegroundColor Red
+        Write-Host "    How to fix: Check JSON syntax in $($file.Name), ensure all brackets/braces match and commas are correct" -ForegroundColor Yellow
         $errorCount++
     }
 }

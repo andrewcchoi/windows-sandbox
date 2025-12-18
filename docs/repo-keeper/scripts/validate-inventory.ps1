@@ -74,6 +74,7 @@ function Test-InventoryPath {
             Issue = "NOT FOUND"
         }
         Write-Host "  [MISSING] $Path" -ForegroundColor Red
+        Write-Host "    How to fix: Create the file at $Path or remove it from INVENTORY.json" -ForegroundColor Yellow
         return $false
     }
 }

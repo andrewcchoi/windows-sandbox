@@ -23,7 +23,7 @@ while [[ "$#" -gt 0 ]]; do
         -v|--verbose) VERBOSE=true ;;
         -q|--quiet) QUIET=true ;;
         --log) LOG_FILE="$2"; shift ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
+        *) echo "Unknown parameter: $1"; exit 128 ;;
     esac
     shift
 done

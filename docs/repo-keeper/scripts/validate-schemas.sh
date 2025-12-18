@@ -29,7 +29,7 @@ while [[ "$#" -gt 0 ]]; do
         -v|--verbose) VERBOSE=true ;;
         -q|--quiet) QUIET=true ;;
         --log) LOG_FILE="$2"; shift ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
+        *) echo "Unknown parameter: $1"; exit 128 ;;
     esac
     shift
 done
@@ -65,6 +65,7 @@ validate_against_schema() {
 
     if [ ! -f "$data_file" ]; then
         echo -e "  ${RED}[ERROR] File not found: $data_file${NC}"
+        echo -e "    ${YELLOW}How to fix: Create the file or remove it from INVENTORY.json${NC}"
         ((ERROR_COUNT++))
         return 1
     fi
@@ -94,6 +95,7 @@ validate_against_schema() {
         ajv validate -s "$schema_file" -d "$data_file" --spec=draft7 2>&1 | grep -v "valid" | head -10 | while read line; do
             echo -e "  ${RED}  $line${NC}"
         done
+        echo -e "    ${YELLOW}How to fix: Check JSON syntax and ensure all required fields are present with correct types${NC}"
         ((ERROR_COUNT++))
         return 1
     fi

@@ -66,6 +66,7 @@ if ($marketplaceVersion -ne $expectedVersion) {
         Type = "Config"
     }
     Write-Host "[ERROR] marketplace.json version mismatch: $marketplaceVersion" -ForegroundColor Red
+    Write-Host "  How to fix: Update version field in .claude-plugin\marketplace.json to $expectedVersion" -ForegroundColor Yellow
 } else {
     Write-Host "[OK] marketplace.json version matches: $marketplaceVersion" -ForegroundColor Green
 }
@@ -79,6 +80,7 @@ if ($inventoryVersion -ne $expectedVersion) {
         Type = "Inventory"
     }
     Write-Host "[ERROR] INVENTORY.json version mismatch: $inventoryVersion" -ForegroundColor Red
+    Write-Host "  How to fix: Update version field in docs\repo-keeper\INVENTORY.json to $expectedVersion" -ForegroundColor Yellow
 } else {
     Write-Host "[OK] INVENTORY.json version matches: $inventoryVersion" -ForegroundColor Green
 }
@@ -120,6 +122,7 @@ foreach ($file in $mdFiles) {
                 Type = "Footer"
             }
             Write-Host "  [MISMATCH] $relativePath - Found: $foundVersion" -ForegroundColor Yellow
+            Write-Host "    How to fix: Update **Version:** footer in $relativePath to $expectedVersion" -ForegroundColor Yellow
         }
     } else {
         $missingFooters++
@@ -154,6 +157,7 @@ foreach ($dataFile in $dataFiles) {
                 Type = "Data"
             }
             Write-Host "  [ERROR] $($dataFile.Path) version mismatch: $dataVersion" -ForegroundColor Red
+            Write-Host "    How to fix: Update version field in $($dataFile.Path) to $expectedVersion" -ForegroundColor Yellow
         } else {
             Write-Host "  [OK] $($dataFile.Path) version matches: $dataVersion" -ForegroundColor Green
         }

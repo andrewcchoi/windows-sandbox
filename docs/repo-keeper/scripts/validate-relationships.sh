@@ -29,7 +29,7 @@ while [[ "$#" -gt 0 ]]; do
         -v|--verbose) VERBOSE=true ;;
         -q|--quiet) QUIET=true ;;
         --log) LOG_FILE="$2"; shift ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
+        *) echo "Unknown parameter: $1"; exit 128 ;;
     esac
     shift
 done
@@ -74,6 +74,7 @@ for ((i=0; i<SKILL_COUNT; i++)); do
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
     if [ ! -f "$REPO_ROOT/$SKILL_PATH" ]; then
         echo -e "  ${RED}[ERROR] $SKILL_NAME: Skill file not found: $SKILL_PATH${NC}"
+        echo -e "    ${YELLOW}How to fix: Create skill file at $SKILL_PATH or update path in INVENTORY.json${NC}"
         ERROR_COUNT=$((ERROR_COUNT + 1))
     elif [ "$VERBOSE" = true ]; then
         echo -e "  ${GRAY}[OK] $SKILL_NAME: skill file exists${NC}"
@@ -88,6 +89,7 @@ for ((i=0; i<SKILL_COUNT; i++)); do
 
             if [ ! -f "$REPO_ROOT/$TEMPLATE_PATH" ]; then
                 echo -e "  ${RED}[ERROR] $SKILL_NAME → $TEMPLATE_PATH (NOT FOUND)${NC}"
+                echo -e "    ${YELLOW}How to fix: Create template file at $TEMPLATE_PATH or remove from related_templates in INVENTORY.json${NC}"
                 ERROR_COUNT=$((ERROR_COUNT + 1))
             elif [ "$VERBOSE" = true ]; then
                 echo -e "  ${GRAY}[OK] $SKILL_NAME → $TEMPLATE_PATH${NC}"
@@ -116,6 +118,7 @@ for ((i=0; i<SKILL_COUNT; i++)); do
         # Check command file exists
         if [ ! -f "$REPO_ROOT/$RELATED_COMMAND" ]; then
             echo -e "  ${RED}[ERROR] $SKILL_NAME → $RELATED_COMMAND (NOT FOUND)${NC}"
+            echo -e "    ${YELLOW}How to fix: Create command file at $RELATED_COMMAND or update related_command in INVENTORY.json${NC}"
             ERROR_COUNT=$((ERROR_COUNT + 1))
         else
             # Check command mentions skill (bidirectional)
@@ -153,6 +156,7 @@ for ((i=0; i<COMMAND_COUNT; i++)); do
 
     if [ -z "$SKILL_EXISTS" ] && [ "$INVOKES_SKILL" != "interactive" ]; then
         echo -e "  ${RED}[ERROR] $COMMAND_NAME invokes non-existent skill: $INVOKES_SKILL${NC}"
+        echo -e "    ${YELLOW}How to fix: Add skill '$INVOKES_SKILL' to INVENTORY.json or update invokes_skill field for command${NC}"
         ERROR_COUNT=$((ERROR_COUNT + 1))
     elif [ "$VERBOSE" = true ]; then
         echo -e "  ${GRAY}[OK] $COMMAND_NAME → $INVOKES_SKILL${NC}"
@@ -178,6 +182,7 @@ for ((i=0; i<SKILL_COUNT; i++)); do
 
         if [ ! -d "$REPO_ROOT/$RELATED_EXAMPLE" ]; then
             echo -e "  ${RED}[ERROR] $SKILL_NAME → $RELATED_EXAMPLE (NOT FOUND)${NC}"
+            echo -e "    ${YELLOW}How to fix: Create example at $RELATED_EXAMPLE or update related_example in INVENTORY.json${NC}"
             ERROR_COUNT=$((ERROR_COUNT + 1))
         elif [ "$VERBOSE" = true ]; then
             echo -e "  ${GRAY}[OK] $SKILL_NAME → $RELATED_EXAMPLE${NC}"

@@ -29,7 +29,7 @@ while [[ "$#" -gt 0 ]]; do
         -v|--verbose) VERBOSE=true ;;
         -q|--quiet) QUIET=true ;;
         --log) LOG_FILE="$2"; shift ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
+        *) echo "Unknown parameter: $1"; exit 128 ;;
     esac
     shift
 done
@@ -64,6 +64,7 @@ EXPECTED_VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$PLUGIN_JSON" | head -1)
 if ! [[ "$EXPECTED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?(\+[a-zA-Z0-9.]+)?$ ]]; then
     echo -e "${RED}[ERROR] Invalid semver format in plugin.json: $EXPECTED_VERSION${NC}"
     echo -e "${RED}Expected format: MAJOR.MINOR.PATCH[-prerelease][+build]${NC}"
+    echo -e "${YELLOW}  How to fix: Update version in .claude-plugin/plugin.json to valid semver format (e.g., 1.0.0)${NC}"
     exit 1
 fi
 
@@ -97,6 +98,7 @@ if [ "$MARKETPLACE_VERSION" != "$EXPECTED_VERSION" ]; then
     ERRORS+=(".claude-plugin/marketplace.json|$MARKETPLACE_VERSION|Config")
     ((ERROR_COUNT++))
     echo -e "${RED}[ERROR] marketplace.json version mismatch: $MARKETPLACE_VERSION${NC}"
+    echo -e "${YELLOW}  How to fix: Update version field in .claude-plugin/marketplace.json to $EXPECTED_VERSION${NC}"
 else
     if [ "$QUIET" = false ]; then
         echo -e "${GREEN}[OK] marketplace.json version matches: $MARKETPLACE_VERSION${NC}"
@@ -108,6 +110,7 @@ if [ "$INVENTORY_VERSION" != "$EXPECTED_VERSION" ]; then
     ERRORS+=("docs/repo-keeper/INVENTORY.json|$INVENTORY_VERSION|Inventory")
     ((ERROR_COUNT++))
     echo -e "${RED}[ERROR] INVENTORY.json version mismatch: $INVENTORY_VERSION${NC}"
+    echo -e "${YELLOW}  How to fix: Update version field in docs/repo-keeper/INVENTORY.json to $EXPECTED_VERSION${NC}"
 else
     if [ "$QUIET" = false ]; then
         echo -e "${GREEN}[OK] INVENTORY.json version matches: $INVENTORY_VERSION${NC}"
@@ -138,6 +141,7 @@ while IFS= read -r -d '' file; do
             ((ERROR_COUNT++))
             ERRORS+=("$RELATIVE_PATH|$FOUND_VERSION|Footer")
             echo -e "  ${YELLOW}[MISMATCH] $RELATIVE_PATH - Found: $FOUND_VERSION${NC}"
+            echo -e "    ${YELLOW}How to fix: Update **Version:** footer in $RELATIVE_PATH to $EXPECTED_VERSION${NC}"
         fi
     else
         ((MISSING_FOOTERS++))
@@ -168,6 +172,7 @@ check_data_file() {
             ERRORS+=("$file_path|$DATA_VERSION|Data")
             ((ERROR_COUNT++))
             echo -e "  ${RED}[ERROR] $file_path version mismatch: $DATA_VERSION${NC}"
+            echo -e "    ${YELLOW}How to fix: Update version field in $file_path to $EXPECTED_VERSION${NC}"
         else
             if [ "$QUIET" = false ]; then
                 echo -e "  ${GREEN}[OK] $file_path version matches: $DATA_VERSION${NC}"

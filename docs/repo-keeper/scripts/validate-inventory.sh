@@ -29,7 +29,7 @@ while [[ "$#" -gt 0 ]]; do
         --find-orphans) FIND_ORPHANS=true ;;
         -q|--quiet) QUIET=true ;;
         --log) LOG_FILE="$2"; shift ;;
-        *) echo "Unknown parameter: $1"; exit 1 ;;
+        *) echo "Unknown parameter: $1"; exit 128 ;;
     esac
     shift
 done
@@ -98,6 +98,7 @@ validate_path() {
         ((MISSING_PATHS++))
         ERRORS+=("$category|$path|NOT FOUND")
         echo -e "  ${RED}[MISSING] $path${NC}"
+        echo -e "    ${YELLOW}How to fix: Create the file at $path or remove it from INVENTORY.json${NC}"
         return 1
     fi
 }

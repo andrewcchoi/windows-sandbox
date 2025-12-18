@@ -24,6 +24,7 @@ TIER="standard"  # quick, standard, full
 VERBOSE=false
 FIX_CRLF=false
 QUIET=false
+FAIL_FAST=false
 LOG_FILE=""
 
 # Colors
@@ -42,8 +43,9 @@ while [[ "$#" -gt 0 ]]; do
         -v|--verbose) VERBOSE=true ;;
         --fix-crlf) FIX_CRLF=true ;;
         -q|--quiet) QUIET=true ;;
+        -f|--fail-fast) FAIL_FAST=true ;;
         --log) LOG_FILE="$2"; shift ;;
-        *) echo "Unknown parameter: $1"; echo "Usage: $0 [--quick|--full] [-v|--verbose] [--fix-crlf] [-q|--quiet] [--log FILE]"; exit 1 ;;
+        *) echo "Unknown parameter: $1"; echo "Usage: $0 [--quick|--full] [-v|--verbose] [--fix-crlf] [-q|--quiet] [-f|--fail-fast] [--log FILE]"; exit 128 ;;
     esac
     shift
 done
@@ -162,6 +164,16 @@ run_check() {
             grep -E "\[ERROR\]|✗" "$output_file" 2>/dev/null | head -10 | while read -r line; do
                 echo -e "    ${RED}$line${NC}"
             done
+        fi
+
+        # Exit immediately if fail-fast is enabled
+        if [ "$FAIL_FAST" = true ]; then
+            if [ "$QUIET" = false ]; then
+                echo ""
+                echo -e "${RED}Exiting due to --fail-fast flag${NC}"
+                echo ""
+            fi
+            exit 1
         fi
     fi
 

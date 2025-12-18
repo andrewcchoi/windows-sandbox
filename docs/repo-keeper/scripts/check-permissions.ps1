@@ -75,9 +75,15 @@ foreach ($script in $scripts) {
                 Write-Host "  [OK] $scriptName is executable" -ForegroundColor Gray
             }
         } catch {
-            # If bash test fails, just verify file exists
-            if ($Verbose) {
-                Write-Host "  [OK] $scriptName exists" -ForegroundColor Gray
+            # If bash test fails, log the error and fall back to existence check
+            Write-Host "  [WARNING] Bash permission check failed for $scriptName`: $($_.Exception.Message)" -ForegroundColor Yellow
+            if (Test-Path $script.FullName) {
+                if ($Verbose) {
+                    Write-Host "  [OK] $scriptName exists (permission check unavailable)" -ForegroundColor Gray
+                }
+            } else {
+                Write-Host "  [WARNING] Not found: $scriptName" -ForegroundColor Yellow
+                $warningCount++
             }
         }
     }
@@ -113,8 +119,15 @@ if (Test-Path $libPath) {
                     Write-Host "  [OK] $scriptName is executable" -ForegroundColor Gray
                 }
             } catch {
-                if ($Verbose) {
-                    Write-Host "  [OK] $scriptName exists" -ForegroundColor Gray
+                # If bash test fails, log the error and fall back to existence check
+                Write-Host "  [WARNING] Bash permission check failed for $scriptName`: $($_.Exception.Message)" -ForegroundColor Yellow
+                if (Test-Path $script.FullName) {
+                    if ($Verbose) {
+                        Write-Host "  [OK] $scriptName exists (permission check unavailable)" -ForegroundColor Gray
+                    }
+                } else {
+                    Write-Host "  [WARNING] Not found: $scriptName" -ForegroundColor Yellow
+                    $warningCount++
                 }
             }
         }
