@@ -156,11 +156,12 @@ run_check() {
 # Tier 1: Structural Validation
 echo -e "${CYAN}Running Tier 1: Structural Validation...${NC}"
 
-run_check 1 5 "Version sync" "check-version-sync.sh"
-run_check 2 5 "Link integrity" "check-links.sh"
-run_check 3 5 "Inventory accuracy" "validate-inventory.sh"
-run_check 4 5 "Relationship validation" "validate-relationships.sh"
-run_check 5 5 "Schema validation" "validate-schemas.sh"
+run_check 1 6 "Version sync" "check-version-sync.sh"
+run_check 2 6 "Link integrity" "check-links.sh"
+run_check 3 6 "Inventory accuracy" "validate-inventory.sh"
+run_check 4 6 "Relationship validation" "validate-relationships.sh"
+run_check 5 6 "Schema validation" "validate-schemas.sh"
+run_check 6 6 "File permissions" "check-permissions.sh"
 
 # Exit early if quick mode
 if [ "$TIER" = "quick" ]; then

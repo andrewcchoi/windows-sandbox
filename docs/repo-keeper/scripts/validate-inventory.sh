@@ -53,6 +53,13 @@ LAST_UPDATED=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTOR
 
 echo -e "${GREEN}Inventory version: $VERSION${NC}"
 echo -e "${GREEN}Last updated: $LAST_UPDATED${NC}"
+
+# Check timestamp not in future
+CURRENT_DATE=$(date +%Y-%m-%d)
+if [[ "$LAST_UPDATED" > "$CURRENT_DATE" ]]; then
+    echo -e "${YELLOW}[WARNING] last_updated is in the future: $LAST_UPDATED (current: $CURRENT_DATE)${NC}"
+fi
+
 echo ""
 
 TOTAL_PATHS=0
