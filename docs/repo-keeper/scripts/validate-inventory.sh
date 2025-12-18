@@ -41,12 +41,6 @@ NC='\033[0m'
 echo -e "${CYAN}=== Repository Inventory Validator ===${NC}"
 echo ""
 
-# Check for Python
-if ! command -v python3 &> /dev/null; then
-    echo -e "${RED}Error: python3 is required but not installed${NC}"
-    exit 1
-fi
-
 INVENTORY="$REPO_ROOT/docs/repo-keeper/INVENTORY.json"
 if [ ! -f "$INVENTORY" ]; then
     echo -e "${RED}Error: INVENTORY.json not found${NC}"
@@ -54,8 +48,8 @@ if [ ! -f "$INVENTORY" ]; then
 fi
 
 # Get inventory metadata
-VERSION=$(python3 -c "import json; data=json.load(open('$INVENTORY')); print(data.get('version', 'unknown'))")
-LAST_UPDATED=$(python3 -c "import json; data=json.load(open('$INVENTORY')); print(data.get('last_updated', 'unknown'))")
+VERSION=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.version || 'unknown')")
+LAST_UPDATED=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.last_updated || 'unknown')")
 
 echo -e "${GREEN}Inventory version: $VERSION${NC}"
 echo -e "${GREEN}Last updated: $LAST_UPDATED${NC}"
@@ -95,27 +89,26 @@ while IFS= read -r line; do
     elif [[ $line == REF:* ]]; then
         validate_path "${line#REF:}" "Skill Reference"
     fi
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for skill in data.get('skills', []):
-    print(f"SKILL:{skill['path']}")
-    for ref in skill.get('references', []):
-        print(f"REF:{ref}")
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+(data.skills || []).forEach(skill => {
+    console.log(\`SKILL:\${skill.path}\`);
+    (skill.references || []).forEach(ref => {
+        console.log(\`REF:\${ref}\`);
+    });
+});
+")
 
 # Validate Commands
 echo -e "${CYAN}Validating commands...${NC}"
 while IFS= read -r path; do
     [ -n "$path" ] && validate_path "$path" "Command"
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for command in data.get('commands', []):
-    print(command['path'])
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+(data.commands || []).forEach(command => {
+    console.log(command.path);
+});
+")
 
 # Validate Templates
 echo -e "${CYAN}Validating templates...${NC}"
@@ -123,25 +116,23 @@ echo -e "${CYAN}Validating templates...${NC}"
 # Master templates
 while IFS= read -r path; do
     [ -n "$path" ] && validate_path "$path" "Master Template"
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for template in data.get('templates', {}).get('master', []):
-    print(template['path'])
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+((data.templates || {}).master || []).forEach(template => {
+    console.log(template.path);
+});
+")
 
 # Other template categories
 for category in dockerfiles compose firewall extensions mcp variables env; do
     while IFS= read -r path; do
         [ -n "$path" ] && validate_path "$path" "Template ($category)"
-    done < <(python3 << PYEOF
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for template in data.get('templates', {}).get('$category', []):
-    print(template['path'])
-PYEOF
-    )
+    done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+((data.templates || {})['$category'] || []).forEach(template => {
+    console.log(template.path);
+});
+")
 done
 
 # Validate Examples
@@ -156,44 +147,44 @@ while IFS= read -r line; do
     elif [[ $line == COMPOSE:* ]]; then
         validate_path "${line#COMPOSE:}" "Compose"
     fi
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for example in data.get('examples', []):
-    print(f"EXAMPLE:{example['path']}")
-    if 'devcontainer_path' in example and example['devcontainer_path']:
-        print(f"DEVCONTAINER:{example['devcontainer_path']}")
-    if 'dockerfile_path' in example and example['dockerfile_path']:
-        print(f"DOCKERFILE:{example['dockerfile_path']}")
-    if 'compose_path' in example and example['compose_path']:
-        print(f"COMPOSE:{example['compose_path']}")
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+(data.examples || []).forEach(example => {
+    console.log(\`EXAMPLE:\${example.path}\`);
+    if (example.devcontainer_path) {
+        console.log(\`DEVCONTAINER:\${example.devcontainer_path}\`);
+    }
+    if (example.dockerfile_path) {
+        console.log(\`DOCKERFILE:\${example.dockerfile_path}\`);
+    }
+    if (example.compose_path) {
+        console.log(\`COMPOSE:\${example.compose_path}\`);
+    }
+});
+")
 
 # Validate Data Files
 echo -e "${CYAN}Validating data files...${NC}"
 while IFS= read -r path; do
     [ -n "$path" ] && validate_path "$path" "Data File"
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for datafile in data.get('data_files', []):
-    print(datafile['path'])
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+(data.data_files || []).forEach(datafile => {
+    console.log(datafile.path);
+});
+")
 
 # Validate Documentation
 echo -e "${CYAN}Validating documentation...${NC}"
 for category in root docs commands skills templates examples data tests repo-keeper; do
     while IFS= read -r path; do
         [ -n "$path" ] && validate_path "$path" "Documentation ($category)"
-    done < <(python3 << PYEOF
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for doc in data.get('documentation', {}).get('$category', []):
-    print(doc['path'])
-PYEOF
-    )
+    done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+((data.documentation || {})['$category'] || []).forEach(doc => {
+    console.log(doc.path);
+});
+")
 done
 
 # Validate DevContainers
@@ -206,51 +197,49 @@ while IFS= read -r line; do
     elif [[ $line == FIREWALL:* ]]; then
         validate_path "${line#FIREWALL:}" "Firewall Script"
     fi
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for devcontainer in data.get('devcontainers', []):
-    print(f"DEVCONTAINER:{devcontainer['path']}")
-    if 'dockerfile_path' in devcontainer and devcontainer['dockerfile_path']:
-        print(f"DOCKERFILE:{devcontainer['dockerfile_path']}")
-    if 'firewall_path' in devcontainer and devcontainer['firewall_path']:
-        print(f"FIREWALL:{devcontainer['firewall_path']}")
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+(data.devcontainers || []).forEach(devcontainer => {
+    console.log(\`DEVCONTAINER:\${devcontainer.path}\`);
+    if (devcontainer.dockerfile_path) {
+        console.log(\`DOCKERFILE:\${devcontainer.dockerfile_path}\`);
+    }
+    if (devcontainer.firewall_path) {
+        console.log(\`FIREWALL:\${devcontainer.firewall_path}\`);
+    }
+});
+")
 
 # Validate Dependencies
 echo -e "${CYAN}Validating dependencies...${NC}"
 while IFS= read -r path; do
     [ -n "$path" ] && validate_path "$path" "Python Requirements"
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for req in data.get('dependencies', {}).get('python_requirements', []):
-    print(req)
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+((data.dependencies || {}).python_requirements || []).forEach(req => {
+    console.log(req);
+});
+")
 
 while IFS= read -r path; do
     [ -n "$path" ] && validate_path "$path" "Node Package"
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for pkg in data.get('dependencies', {}).get('node_packages', []):
-    print(pkg)
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+((data.dependencies || {}).node_packages || []).forEach(pkg => {
+    console.log(pkg);
+});
+")
 
 # Validate Test Files
 echo -e "${CYAN}Validating test files...${NC}"
 while IFS= read -r path; do
     [ -n "$path" ] && validate_path "$path" "Manual Test"
-done < <(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-for test in data.get('test_files', {}).get('manual_tests', []):
-    print(test)
-PYEOF
-)
+done < <(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+((data.test_files || {}).manual_tests || []).forEach(test => {
+    console.log(test);
+});
+")
 
 # Find orphaned files (if requested)
 ORPHAN_COUNT=0
@@ -326,30 +315,35 @@ if [ ${#ERRORS[@]} -gt 0 ]; then
     echo -e "${CYAN}=== Missing Paths Details ===${NC}"
     echo ""
 
-    # Write errors to temp file and process with Python
+    # Write errors to temp file and process with Node.js
     TMP_FILE=$(mktemp)
     printf '%s\n' "${ERRORS[@]}" > "$TMP_FILE"
 
-    python3 << PYEOF
-from collections import defaultdict
+    node << NODEOF
+const fs = require('fs');
+const errors = {};
 
-errors = defaultdict(list)
-with open('$TMP_FILE', 'r') as f:
-    for line in f:
-        line = line.strip()
-        if '|' in line:
-            parts = line.split('|')
-            category = parts[0]
-            path = parts[1]
-            errors[category].append(path)
+const lines = fs.readFileSync('$TMP_FILE', 'utf8').split('\n');
+lines.forEach(line => {
+    line = line.trim();
+    if (line.includes('|')) {
+        const parts = line.split('|');
+        const category = parts[0];
+        const path = parts[1];
+        if (!errors[category]) errors[category] = [];
+        errors[category].push(path);
+    }
+});
 
-for category in sorted(errors.keys()):
-    paths = errors[category]
-    print(f"\033[1;33m{category} ({len(paths)} missing):\033[0m")
-    for path in paths:
-        print(f"  {path}")
-    print()
-PYEOF
+Object.keys(errors).sort().forEach(category => {
+    const paths = errors[category];
+    console.log(\`\x1b[1;33m\${category} (\${paths.length} missing):\x1b[0m\`);
+    paths.forEach(path => {
+        console.log(\`  \${path}\`);
+    });
+    console.log();
+});
+NODEOF
 
     rm -f "$TMP_FILE"
 fi
@@ -358,14 +352,11 @@ fi
 echo ""
 echo -e "${CYAN}=== Version Checks ===${NC}"
 
-KNOWN_ISSUES=$(python3 << 'PYEOF'
-import json
-data = json.load(open('/workspace/docs/repo-keeper/INVENTORY.json'))
-issues = data.get('known_issues', {}).get('outdated_versions', [])
-for issue in issues:
-    print(issue)
-PYEOF
-)
+KNOWN_ISSUES=$(node -e "
+const data = JSON.parse(require('fs').readFileSync('$INVENTORY'));
+const issues = (data.known_issues || {}).outdated_versions || [];
+issues.forEach(issue => console.log(issue));
+")
 
 if [ -n "$KNOWN_ISSUES" ]; then
     echo -e "${YELLOW}Known version issues:${NC}"

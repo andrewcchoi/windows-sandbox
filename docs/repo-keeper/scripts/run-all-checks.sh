@@ -45,12 +45,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Get version from plugin.json
-if command -v jq >/dev/null 2>&1; then
-    VERSION=$(jq -r '.version' "$REPO_ROOT/.claude-plugin/plugin.json" 2>/dev/null || echo "unknown")
-else
-    # Fallback if jq is not available
-    VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$REPO_ROOT/.claude-plugin/plugin.json" 2>/dev/null || echo "unknown")
-fi
+VERSION=$(node -e "try { console.log(JSON.parse(require('fs').readFileSync('$REPO_ROOT/.claude-plugin/plugin.json')).version); } catch(e) { console.log('unknown'); }")
 
 echo -e "${CYAN}=== Repository Validation Suite ===${NC}"
 echo "Version: $VERSION"

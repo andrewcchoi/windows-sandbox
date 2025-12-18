@@ -41,16 +41,6 @@ NC='\033[0m'
 echo -e "${CYAN}=== Relationship Validator ===${NC}"
 echo ""
 
-# Check for jq
-if ! command -v jq &> /dev/null; then
-    if [ -f "/tmp/bin/jq" ]; then
-        export PATH="/tmp/bin:$PATH"
-    else
-        echo -e "${RED}Error: jq is required but not installed${NC}"
-        exit 1
-    fi
-fi
-
 INVENTORY="$REPO_ROOT/docs/repo-keeper/INVENTORY.json"
 if [ ! -f "$INVENTORY" ]; then
     echo -e "${RED}Error: INVENTORY.json not found${NC}"
@@ -63,10 +53,10 @@ TOTAL_CHECKS=0
 # Check skill → template relationships
 echo -e "${CYAN}Checking skill → template relationships...${NC}"
 
-SKILL_COUNT=$(jq '.skills | length' "$INVENTORY")
+SKILL_COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log((d.skills || []).length)")
 for ((i=0; i<SKILL_COUNT; i++)); do
-    SKILL_NAME=$(jq -r ".skills[$i].name" "$INVENTORY")
-    SKILL_PATH=$(jq -r ".skills[$i].path" "$INVENTORY")
+    SKILL_NAME=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.name || '')")
+    SKILL_PATH=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.path || '')")
 
     # Check skill file exists
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
@@ -78,10 +68,10 @@ for ((i=0; i<SKILL_COUNT; i++)); do
     fi
 
     # Check related templates
-    TEMPLATE_COUNT=$(jq ".skills[$i].related_templates | length // 0" "$INVENTORY")
+    TEMPLATE_COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log((d.skills[$i]?.related_templates || []).length)")
     if [ "$TEMPLATE_COUNT" -gt 0 ]; then
         for ((j=0; j<TEMPLATE_COUNT; j++)); do
-            TEMPLATE_PATH=$(jq -r ".skills[$i].related_templates[$j]" "$INVENTORY")
+            TEMPLATE_PATH=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.related_templates?.[$j] || '')")
             TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
 
             if [ ! -f "$REPO_ROOT/$TEMPLATE_PATH" ]; then
@@ -103,8 +93,8 @@ echo ""
 echo -e "${CYAN}Checking skill ↔ command relationships...${NC}"
 
 for ((i=0; i<SKILL_COUNT; i++)); do
-    SKILL_NAME=$(jq -r ".skills[$i].name" "$INVENTORY")
-    RELATED_COMMAND=$(jq -r ".skills[$i].related_command // empty" "$INVENTORY")
+    SKILL_NAME=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.name || '')")
+    RELATED_COMMAND=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.related_command || '')")
 
     if [ -n "$RELATED_COMMAND" ]; then
         TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
@@ -134,16 +124,16 @@ fi
 echo ""
 echo -e "${CYAN}Checking command → skill relationships...${NC}"
 
-COMMAND_COUNT=$(jq '.commands | length' "$INVENTORY")
+COMMAND_COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log((d.commands || []).length)")
 for ((i=0; i<COMMAND_COUNT; i++)); do
-    COMMAND_NAME=$(jq -r ".commands[$i].name" "$INVENTORY")
-    COMMAND_PATH=$(jq -r ".commands[$i].path" "$INVENTORY")
-    INVOKES_SKILL=$(jq -r ".commands[$i].invokes_skill" "$INVENTORY")
+    COMMAND_NAME=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.commands[$i]?.name || '')")
+    COMMAND_PATH=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.commands[$i]?.path || '')")
+    INVOKES_SKILL=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.commands[$i]?.invokes_skill || '')")
 
     TOTAL_CHECKS=$((TOTAL_CHECKS + 1))
 
     # Check if invoked skill exists
-    SKILL_EXISTS=$(jq -r --arg skill "$INVOKES_SKILL" '.skills[] | select(.name == $skill) | .name' "$INVENTORY")
+    SKILL_EXISTS=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); const skill = (d.skills || []).find(s => s.name === '$INVOKES_SKILL'); console.log(skill?.name || '')")
 
     if [ -z "$SKILL_EXISTS" ] && [ "$INVOKES_SKILL" != "interactive" ]; then
         echo -e "  ${RED}[ERROR] $COMMAND_NAME invokes non-existent skill: $INVOKES_SKILL${NC}"
@@ -162,8 +152,8 @@ echo ""
 echo -e "${CYAN}Checking skill → example relationships...${NC}"
 
 for ((i=0; i<SKILL_COUNT; i++)); do
-    SKILL_NAME=$(jq -r ".skills[$i].name" "$INVENTORY")
-    RELATED_EXAMPLE=$(jq -r ".skills[$i].related_example // empty" "$INVENTORY")
+    SKILL_NAME=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.name || '')")
+    RELATED_EXAMPLE=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.related_example || '')")
 
     if [ -n "$RELATED_EXAMPLE" ] && [ "$RELATED_EXAMPLE" != "null" ]; then
         TOTAL_CHECKS=$((TOTAL_CHECKS + 1))

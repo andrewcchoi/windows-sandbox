@@ -41,12 +41,6 @@ NC='\033[0m'
 echo -e "${CYAN}=== Completeness Validator ===${NC}"
 echo ""
 
-# Check for jq
-if ! command -v jq &> /dev/null; then
-    echo -e "${RED}Error: jq is required but not installed${NC}"
-    exit 1
-fi
-
 INVENTORY="$REPO_ROOT/docs/repo-keeper/INVENTORY.json"
 if [ ! -f "$INVENTORY" ]; then
     echo -e "${RED}Error: INVENTORY.json not found${NC}"
@@ -59,11 +53,11 @@ ERROR_COUNT=0
 echo -e "${CYAN}Checking feature documentation...${NC}"
 
 # Check skills have SKILL.md
-SKILL_COUNT=$(jq '.skills | length' "$INVENTORY")
+SKILL_COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log((d.skills || []).length)")
 SKILLS_WITH_DOCS=0
 for ((i=0; i<SKILL_COUNT; i++)); do
-    SKILL_NAME=$(jq -r ".skills[$i].name" "$INVENTORY")
-    SKILL_PATH=$(jq -r ".skills[$i].path" "$INVENTORY")
+    SKILL_NAME=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.name || '')")
+    SKILL_PATH=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.skills[$i]?.path || '')")
 
     if [ -f "$REPO_ROOT/$SKILL_PATH" ]; then
         ((SKILLS_WITH_DOCS++)) || true
@@ -75,13 +69,13 @@ done
 echo -e "  ${GREEN}[OK] $SKILLS_WITH_DOCS/$SKILL_COUNT skills have SKILL.md${NC}"
 
 # Check commands documented in README
-COMMAND_COUNT=$(jq '.commands | length' "$INVENTORY")
+COMMAND_COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log((d.commands || []).length)")
 COMMANDS_README="$REPO_ROOT/commands/README.md"
 COMMANDS_DOCUMENTED=0
 
 if [ -f "$COMMANDS_README" ]; then
     for ((i=0; i<COMMAND_COUNT; i++)); do
-        COMMAND_NAME=$(jq -r ".commands[$i].name" "$INVENTORY")
+        COMMAND_NAME=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.commands[$i]?.name || '')")
 
         if grep -q "$COMMAND_NAME" "$COMMANDS_README"; then
             ((COMMANDS_DOCUMENTED++)) || true
@@ -99,11 +93,11 @@ fi
 # Check data files in README
 DATA_README="$REPO_ROOT/data/README.md"
 if [ -f "$DATA_README" ]; then
-    DATA_COUNT=$(jq '.data_files | length' "$INVENTORY")
+    DATA_COUNT=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log((d.data_files || []).length)")
     DATA_DOCUMENTED=0
 
     for ((i=0; i<DATA_COUNT; i++)); do
-        FILE_NAME=$(jq -r ".data_files[$i].name" "$INVENTORY")
+        FILE_NAME=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); console.log(d.data_files[$i]?.name || '')")
 
         if grep -q "$FILE_NAME" "$DATA_README"; then
             ((DATA_DOCUMENTED++)) || true
@@ -126,7 +120,7 @@ for mode in "${MODES[@]}"; do
     MISSING_COUNT=0
 
     # Check for skill
-    SKILL_EXISTS=$(jq -r --arg mode "$mode" '.skills[] | select(.mode == $mode) | .name' "$INVENTORY")
+    SKILL_EXISTS=$(node -e "const d=JSON.parse(require('fs').readFileSync('$INVENTORY')); const skill = (d.skills || []).find(s => s.mode === '$mode'); console.log(skill?.name || '')")
     if [ -z "$SKILL_EXISTS" ]; then
         echo -e "  ${RED}[ERROR] $mode: No skill found${NC}"
         ((ERROR_COUNT++)) || true
