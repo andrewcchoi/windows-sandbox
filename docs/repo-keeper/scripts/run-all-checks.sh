@@ -4,8 +4,20 @@
 
 set -e
 
+# Auto-detect repo root from script location
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-REPO_ROOT="/workspace"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+# Allow override via environment variable
+if [[ -n "${REPO_ROOT_OVERRIDE:-}" ]]; then
+    REPO_ROOT="$REPO_ROOT_OVERRIDE"
+fi
+
+# Source dependency checking library
+source "$SCRIPT_DIR/lib/check-dependencies.sh"
+
+# Check required dependencies
+check_node
 
 # Default settings
 TIER="standard"  # quick, standard, full
@@ -33,12 +45,7 @@ while [[ "$#" -gt 0 ]]; do
 done
 
 # Get version from plugin.json
-if command -v jq >/dev/null 2>&1; then
-    VERSION=$(jq -r '.version' "$REPO_ROOT/.claude-plugin/plugin.json" 2>/dev/null || echo "unknown")
-else
-    # Fallback if jq is not available
-    VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$REPO_ROOT/.claude-plugin/plugin.json" 2>/dev/null || echo "unknown")
-fi
+VERSION=$(node -e "try { console.log(JSON.parse(require('fs').readFileSync('$REPO_ROOT/.claude-plugin/plugin.json')).version); } catch(e) { console.log('unknown'); }")
 
 echo -e "${CYAN}=== Repository Validation Suite ===${NC}"
 echo "Version: $VERSION"
@@ -149,11 +156,12 @@ run_check() {
 # Tier 1: Structural Validation
 echo -e "${CYAN}Running Tier 1: Structural Validation...${NC}"
 
-run_check 1 5 "Version sync" "check-version-sync.sh"
-run_check 2 5 "Link integrity" "check-links.sh"
-run_check 3 5 "Inventory accuracy" "validate-inventory.sh"
-run_check 4 5 "Relationship validation" "validate-relationships.sh"
-run_check 5 5 "Schema validation" "validate-schemas.sh"
+run_check 1 6 "Version sync" "check-version-sync.sh"
+run_check 2 6 "Link integrity" "check-links.sh"
+run_check 3 6 "Inventory accuracy" "validate-inventory.sh"
+run_check 4 6 "Relationship validation" "validate-relationships.sh"
+run_check 5 6 "Schema validation" "validate-schemas.sh"
+run_check 6 6 "File permissions" "check-permissions.sh"
 
 # Exit early if quick mode
 if [ "$TIER" = "quick" ]; then

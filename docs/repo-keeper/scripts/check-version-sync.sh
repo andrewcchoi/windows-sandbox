@@ -4,7 +4,21 @@
 
 set -e
 
-REPO_ROOT="/workspace"
+# Auto-detect repo root from script location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+# Allow override via environment variable
+if [[ -n "${REPO_ROOT_OVERRIDE:-}" ]]; then
+    REPO_ROOT="$REPO_ROOT_OVERRIDE"
+fi
+
+# Source dependency checking library
+source "$SCRIPT_DIR/lib/check-dependencies.sh"
+
+# Check required dependencies
+check_node
+
 VERBOSE=false
 
 # Parse arguments
@@ -35,6 +49,14 @@ if [ ! -f "$PLUGIN_JSON" ]; then
 fi
 
 EXPECTED_VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$PLUGIN_JSON" | head -1)
+
+# Validate semver format
+if ! [[ "$EXPECTED_VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+(-[a-zA-Z0-9.]+)?(\+[a-zA-Z0-9.]+)?$ ]]; then
+    echo -e "${RED}[ERROR] Invalid semver format in plugin.json: $EXPECTED_VERSION${NC}"
+    echo -e "${RED}Expected format: MAJOR.MINOR.PATCH[-prerelease][+build]${NC}"
+    exit 1
+fi
+
 echo -e "${GREEN}Expected version (from plugin.json): $EXPECTED_VERSION${NC}"
 echo ""
 

@@ -4,7 +4,21 @@
 
 set -e
 
-REPO_ROOT="/workspace"
+# Auto-detect repo root from script location
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
+
+# Allow override via environment variable
+if [[ -n "${REPO_ROOT_OVERRIDE:-}" ]]; then
+    REPO_ROOT="$REPO_ROOT_OVERRIDE"
+fi
+
+# Source dependency checking library
+source "$SCRIPT_DIR/lib/check-dependencies.sh"
+
+# Check required dependencies
+check_node
+
 VERBOSE=false
 CHECK_EXTERNAL=false
 
@@ -30,6 +44,28 @@ echo -e "${CYAN}=== Content Validator ===${NC}"
 echo ""
 
 ERROR_COUNT=0
+WARNING_COUNT=0
+
+# Check for UTF-8 BOM
+echo -e "${CYAN}Checking for UTF-8 BOM...${NC}"
+
+BOM_COUNT=0
+while IFS= read -r -d '' file; do
+    if head -c3 "$file" 2>/dev/null | grep -q $'\xef\xbb\xbf'; then
+        RELATIVE_PATH="${file#$REPO_ROOT/}"
+        echo -e "  ${YELLOW}[WARNING] UTF-8 BOM detected: $RELATIVE_PATH${NC}"
+        ((BOM_COUNT++))
+        ((WARNING_COUNT++))
+    fi
+done < <(find "$REPO_ROOT" \( -name "*.md" -o -name "*.json" -o -name "*.sh" \) ! -path "*/node_modules/*" ! -path "*/.git/*" -print0 2>/dev/null)
+
+if [ $BOM_COUNT -eq 0 ]; then
+    echo -e "  ${GREEN}[OK] No UTF-8 BOM detected in files${NC}"
+elif [ "$VERBOSE" = false ]; then
+    echo -e "  ${YELLOW}Total files with BOM: $BOM_COUNT${NC}"
+fi
+
+echo ""
 
 # Check SKILL.md files for required sections
 echo -e "${CYAN}Checking required sections in SKILL.md files...${NC}"
@@ -142,6 +178,122 @@ else
     echo -e "  ${YELLOW}[WARNING] Found $BROKEN_SEQUENCES files with step gaps${NC}"
 fi
 
+# V10: Check code block syntax
+echo ""
+echo -e "${CYAN}Checking code block syntax...${NC}"
+
+# Common valid language tags
+VALID_LANGS="bash|sh|shell|python|py|javascript|js|typescript|ts|json|yaml|yml|markdown|md|html|css|dockerfile|sql|go|rust|java|c|cpp|ruby|php|perl|powershell|ps1|text|txt|plaintext"
+
+INVALID_CODE_BLOCKS=0
+MD_FILES_SUBSET=$(find "$REPO_ROOT" -name "*.md" -type f ! -path "*/node_modules/*" ! -path "*/.git/*" 2>/dev/null | head -100)
+
+for md_file in $MD_FILES_SUBSET; do
+    RELATIVE_PATH="${md_file#$REPO_ROOT/}"
+
+    # Find fenced code blocks with language tags
+    grep -n '^```[a-zA-Z]' "$md_file" 2>/dev/null | while IFS=: read -r line_num line_content; do
+        # Extract language tag
+        lang=$(echo "$line_content" | sed 's/^```\([a-zA-Z0-9_-]*\).*/\1/')
+
+        # Check if language is valid
+        if ! echo "$lang" | grep -qiE "^($VALID_LANGS)$"; then
+            if [ "$VERBOSE" = true ]; then
+                echo -e "  ${YELLOW}[WARNING] $RELATIVE_PATH:$line_num - Unknown language tag: '$lang'${NC}"
+            fi
+            ((INVALID_CODE_BLOCKS++))
+            ((WARNING_COUNT++))
+        fi
+    done
+done
+
+if [ $INVALID_CODE_BLOCKS -eq 0 ]; then
+    echo -e "  ${GREEN}[OK] All code block language tags are valid${NC}"
+elif [ "$VERBOSE" = false ]; then
+    echo -e "  ${YELLOW}Total code blocks with unknown languages: $INVALID_CODE_BLOCKS${NC}"
+fi
+
+# V11: Check YAML frontmatter
+echo ""
+echo -e "${CYAN}Checking YAML frontmatter...${NC}"
+
+INVALID_FRONTMATTER=0
+MD_FILES_WITH_FM=$(find "$REPO_ROOT" -name "*.md" -type f ! -path "*/node_modules/*" ! -path "*/.git/*" 2>/dev/null | head -100)
+
+for md_file in $MD_FILES_WITH_FM; do
+    RELATIVE_PATH="${md_file#$REPO_ROOT/}"
+
+    # Check if file starts with YAML frontmatter (---)
+    FIRST_LINE=$(head -n 1 "$md_file" 2>/dev/null)
+    if [ "$FIRST_LINE" = "---" ]; then
+        # Extract frontmatter
+        FRONTMATTER=$(awk '/^---$/{if(++n==2) exit} n>=1' "$md_file")
+
+        # Check if frontmatter is properly closed
+        CLOSING_COUNT=$(echo "$FRONTMATTER" | grep -c '^---$')
+        if [ "$CLOSING_COUNT" -lt 2 ]; then
+            echo -e "  ${YELLOW}[WARNING] $RELATIVE_PATH - YAML frontmatter not properly closed${NC}"
+            ((INVALID_FRONTMATTER++))
+            ((WARNING_COUNT++))
+            continue
+        fi
+
+        # Basic YAML syntax validation using Node.js
+        YAML_VALID=$(node -e "
+            const fs = require('fs');
+            const content = fs.readFileSync('$md_file', 'utf8');
+            const lines = content.split('\\n');
+
+            if (lines[0] !== '---') {
+                console.log('false');
+                process.exit(0);
+            }
+
+            let endIdx = -1;
+            for (let i = 1; i < lines.length; i++) {
+                if (lines[i] === '---') {
+                    endIdx = i;
+                    break;
+                }
+            }
+
+            if (endIdx === -1) {
+                console.log('false');
+                process.exit(0);
+            }
+
+            const yamlLines = lines.slice(1, endIdx);
+
+            // Basic YAML validation: check for key: value format
+            let valid = true;
+            for (const line of yamlLines) {
+                if (line.trim() === '') continue;
+                if (line.startsWith(' ') || line.startsWith('\t')) continue; // indented lines
+                if (!line.includes(':') && line.trim() !== '') {
+                    valid = false;
+                    break;
+                }
+            }
+
+            console.log(valid ? 'true' : 'false');
+        " 2>/dev/null)
+
+        if [ "$YAML_VALID" != "true" ]; then
+            echo -e "  ${YELLOW}[WARNING] $RELATIVE_PATH - Invalid YAML frontmatter syntax${NC}"
+            ((INVALID_FRONTMATTER++))
+            ((WARNING_COUNT++))
+        elif [ "$VERBOSE" = true ]; then
+            echo -e "  ${GRAY}[OK] $RELATIVE_PATH - Valid YAML frontmatter${NC}"
+        fi
+    fi
+done
+
+if [ $INVALID_FRONTMATTER -eq 0 ]; then
+    echo -e "  ${GREEN}[OK] All YAML frontmatter is valid${NC}"
+else
+    echo -e "  ${YELLOW}Files with invalid frontmatter: $INVALID_FRONTMATTER${NC}"
+fi
+
 # External link checking (optional)
 if [ "$CHECK_EXTERNAL" = true ]; then
     echo ""
@@ -174,9 +326,15 @@ echo -e "${CYAN}=== Summary ===${NC}"
 if [ $ERROR_COUNT -eq 0 ]; then
     echo -e "${GREEN}✓ All content checks passed!${NC}"
     echo -e "${GREEN}Total errors: $ERROR_COUNT${NC}"
+    if [ $WARNING_COUNT -gt 0 ]; then
+        echo -e "${YELLOW}Total warnings: $WARNING_COUNT${NC}"
+    fi
     exit 0
 else
     echo -e "${RED}✗ Content validation failed!${NC}"
     echo -e "${RED}Total errors: $ERROR_COUNT${NC}"
+    if [ $WARNING_COUNT -gt 0 ]; then
+        echo -e "${YELLOW}Total warnings: $WARNING_COUNT${NC}"
+    fi
     exit 1
 fi
