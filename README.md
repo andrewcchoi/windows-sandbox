@@ -717,6 +717,16 @@ MIT License - See LICENSE file for details
 - **Documentation**: See `skills/*/references/` directories
 - **Claude Code Docs**: https://claude.ai/code
 
+## Repository Maintenance
+
+For contributors and maintainers, see [`docs/repo-keeper/`](docs/repo-keeper/):
+
+- **Organization Checklist**: [`ORGANIZATION_CHECKLIST.md`](docs/repo-keeper/ORGANIZATION_CHECKLIST.md) - 18-category maintenance checklist
+- **Inventory**: [`INVENTORY.json`](docs/repo-keeper/INVENTORY.json) - Entity inventory for auditing
+- **Automation Scripts**: [`scripts/`](docs/repo-keeper/scripts/) - Version sync, link checking, inventory validation
+- **GitHub Workflows**: [`workflows/`](docs/repo-keeper/workflows/) - CI/CD templates for automated validation
+- **Issue/PR Templates**: [`templates/`](docs/repo-keeper/templates/) - Standardized templates for contributors
+
 ## Changelog
 
 ### v2.0.0 (2025-12-16)
