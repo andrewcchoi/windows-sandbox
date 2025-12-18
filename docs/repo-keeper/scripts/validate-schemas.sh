@@ -91,13 +91,37 @@ INVENTORY_SCHEMA="$REPO_ROOT/docs/repo-keeper/schemas/inventory.schema.json"
 
 validate_against_schema "$INVENTORY" "$INVENTORY_SCHEMA"
 
-# Validate data files against generic data-file schema
+# V12: Validate data files against specific schemas when available
 echo ""
+
+# Define specific schemas for data files
+declare -A SPECIFIC_SCHEMAS
+SPECIFIC_SCHEMAS["secrets.json"]="$REPO_ROOT/docs/repo-keeper/schemas/secrets.schema.json"
+# Add more specific schemas here as they are created:
+# SPECIFIC_SCHEMAS["variables.json"]="$REPO_ROOT/docs/repo-keeper/schemas/variables.schema.json"
+# SPECIFIC_SCHEMAS["mcp-servers.json"]="$REPO_ROOT/docs/repo-keeper/schemas/mcp-servers.schema.json"
+
+# Default generic schema
 DATA_SCHEMA="$REPO_ROOT/docs/repo-keeper/schemas/data-file.schema.json"
 
 for data_file in "$REPO_ROOT/data"/*.json; do
     [ -e "$data_file" ] || continue
-    validate_against_schema "$data_file" "$DATA_SCHEMA"
+
+    file_name=$(basename "$data_file")
+
+    # Check if specific schema exists for this file
+    if [ -n "${SPECIFIC_SCHEMAS[$file_name]}" ] && [ -f "${SPECIFIC_SCHEMAS[$file_name]}" ]; then
+        if [ "$VERBOSE" = true ]; then
+            echo -e "${GRAY}Using specific schema for $file_name${NC}"
+        fi
+        validate_against_schema "$data_file" "${SPECIFIC_SCHEMAS[$file_name]}"
+    else
+        # Fall back to generic schema
+        if [ "$VERBOSE" = true ]; then
+            echo -e "${GRAY}Using generic schema for $file_name${NC}"
+        fi
+        validate_against_schema "$data_file" "$DATA_SCHEMA"
+    fi
 done
 
 # Summary
