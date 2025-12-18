@@ -1,0 +1,223 @@
+#!/bin/bash
+# check-version-sync.sh
+# Validates version consistency across the repository
+
+set -e
+
+REPO_ROOT="/workspace"
+VERBOSE=false
+
+# Parse arguments
+while [[ "$#" -gt 0 ]]; do
+    case $1 in
+        -v|--verbose) VERBOSE=true ;;
+        *) echo "Unknown parameter: $1"; exit 1 ;;
+    esac
+    shift
+done
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+GRAY='\033[0;90m'
+NC='\033[0m' # No Color
+
+echo -e "${CYAN}=== Repository Version Sync Checker ===${NC}"
+echo ""
+
+# Read version from plugin.json
+PLUGIN_JSON="$REPO_ROOT/.claude-plugin/plugin.json"
+if [ ! -f "$PLUGIN_JSON" ]; then
+    echo -e "${RED}Error: plugin.json not found${NC}"
+    exit 1
+fi
+
+EXPECTED_VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$PLUGIN_JSON" | head -1)
+echo -e "${GREEN}Expected version (from plugin.json): $EXPECTED_VERSION${NC}"
+echo ""
+
+# Read version from marketplace.json
+MARKETPLACE_JSON="$REPO_ROOT/.claude-plugin/marketplace.json"
+MARKETPLACE_VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$MARKETPLACE_JSON" | head -1)
+
+# Read version from INVENTORY.json
+INVENTORY_JSON="$REPO_ROOT/docs/repo-keeper/INVENTORY.json"
+INVENTORY_VERSION="unknown"
+if [ -f "$INVENTORY_JSON" ]; then
+    INVENTORY_VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$INVENTORY_JSON" | head -1)
+fi
+
+# Initialize counters
+TOTAL_FILES=0
+MATCHING_FILES=0
+MISSING_FOOTERS=0
+WRONG_VERSIONS=0
+ERROR_COUNT=0
+
+declare -a ERRORS=()
+
+# Check marketplace.json
+if [ "$MARKETPLACE_VERSION" != "$EXPECTED_VERSION" ]; then
+    ERRORS+=(".claude-plugin/marketplace.json|$MARKETPLACE_VERSION|Config")
+    ((ERROR_COUNT++))
+    echo -e "${RED}[ERROR] marketplace.json version mismatch: $MARKETPLACE_VERSION${NC}"
+else
+    echo -e "${GREEN}[OK] marketplace.json version matches: $MARKETPLACE_VERSION${NC}"
+fi
+
+# Check INVENTORY.json
+if [ "$INVENTORY_VERSION" != "$EXPECTED_VERSION" ]; then
+    ERRORS+=("docs/repo-keeper/INVENTORY.json|$INVENTORY_VERSION|Inventory")
+    ((ERROR_COUNT++))
+    echo -e "${RED}[ERROR] INVENTORY.json version mismatch: $INVENTORY_VERSION${NC}"
+else
+    echo -e "${GREEN}[OK] INVENTORY.json version matches: $INVENTORY_VERSION${NC}"
+fi
+
+echo ""
+echo -e "${CYAN}Checking documentation footers...${NC}"
+
+# Find all markdown files (excluding node_modules, .git, and CHANGELOG.md)
+while IFS= read -r -d '' file; do
+    ((TOTAL_FILES++))
+    RELATIVE_PATH="${file#$REPO_ROOT/}"
+
+    # Check for version footer pattern: **Version:** X.Y.Z
+    if grep -q '\*\*Version:\*\*' "$file"; then
+        FOUND_VERSION=$(grep -oP '\*\*Version:\*\*\s+\K[\d\.]+' "$file" | head -1)
+
+        if [ "$FOUND_VERSION" = "$EXPECTED_VERSION" ]; then
+            ((MATCHING_FILES++))
+            if [ "$VERBOSE" = true ]; then
+                echo -e "  ${GRAY}[OK] $RELATIVE_PATH${NC}"
+            fi
+        else
+            ((WRONG_VERSIONS++))
+            ((ERROR_COUNT++))
+            ERRORS+=("$RELATIVE_PATH|$FOUND_VERSION|Footer")
+            echo -e "  ${YELLOW}[MISMATCH] $RELATIVE_PATH - Found: $FOUND_VERSION${NC}"
+        fi
+    else
+        ((MISSING_FOOTERS++))
+        if [ "$VERBOSE" = true ]; then
+            echo -e "  ${GRAY}[NO FOOTER] $RELATIVE_PATH${NC}"
+        fi
+    fi
+done < <(find "$REPO_ROOT" -name "*.md" -type f \
+    ! -path "*/node_modules/*" \
+    ! -path "*/.git/*" \
+    ! -name "CHANGELOG.md" \
+    -print0)
+
+# Check data files with version fields
+echo ""
+echo -e "${CYAN}Checking data files...${NC}"
+
+check_data_file() {
+    local file_path="$1"
+    local full_path="$REPO_ROOT/$file_path"
+
+    if [ -f "$full_path" ]; then
+        DATA_VERSION=$(grep -oP '"version"\s*:\s*"\K[^"]+' "$full_path" | head -1)
+
+        if [ "$DATA_VERSION" != "$EXPECTED_VERSION" ]; then
+            ERRORS+=("$file_path|$DATA_VERSION|Data")
+            ((ERROR_COUNT++))
+            echo -e "  ${RED}[ERROR] $file_path version mismatch: $DATA_VERSION${NC}"
+        else
+            echo -e "  ${GREEN}[OK] $file_path version matches: $DATA_VERSION${NC}"
+        fi
+    fi
+}
+
+check_data_file "data/secrets.json"
+check_data_file "data/variables.json"
+
+# Summary
+echo ""
+echo -e "${CYAN}=== Summary ===${NC}"
+echo "Total markdown files checked: $TOTAL_FILES"
+echo -e "${GREEN}Files with matching footers:  $MATCHING_FILES${NC}"
+echo -e "${YELLOW}Files with wrong versions:    $WRONG_VERSIONS${NC}"
+echo -e "${GRAY}Files missing footers:        $MISSING_FOOTERS${NC}"
+if [ $ERROR_COUNT -eq 0 ]; then
+    echo -e "${GREEN}Total errors found:           $ERROR_COUNT${NC}"
+else
+    echo -e "${RED}Total errors found:           $ERROR_COUNT${NC}"
+fi
+
+# Detailed error report
+if [ $ERROR_COUNT -gt 0 ]; then
+    echo ""
+    echo -e "${RED}=== Error Details ===${NC}"
+    echo ""
+
+    # Group errors by type
+    declare -a CONFIG_ERRORS=()
+    declare -a INVENTORY_ERRORS=()
+    declare -a FOOTER_ERRORS=()
+    declare -a DATA_ERRORS=()
+
+    for error in "${ERRORS[@]}"; do
+        IFS='|' read -r file version type <<< "$error"
+        case $type in
+            Config) CONFIG_ERRORS+=("$file|$version") ;;
+            Inventory) INVENTORY_ERRORS+=("$file|$version") ;;
+            Footer) FOOTER_ERRORS+=("$file|$version") ;;
+            Data) DATA_ERRORS+=("$file|$version") ;;
+        esac
+    done
+
+    if [ ${#CONFIG_ERRORS[@]} -gt 0 ]; then
+        echo -e "${YELLOW}Configuration Files:${NC}"
+        for error in "${CONFIG_ERRORS[@]}"; do
+            IFS='|' read -r file version <<< "$error"
+            echo "  $file: $version -> $EXPECTED_VERSION"
+        done
+        echo ""
+    fi
+
+    if [ ${#INVENTORY_ERRORS[@]} -gt 0 ]; then
+        echo -e "${YELLOW}Inventory:${NC}"
+        for error in "${INVENTORY_ERRORS[@]}"; do
+            IFS='|' read -r file version <<< "$error"
+            echo "  $file: $version -> $EXPECTED_VERSION"
+        done
+        echo ""
+    fi
+
+    if [ ${#DATA_ERRORS[@]} -gt 0 ]; then
+        echo -e "${YELLOW}Data Files:${NC}"
+        for error in "${DATA_ERRORS[@]}"; do
+            IFS='|' read -r file version <<< "$error"
+            echo "  $file: $version -> $EXPECTED_VERSION"
+        done
+        echo ""
+    fi
+
+    if [ ${#FOOTER_ERRORS[@]} -gt 0 ]; then
+        echo -e "${YELLOW}Documentation Footers (${#FOOTER_ERRORS[@]} files):${NC}"
+        for error in "${FOOTER_ERRORS[@]}"; do
+            IFS='|' read -r file version <<< "$error"
+            echo "  $file: $version -> $EXPECTED_VERSION"
+        done
+    fi
+fi
+
+echo ""
+
+# Exit with appropriate code for CI/CD
+if [ $ERROR_COUNT -eq 0 ]; then
+    echo -e "${GREEN}✓ All versions are in sync!${NC}"
+    exit 0
+else
+    echo -e "${RED}✗ Version sync check failed!${NC}"
+    echo ""
+    echo "To fix version mismatches:"
+    echo "  1. Update all files to version $EXPECTED_VERSION"
+    echo "  2. Use search/replace across the repository"
+    echo "  3. Run this script again to verify"
+    exit 1
+fi
