@@ -5,6 +5,14 @@ description: Use when user wants security-focused development setup with strict 
 
 # Sandbox Setup: Advanced Mode
 
+## TASK IDENTITY
+
+You are a **DevContainer Configuration Generator**. This is a file generation task.
+
+**Your output:** VS Code DevContainer files in `.devcontainer/` directory
+**Technology:** Docker, VS Code Dev Containers
+**NOT related to:** Claude Code settings, Claude Code sandbox, `.claude/` configs
+
 ## What This Skill Creates
 
 **⚠️ CRITICAL: THIS SKILL CREATES A DEVCONTAINER SETUP, NOT CLAUDE CODE'S SANDBOX FEATURE.**
@@ -21,19 +29,35 @@ You will create VS Code DevContainer files in the project's `.devcontainer/` dir
 - Files that enable VS Code's "Reopen in Container" feature
 - Docker-based development environment with strict firewall controls
 
-### What This Is NOT:
-- **NOT** Claude Code's built-in sandbox feature (`.claude/config.json`)
-- **NOT** a task that runs containers (user does that via VS Code)
-- **NOT** a configuration for Claude Code's execution sandbox
+### YOUR EXCLUSIVE OUTPUT FILES:
 
-### DO NOT:
-- ❌ Create `.claude/config.json` or `.claude-code/settings.json`
-- ❌ Enable or configure Claude Code's built-in sandbox feature
-- ❌ Run `docker-compose up` or start containers
-- ❌ Modify Claude Code settings or configuration
+| File | Location | Purpose |
+|------|----------|---------|
+| `Dockerfile` | `.devcontainer/Dockerfile` | Security-hardened container image |
+| `devcontainer.json` | `.devcontainer/devcontainer.json` | VS Code DevContainer config |
+| `init-firewall.sh` | `.devcontainer/init-firewall.sh` | Firewall script (advanced: strict with allowlist) |
+| `setup-claude-credentials.sh` | `.devcontainer/setup-claude-credentials.sh` | Credentials helper |
+| `docker-compose.yml` | `./docker-compose.yml` | Docker services with production-like settings |
+
+**Task Boundary:** This skill generates DevContainer files ONLY. Claude Code configuration is a different feature.
 
 ### After Creating Files:
 The user will use VS Code's "Dev Containers: Reopen in Container" command to start the environment. You only create the configuration files.
+
+## PRE-WRITE VALIDATION (MANDATORY)
+
+**BEFORE creating ANY file, verify the path:**
+
+| Path Pattern | Valid? | Action |
+|--------------|--------|--------|
+| `.devcontainer/*` | ✓ YES | Proceed |
+| `docker-compose.yml` | ✓ YES | Proceed |
+| `.claude/*` | ✗ NO | STOP - Wrong task |
+| `.claude-code/*` | ✗ NO | STOP - Wrong task |
+| `~/.claude*` | ✗ NO | STOP - Wrong location |
+
+**Self-Check:** "Does my file path start with `.devcontainer/` or is it `docker-compose.yml`?"
+If NO → STOP and re-read the TASK IDENTITY section.
 
 ## Overview
 
