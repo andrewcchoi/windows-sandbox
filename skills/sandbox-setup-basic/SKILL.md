@@ -121,6 +121,21 @@ The Basic mode provides the fastest path to a working sandbox environment. This 
 
 Basic mode gets developers up and running in minutes using battle-tested base images without custom security layers.
 
+## Usage
+
+This skill is invoked via the `/sandboxxer:basic` command or by selecting "Basic Mode" from the `/sandboxxer:setup` interactive mode selector.
+
+**Command:**
+```
+/sandboxxer:basic
+```
+
+The skill will:
+1. Detect your project type automatically
+2. Ask 1-2 minimal questions
+3. Generate DevContainer configuration files in `.devcontainer/`
+4. Configure docker-compose for multi-service projects
+
 ## When to Use This Skill
 
 ### Use Basic Mode When

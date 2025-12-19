@@ -139,6 +139,22 @@ Intermediate mode provides a standard Dockerfile-based development sandbox with 
 - Official base images only
 - 4-6 configuration questions for streamlined setup
 
+## Usage
+
+This skill is invoked via the `/sandboxxer:intermediate` command or by selecting "Intermediate Mode" from the `/sandboxxer:setup` interactive mode selector.
+
+**Command:**
+```
+/sandboxxer:intermediate
+```
+
+The skill will:
+1. Ask 4-6 configuration questions (project details, services, extensions)
+2. Generate a custom Dockerfile with development tools
+3. Create DevContainer configuration in `.devcontainer/`
+4. Configure docker-compose with selected services
+5. Set up permissive firewall (no network restrictions)
+
 ## When to Use This Skill
 
 **Use Intermediate Mode When:**

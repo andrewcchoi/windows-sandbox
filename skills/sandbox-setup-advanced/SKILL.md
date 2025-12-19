@@ -134,6 +134,23 @@ The templates contain:
 
 Advanced Mode provides security-focused development environments with strict firewall controls and customizable domain allowlists. This mode balances security and usability by asking 7-10 configuration questions with brief explanations, using strict firewall defaults with configurable allowlists, and generating production-like configurations.
 
+## Usage
+
+This skill is invoked via the `/sandboxxer:advanced` command or by selecting "Advanced Mode" from the `/sandboxxer:setup` interactive mode selector.
+
+**Command:**
+```
+/sandboxxer:advanced
+```
+
+The skill will:
+1. Ask 7-10 configuration questions with security explanations
+2. Generate a custom Dockerfile with security-hardened settings
+3. Create strict firewall configuration with customizable domain allowlists
+4. Set up DevContainer configuration in `.devcontainer/`
+5. Configure docker-compose with selected services
+6. Generate production-like network isolation
+
 ## When to Use This Skill
 
 Use this skill when:
