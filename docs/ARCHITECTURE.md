@@ -48,62 +48,104 @@ Firewall domain whitelist organized by category:
 
 ### 4. Template System
 
-The plugin uses a hybrid template organization:
+The plugin uses a fully self-contained template organization with master source files:
 
 #### Directory Structure
 ```
 templates/
-├── shared/                  # Shared files (identical across all modes)
-│   ├── docker-compose.yml           # 2.4 KB
-│   ├── Dockerfile.python            # 3.3 KB (multi-stage build)
-│   ├── Dockerfile.node              # 3.0 KB (multi-stage build)
-│   └── setup-claude-credentials.sh  # 6.2 KB (credential persistence)
+├── master-shared/           # Master source files (synced to skills)
+│   ├── docker-compose.yml           # 2.4 KB - Source of truth
+│   ├── Dockerfile.python            # 3.3 KB - Source of truth (multi-stage build)
+│   ├── Dockerfile.node              # 3.0 KB - Source of truth (multi-stage build)
+│   └── setup-claude-credentials.sh  # 6.2 KB - Source of truth (credential persistence)
 ├── master/                  # Master templates with all sections
 │   ├── devcontainer.json.master
 │   ├── Dockerfile.master
 │   ├── docker-compose.master.yml
 │   ├── init-firewall.master.sh
 │   └── setup-claude-credentials.master.sh
+├── compose/                 # Mode-specific compose variants
+├── env/                     # Mode-specific .env templates
+├── extensions/              # Mode-specific VS Code extensions
+├── mcp/                     # Mode-specific MCP configs
+├── variables/               # Mode-specific variable configs
 └── legacy/                  # Old monolithic templates (deprecated)
-    ├── python/
-    ├── node/
-    └── fullstack/
 
 skills/
 ├── sandbox-setup-basic/
-│   └── templates/           # Mode-specific files
-│       └── devcontainer.json        # 908 bytes
+│   └── templates/           # ALL files needed for basic mode (self-contained)
+│       ├── devcontainer.json
+│       ├── docker-compose.yml        # Copied from master-shared
+│       ├── Dockerfile.python         # Copied from master-shared
+│       ├── Dockerfile.node           # Copied from master-shared
+│       ├── setup-claude-credentials.sh # Copied from master-shared
+│       ├── .env.template
+│       ├── extensions.json
+│       ├── mcp.json
+│       └── variables.json
 ├── sandbox-setup-intermediate/
-│   └── templates/
-│       ├── devcontainer.json        # 965 bytes
-│       └── init-firewall.sh         # 2.3 KB (permissive firewall)
+│   └── templates/           # ALL files needed for intermediate mode
+│       ├── devcontainer.json
+│       ├── docker-compose.yml        # Copied from master-shared
+│       ├── Dockerfile.python         # Copied from master-shared
+│       ├── Dockerfile.node           # Copied from master-shared
+│       ├── setup-claude-credentials.sh # Copied from master-shared
+│       ├── init-firewall.sh          # 2.3 KB (permissive firewall)
+│       ├── .env.template
+│       ├── extensions.json
+│       ├── mcp.json
+│       └── variables.json
 ├── sandbox-setup-advanced/
-│   └── templates/
-│       ├── devcontainer.json        # 957 bytes
-│       └── init-firewall.sh         # 10.8 KB (strict firewall)
+│   └── templates/           # ALL files needed for advanced mode
+│       ├── devcontainer.json
+│       ├── docker-compose.yml        # Copied from master-shared
+│       ├── Dockerfile.python         # Copied from master-shared
+│       ├── Dockerfile.node           # Copied from master-shared
+│       ├── setup-claude-credentials.sh # Copied from master-shared
+│       ├── init-firewall.sh          # 10.8 KB (strict firewall)
+│       ├── .env.template
+│       ├── extensions.json
+│       ├── mcp.json
+│       └── variables.json
 └── sandbox-setup-yolo/
-    └── templates/
-        ├── devcontainer.json        # 959 bytes
-        └── init-firewall.sh         # 17.9 KB (full firewall)
+    └── templates/           # ALL files needed for yolo mode
+        ├── devcontainer.json
+        ├── docker-compose.yml        # Copied from master-shared
+        ├── Dockerfile.python         # Copied from master-shared
+        ├── Dockerfile.node           # Copied from master-shared
+        ├── setup-claude-credentials.sh # Copied from master-shared
+        ├── init-firewall.sh          # 17.9 KB (full firewall)
+        ├── .env.template
+        ├── extensions.json
+        ├── mcp.json
+        └── variables.json
 ```
 
 #### Organization Strategy
 
-**Shared Templates** (`templates/shared/`):
-- Files that are identical across all modes
-- No duplication - single source of truth
+**Master Shared Files** (`templates/master-shared/`):
+- Source of truth for files identical across all modes
+- Updated using sync script: `./scripts/sync-templates.sh`
+- Changes propagate to all skill folders
 - Includes: Dockerfiles, docker-compose.yml, credentials script
 
-**Mode-Specific Templates** (in skill folders):
-- Files that differ by mode
-- Self-contained within each skill
-- Includes: devcontainer.json (all modes), init-firewall.sh (except Basic)
+**Fully Self-Contained Skills**:
+- Each skill has ALL templates in its `templates/` folder
+- No external directory dependencies
+- Works reliably when running from any user project
+- Simple skill-relative path: `$SKILL_DIR/templates`
+
+**Sync Workflow**:
+1. Edit files in `templates/master-shared/` (source of truth)
+2. Run `./scripts/sync-templates.sh` to copy to all skills
+3. Commit both master and synced copies
 
 **Benefits**:
-- Simple path discovery using skill-relative paths
-- No duplication of large shared files
-- Mode-specific files co-located with their skills
-- Works reliably from any execution directory
+- Guaranteed template availability from skill context
+- No "template not found" errors in user projects
+- Simple, predictable path discovery
+- Clear separation: master (edit here) vs runtime (skills)
+- Minimal duplication cost (~60KB total for reliability)
 
 #### Section Marker Format
 Templates use comments to mark extractable sections:

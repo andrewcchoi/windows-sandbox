@@ -82,39 +82,29 @@ If NO → STOP and re-read the TASK IDENTITY section.
 **⚠️ NEW WORKFLOW: Copy templates first, then customize.**
 
 Instead of reading templates and generating similar files, you will:
-1. Copy complete template files from the plugin directory
+1. Copy complete template files from the skill's templates folder
 2. Customize placeholders and add project-specific values
 
 This ensures all files have complete content with multi-stage builds, credentials persistence, and all required tools.
 
-### Step 1A: Find Template Directories
+### Step 1A: Find Template Directory
 
-Templates are organized in two locations:
-- **Shared templates**: Common files used by all modes
-- **Mode-specific templates**: Unique files for this mode
+All templates for this mode are in the skill's `templates/` folder (self-contained).
 
 ```bash
 # Find the skill directory (relative to this SKILL.md file)
 SKILL_DIR="$(dirname "${BASH_SOURCE[0]}")"
+TEMPLATES="$SKILL_DIR/templates"
 
-# Shared templates are at plugin root
-PLUGIN_ROOT="$(cd "$SKILL_DIR/../.." && pwd)"
-SHARED_DIR="$PLUGIN_ROOT/templates/shared"
-
-# Mode-specific templates are in this skill folder
-MODE_DIR="$SKILL_DIR/templates"
-
-echo "Shared templates: $SHARED_DIR"
-echo "Mode templates: $MODE_DIR"
+echo "Templates location: $TEMPLATES"
 ```
 
 **Verify templates exist:**
 ```bash
-ls -la "$SHARED_DIR/"
-ls -la "$MODE_DIR/"
+ls -la "$TEMPLATES/"
 ```
 
-If either directory is missing, STOP and report the error.
+If the directory is missing, STOP and report the error.
 
 ### Step 1B: Copy Template Files
 
@@ -124,15 +114,17 @@ Use Bash to copy all YOLO mode template files:
 # Create .devcontainer directory
 mkdir -p .devcontainer
 
-# Copy shared files (Dockerfiles, compose, credentials)
-cp "$SHARED_DIR/docker-compose.yml" ./docker-compose.yml
-cp "$SHARED_DIR/Dockerfile.python" .devcontainer/Dockerfile.python
-cp "$SHARED_DIR/Dockerfile.node" .devcontainer/Dockerfile.node
-cp "$SHARED_DIR/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
-
-# Copy mode-specific files (devcontainer.json, firewall)
-cp "$MODE_DIR/devcontainer.json" .devcontainer/devcontainer.json
-cp "$MODE_DIR/init-firewall.sh" .devcontainer/init-firewall.sh
+# Copy ALL templates from skill folder
+cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml
+cp "$TEMPLATES/Dockerfile.python" .devcontainer/Dockerfile.python
+cp "$TEMPLATES/Dockerfile.node" .devcontainer/Dockerfile.node
+cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
+cp "$TEMPLATES/devcontainer.json" .devcontainer/devcontainer.json
+cp "$TEMPLATES/init-firewall.sh" .devcontainer/init-firewall.sh
+cp "$TEMPLATES/.env.template" ./.env.template
+cp "$TEMPLATES/extensions.json" .devcontainer/extensions.json
+cp "$TEMPLATES/mcp.json" .devcontainer/mcp.json
+cp "$TEMPLATES/variables.json" .devcontainer/variables.json
 
 # Make scripts executable
 chmod +x .devcontainer/init-firewall.sh
@@ -152,6 +144,10 @@ test -f .devcontainer/Dockerfile.python && echo "✓ Dockerfile.python" || echo 
 test -f .devcontainer/Dockerfile.node && echo "✓ Dockerfile.node" || echo "✗ MISSING"
 test -f .devcontainer/init-firewall.sh && echo "✓ init-firewall.sh" || echo "✗ MISSING"
 test -f .devcontainer/setup-claude-credentials.sh && echo "✓ setup-claude-credentials.sh" || echo "✗ MISSING"
+test -f .env.template && echo "✓ .env.template" || echo "✗ MISSING"
+test -f .devcontainer/extensions.json && echo "✓ extensions.json" || echo "✗ MISSING"
+test -f .devcontainer/mcp.json && echo "✓ mcp.json" || echo "✗ MISSING"
+test -f .devcontainer/variables.json && echo "✓ variables.json" || echo "✗ MISSING"
 
 # Verify Dockerfile has multi-stage build (should be 80+ lines)
 echo ""

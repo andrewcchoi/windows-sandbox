@@ -61,36 +61,22 @@ If NO → STOP and re-read the TASK IDENTITY section.
 
 ## MANDATORY FIRST STEP - COPY TEMPLATES
 
-**⚠️ NEW WORKFLOW: Copy templates first, then customize.**
+**⚠️ SIMPLIFIED WORKFLOW: All templates in one location - just copy from skill folder.**
 
-### Step 1A: Find Template Directories
+### Step 1A: Find Template Directory
 
-Templates are organized in two locations:
-- **Shared templates**: Common files used by all modes
-- **Mode-specific templates**: Unique files for this mode
+All templates for this mode are self-contained in the skill folder:
 
 ```bash
 # Find the skill directory (relative to this SKILL.md file)
 SKILL_DIR="$(dirname "${BASH_SOURCE[0]}")"
+TEMPLATES="$SKILL_DIR/templates"
 
-# Shared templates are at plugin root
-PLUGIN_ROOT="$(cd "$SKILL_DIR/../.." && pwd)"
-SHARED_DIR="$PLUGIN_ROOT/templates/shared"
-
-# Mode-specific templates are in this skill folder
-MODE_DIR="$SKILL_DIR/templates"
-
-echo "Shared templates: $SHARED_DIR"
-echo "Mode templates: $MODE_DIR"
+echo "Templates directory: $TEMPLATES"
+ls -la "$TEMPLATES/"
 ```
 
-**Verify templates exist:**
-```bash
-ls -la "$SHARED_DIR/"
-ls -la "$MODE_DIR/"
-```
-
-If either directory is missing, STOP and report the error.
+**NOTE:** All templates are in `skills/sandbox-setup-basic/templates/` - no external dependencies!
 
 ### Step 1B: Copy Template Files
 
@@ -100,20 +86,22 @@ If either directory is missing, STOP and report the error.
 # Create .devcontainer directory
 mkdir -p .devcontainer
 
-# Copy shared files (Dockerfiles, compose, credentials)
-cp "$SHARED_DIR/docker-compose.yml" ./docker-compose.yml
-cp "$SHARED_DIR/Dockerfile.python" .devcontainer/Dockerfile.python
-cp "$SHARED_DIR/Dockerfile.node" .devcontainer/Dockerfile.node
-cp "$SHARED_DIR/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
-
-# Copy mode-specific files (devcontainer.json)
-cp "$MODE_DIR/devcontainer.json" .devcontainer/devcontainer.json
+# Copy ALL templates from the skill folder
+cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml
+cp "$TEMPLATES/Dockerfile.python" .devcontainer/Dockerfile.python
+cp "$TEMPLATES/Dockerfile.node" .devcontainer/Dockerfile.node
+cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
+cp "$TEMPLATES/devcontainer.json" .devcontainer/devcontainer.json
+cp "$TEMPLATES/.env.template" ./.env.template
+cp "$TEMPLATES/extensions.json" .devcontainer/extensions.json
+cp "$TEMPLATES/mcp.json" .devcontainer/mcp.json
+cp "$TEMPLATES/variables.json" .devcontainer/variables.json
 
 # Make scripts executable
 chmod +x .devcontainer/setup-claude-credentials.sh
 ```
 
-**NOTE:** Basic mode has NO firewall script. Only credentials + Dockerfiles + devcontainer.json.
+**NOTE:** Basic mode has NO firewall script.
 
 ### Step 1C: Verify Files Were Copied
 
