@@ -139,6 +139,36 @@ YOLO mode allows any Docker image from any registry:
 - Security scan results
 - Dockerfile source (if available)
 
+## File Creation Location
+
+**CRITICAL**: All generated files must be created in the user's current working directory (project root).
+
+### Before generating files:
+
+1. **Verify you're in the user's project directory** (where their source code is)
+2. **Create the `.devcontainer/` directory**:
+   ```bash
+   mkdir -p .devcontainer
+   ```
+
+### Files to create (paths relative to project root):
+
+- `.devcontainer/Dockerfile` - Comprehensive custom Dockerfile with ALL language toolchains and tools
+- `docker-compose.yml` - Docker services configuration with full customization (in project root)
+- `.devcontainer/devcontainer.json` - DevContainer configuration with user-selected firewall mode
+- `.devcontainer/init-firewall.sh` - Firewall script (yolo: disabled/permissive/strict based on user choice)
+- `.devcontainer/setup-claude-credentials.sh` - Credentials setup (Issue #30)
+- `.devcontainer/mcp.json` - MCP server configuration with all selected servers
+- `.devcontainer/variables.json` - Custom build args and environment variables (optional)
+
+### DO NOT create files in:
+
+- `~/.claude-code/` or `~/.claude/` (home directory configs)
+- `/root/.claude-code/` or any user home directory
+- Any system directory like `/etc/` or `/var/`
+
+**Why this matters**: The DevContainer configuration MUST be in the project's `.devcontainer/` folder for VS Code and Claude Code to detect and use it. Creating files in the wrong location will result in a non-functional setup. YOLO mode gives users complete control, but this location requirement is non-negotiable.
+
 ## Workflow
 
 ### Phase 1: Image Selection
@@ -535,9 +565,30 @@ Even in YOLO mode, perform basic validation:
 
 ## Templates Used
 
-YOLO mode uses the complete master templates with full customization:
+YOLO mode uses the complete master templates with full customization. Always read these template files:
 
-### Dockerfile.master
+### 1. Extensions Template
+**File**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.yolo.json`
+- Comprehensive extension list (35+ extensions)
+- All language extensions (Python, JS, Go, Rust, Java, Ruby, PHP, C++)
+- Productivity tools (GitLens, Error Lens, TODO Tree, Code Spell Checker)
+- Themes (GitHub, Dracula, Monokai)
+- Fun extensions (Power Mode, Rainbow Brackets)
+- **Important**: Read this file and merge with platform-specific extensions
+
+### 2. MCP Configuration Template
+**File**: `${CLAUDE_PLUGIN_ROOT}/templates/mcp/mcp.yolo.json`
+- All 11+ MCP servers available
+- Includes: filesystem, memory, sqlite, fetch, github, postgres, docker, brave-search, puppeteer, slack, google-drive, custom
+- Copy to `.devcontainer/mcp.json` with user selections
+
+### 3. Variables Template
+**File**: `${CLAUDE_PLUGIN_ROOT}/templates/variables/variables.yolo.json`
+- User-defined build args and container environment variables
+- Custom configuration based on user needs
+- Copy to `.devcontainer/variables.json`
+
+### 4. Dockerfile.master
 All sections available:
 - `packages_python` - Python 3 + pip + venv
 - `packages_build` - Build tools (gcc, g++, make, cmake)
@@ -585,6 +636,38 @@ All services available:
 - Nginx
 - Ollama (AI model server)
 - Custom services
+
+### Credentials Persistence (Issue #30)
+
+All YOLO mode setups must include Claude credentials mounting:
+
+1. **In docker-compose.yml**, add volume mount to app service:
+   ```yaml
+   app:
+     volumes:
+       - .:/workspace:cached
+       - ~/.claude:/tmp/host-claude:ro  # Issue #30: credentials mount
+   ```
+
+2. **Create setup script** `.devcontainer/setup-claude-credentials.sh`:
+   ```bash
+   #!/bin/bash
+   # Copy Claude credentials from host mount to container
+   if [ -d "/tmp/host-claude" ]; then
+     mkdir -p ~/.claude
+     cp -r /tmp/host-claude/* ~/.claude/ 2>/dev/null || true
+     echo "Claude credentials copied successfully"
+   fi
+   ```
+   Make executable: `chmod +x .devcontainer/setup-claude-credentials.sh`
+
+3. **In devcontainer.json**, add to lifecycle commands:
+   ```json
+   "postStartCommand": ".devcontainer/init-firewall.sh",
+   "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && ..."
+   ```
+
+**Important**: Always read template files and use them as the source of truth. DO NOT use inline configuration examples without reading templates first.
 
 ## Key Principles
 

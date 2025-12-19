@@ -119,6 +119,56 @@ Reference: `${CLAUDE_PLUGIN_ROOT}/data/official-images.json`
 - **RabbitMQ**: `rabbitmq:3.13-management`
 - **Nginx**: `nginx:1.25-bookworm`
 
+## Template References
+
+When generating configuration, use these template files:
+
+- **Extensions**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basic.json`
+  - Read this file and merge base extensions with platform-specific extensions
+  - Base extensions: `anthropic.claude-code`, `ms-azuretools.vscode-docker`, `redhat.vscode-yaml`, `eamodio.gitlens`, `PKief.material-icon-theme`, `johnpapa.vscode-peacock`
+  - Platform extensions: Python (`ms-python.python`, `ms-python.vscode-pylance`), Node (`dbaeumer.vscode-eslint`, `esbenp.prettier-vscode`), etc.
+
+- **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/templates/compose/docker-compose.basic.yml`
+  - Template includes postgres and redis services
+  - Add app service with credentials mount
+
+- **Firewall**: `${CLAUDE_PLUGIN_ROOT}/templates/firewall/basic-no-firewall.sh`
+  - No-op script that relies on sandbox isolation
+  - Copy to `.devcontainer/init-firewall.sh`
+
+- **Credentials Setup**: Create `.devcontainer/setup-claude-credentials.sh` for Issue #30
+  - Copies Claude credentials from host mount to container
+  - Essential for credentials persistence across container rebuilds
+
+**Important**: Always read the extensions template file and merge with platform-specific extensions. DO NOT use inline extension lists.
+
+## File Creation Location
+
+**CRITICAL**: All generated files must be created in the user's current working directory (project root).
+
+### Before generating files:
+
+1. **Verify you're in the user's project directory** (where their source code is)
+2. **Create the `.devcontainer/` directory**:
+   ```bash
+   mkdir -p .devcontainer
+   ```
+
+### Files to create (paths relative to project root):
+
+- `docker-compose.yml` - Docker services configuration (in project root)
+- `.devcontainer/devcontainer.json` - DevContainer configuration
+- `.devcontainer/init-firewall.sh` - Firewall script (basic mode: no-op script)
+- `.devcontainer/setup-claude-credentials.sh` - Credentials setup (Issue #30)
+
+### DO NOT create files in:
+
+- `~/.claude-code/` or `~/.claude/` (home directory configs)
+- `/root/.claude-code/` or any user home directory
+- Any system directory like `/etc/` or `/var/`
+
+**Why this matters**: The DevContainer configuration MUST be in the project's `.devcontainer/` folder for VS Code and Claude Code to detect and use it. Creating files in the wrong location will result in a non-functional setup.
+
 ## Workflow
 
 ### Step 1: Project Detection (Automatic)
@@ -158,77 +208,114 @@ I couldn't detect your project type automatically. What's your primary language 
 
 ### Step 3: Generate Configuration
 
-#### Option A: Simple Sandbox Template (No Services)
+**Important**: ALL basic mode setups use docker-compose.yml. This enables:
+- Credentials mounting for Issue #30 (persistent Claude credentials)
+- Consistent configuration approach
+- Easy service addition later
 
-When project only needs runtime environment, use minimal devcontainer.json:
+Generate these files:
 
-**File**: `.devcontainer/devcontainer.json`
-
-```json
-{
-  "name": "Project Name Sandbox",
-  "image": "docker/sandbox-templates:claude-code",
-  "customizations": {
-    "vscode": {
-      "extensions": []
-    }
-  },
-  "remoteUser": "root"
-}
-```
-
-#### Option B: Official Image with Services
-
-When project needs database, cache, or other services:
-
-**File**: `docker-compose.yml`
+#### File 1: `docker-compose.yml`
 
 ```yaml
 version: '3.8'
 
 services:
   app:
-    image: python:3.12-slim-bookworm
+    image: python:3.12-slim-bookworm  # Use detected language image
     volumes:
-      - ..:/workspace:cached
+      - .:/workspace:cached
+      - ~/.claude:/tmp/host-claude:ro  # Issue #30: credentials mount
     working_dir: /workspace
     command: sleep infinity
-    depends_on:
-      - postgres
-      - redis
+    # Add depends_on if services needed (postgres, redis, etc.)
 
-  postgres:
-    image: postgres:16-bookworm
-    environment:
-      POSTGRES_USER: devuser
-      POSTGRES_PASSWORD: devpass
-      POSTGRES_DB: devdb
-    volumes:
-      - postgres-data:/var/lib/postgresql/data
+  # Add services from templates/compose/docker-compose.basic.yml if needed
+  # postgres:
+  #   image: postgres:16-bookworm
+  #   environment:
+  #     POSTGRES_USER: devuser
+  #     POSTGRES_PASSWORD: devpass
+  #     POSTGRES_DB: devdb
+  #   ports:
+  #     - "5432:5432"
+  #   volumes:
+  #     - postgres-data:/var/lib/postgresql/data
+  #
+  # redis:
+  #   image: redis:7-alpine
+  #   ports:
+  #     - "6379:6379"
 
-  redis:
-    image: redis:7-alpine
-
-volumes:
-  postgres-data:
+# volumes:
+#   postgres-data:
 ```
 
-**File**: `.devcontainer/devcontainer.json`
+#### File 2: `.devcontainer/devcontainer.json`
+
+Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basic.json` and merge with platform-specific extensions.
 
 ```json
 {
-  "name": "Project Name Sandbox",
+  "name": "{{PROJECT_NAME}} Sandbox",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
+  "remoteUser": "node",
   "customizations": {
     "vscode": {
-      "extensions": []
+      "extensions": [
+        // Base extensions from templates/extensions/extensions.basic.json
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "PKief.material-icon-theme",
+        "johnpapa.vscode-peacock",
+        // Platform-specific (example for Python)
+        "ms-python.python",
+        "ms-python.vscode-pylance"
+      ]
     }
   },
-  "remoteUser": "root"
+  "postStartCommand": ".devcontainer/init-firewall.sh",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "forwardPorts": [8000, 5432, 6379]
 }
 ```
+
+#### File 3: `.devcontainer/init-firewall.sh`
+
+Copy from `${CLAUDE_PLUGIN_ROOT}/templates/firewall/basic-no-firewall.sh`:
+
+```bash
+#!/bin/bash
+echo "=========================================="
+echo "FIREWALL: BASIC MODE"
+echo "=========================================="
+echo "No firewall configured (Basic mode - relies on sandbox isolation)"
+echo "Firewall configuration complete (no restrictions applied)"
+echo "=========================================="
+exit 0
+```
+
+Make executable: `chmod +x .devcontainer/init-firewall.sh`
+
+#### File 4: `.devcontainer/setup-claude-credentials.sh`
+
+Create credentials setup script for Issue #30:
+
+```bash
+#!/bin/bash
+# Copy Claude credentials from host mount to container
+if [ -d "/tmp/host-claude" ]; then
+  mkdir -p ~/.claude
+  cp -r /tmp/host-claude/* ~/.claude/ 2>/dev/null || true
+  echo "Claude credentials copied successfully"
+fi
+```
+
+Make executable: `chmod +x .devcontainer/setup-claude-credentials.sh`
 
 ### Step 4: Auto-Pull Images
 
@@ -279,36 +366,63 @@ Your sandbox is ready to use!
 
 ## Configuration Examples
 
-### Example 1: Python Project (Simple)
+### Example 1: Python Project (No Services)
 
 **Detected files**: `requirements.txt`
 
-**Generated**: `.devcontainer/devcontainer.json`
+**Generated files**:
 
+**docker-compose.yml**:
+```yaml
+version: '3.8'
+
+services:
+  app:
+    image: python:3.12-slim-bookworm
+    volumes:
+      - .:/workspace:cached
+      - ~/.claude:/tmp/host-claude:ro
+    working_dir: /workspace
+    command: sleep infinity
+```
+
+**.devcontainer/devcontainer.json**:
 ```json
 {
   "name": "Python Sandbox",
-  "image": "python:3.12-slim-bookworm",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "node",
   "customizations": {
     "vscode": {
       "extensions": [
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "PKief.material-icon-theme",
+        "johnpapa.vscode-peacock",
         "ms-python.python",
         "ms-python.vscode-pylance"
       ]
     }
   },
-  "postCreateCommand": "pip install -r requirements.txt",
-  "remoteUser": "root"
+  "postStartCommand": ".devcontainer/init-firewall.sh",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "forwardPorts": [8000]
 }
 ```
+
+Plus `.devcontainer/init-firewall.sh` and `.devcontainer/setup-claude-credentials.sh`
 
 ### Example 2: Node.js + PostgreSQL
 
 **Detected files**: `package.json`
 
-**Generated**: `docker-compose.yml` + `.devcontainer/devcontainer.json`
+**Generated files**:
 
-docker-compose.yml:
+**docker-compose.yml**:
 ```yaml
 version: '3.8'
 
@@ -316,7 +430,8 @@ services:
   app:
     image: node:20-bookworm-slim
     volumes:
-      - ..:/workspace:cached
+      - .:/workspace:cached
+      - ~/.claude:/tmp/host-claude:ro
     working_dir: /workspace
     command: sleep infinity
     depends_on:
@@ -337,32 +452,43 @@ volumes:
   postgres-data:
 ```
 
-.devcontainer/devcontainer.json:
+**.devcontainer/devcontainer.json**:
 ```json
 {
   "name": "Node.js + PostgreSQL Sandbox",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
+  "remoteUser": "node",
   "customizations": {
     "vscode": {
       "extensions": [
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "PKief.material-icon-theme",
+        "johnpapa.vscode-peacock",
         "dbaeumer.vscode-eslint",
         "esbenp.prettier-vscode"
       ]
     }
   },
-  "postCreateCommand": "npm install",
-  "remoteUser": "root"
+  "postStartCommand": ".devcontainer/init-firewall.sh",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && npm install",
+  "forwardPorts": [3000, 5432]
 }
 ```
+
+Plus `.devcontainer/init-firewall.sh` and `.devcontainer/setup-claude-credentials.sh`
 
 ### Example 3: Full-Stack (React + Python + PostgreSQL + Redis)
 
 **Detected files**: `package.json`, `requirements.txt`
 
-**Generated**: `docker-compose.yml` with all services
+**Generated files**:
 
+**docker-compose.yml**:
 ```yaml
 version: '3.8'
 
@@ -370,7 +496,8 @@ services:
   app:
     image: docker/sandbox-templates:claude-code
     volumes:
-      - ..:/workspace:cached
+      - .:/workspace:cached
+      - ~/.claude:/tmp/host-claude:ro
     working_dir: /workspace
     command: sleep infinity
     depends_on:
@@ -383,15 +510,51 @@ services:
       POSTGRES_USER: devuser
       POSTGRES_PASSWORD: devpass
       POSTGRES_DB: devdb
+    ports:
+      - "5432:5432"
     volumes:
       - postgres-data:/var/lib/postgresql/data
 
   redis:
     image: redis:7-alpine
+    ports:
+      - "6379:6379"
 
 volumes:
   postgres-data:
 ```
+
+**.devcontainer/devcontainer.json**:
+```json
+{
+  "name": "Full-Stack Sandbox",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "PKief.material-icon-theme",
+        "johnpapa.vscode-peacock",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  },
+  "postStartCommand": ".devcontainer/init-firewall.sh",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt && npm install",
+  "forwardPorts": [8000, 3000, 5432, 6379]
+}
+```
+
+Plus `.devcontainer/init-firewall.sh` and `.devcontainer/setup-claude-credentials.sh`
 
 ## Integration with Other Skills
 

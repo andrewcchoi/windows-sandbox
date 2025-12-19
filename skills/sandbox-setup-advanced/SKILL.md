@@ -102,6 +102,35 @@ ALLOWABLE_DOMAINS=(
 )
 ```
 
+## File Creation Location
+
+**CRITICAL**: All generated files must be created in the user's current working directory (project root).
+
+### Before generating files:
+
+1. **Verify you're in the user's project directory** (where their source code is)
+2. **Create the `.devcontainer/` directory**:
+   ```bash
+   mkdir -p .devcontainer
+   ```
+
+### Files to create (paths relative to project root):
+
+- `.devcontainer/Dockerfile` - Custom Dockerfile with language-specific tools and security hardening
+- `docker-compose.yml` - Docker services configuration with production-like settings (in project root)
+- `.devcontainer/devcontainer.json` - DevContainer configuration with strict firewall
+- `.devcontainer/init-firewall.sh` - Firewall script (advanced: strict with customizable allowlist)
+- `.devcontainer/setup-claude-credentials.sh` - Credentials setup (Issue #30)
+- `.devcontainer/mcp.json` - MCP server configuration (optional)
+
+### DO NOT create files in:
+
+- `~/.claude-code/` or `~/.claude/` (home directory configs)
+- `/root/.claude-code/` or any user home directory
+- Any system directory like `/etc/` or `/var/`
+
+**Why this matters**: The DevContainer configuration MUST be in the project's `.devcontainer/` folder for VS Code and Claude Code to detect and use it. Creating files in the wrong location will result in a non-functional setup.
+
 ## Workflow
 
 ### 1. Project Analysis
@@ -248,19 +277,69 @@ Advanced Mode uses these template sources:
 
 1. **Dockerfile**: `templates/dockerfiles/Dockerfile.<language>`
    - Examples: `Dockerfile.python`, `Dockerfile.node`, `Dockerfile.go`
+   - Multi-stage build with Node.js for corporate proxy support (Issue #29)
    - Customized with base image and pre-install options
 
-2. **Firewall Script**: `templates/firewall/advanced-strict.sh`
+2. **Extensions**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.advanced.json`
+   - Read this file and merge with platform-specific extensions
+   - Includes ~22-28 extensions covering comprehensive development tools
+   - Base + language-specific + productivity + themes
+
+3. **MCP Configuration**: `${CLAUDE_PLUGIN_ROOT}/templates/mcp/mcp.advanced.json`
+   - Includes 8 MCP servers: filesystem, memory, sqlite, fetch, github, postgres, docker, brave-search
+   - Copy to `.devcontainer/mcp.json`
+
+4. **Variables**: `${CLAUDE_PLUGIN_ROOT}/templates/variables/variables.advanced.json`
+   - Build args and container environment variables
+   - Production-like configuration settings
+
+5. **Firewall Script**: `templates/firewall/advanced-strict.sh`
    - Starts with `mode_defaults.advanced` allowlist
    - Customized with user-provided additional domains
    - Category markers added for documentation
 
-3. **Docker Compose**: Extracted from `templates/master/docker-compose.master.yml`
-   - Only includes selected services
-   - Production-like configurations (health checks, resource limits, restart policies)
+6. **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/templates/compose/docker-compose.advanced.yml`
+   - Production-like service configurations
+   - Includes health checks, resource limits, restart policies
+   - Must include credentials mount for Issue #30
 
-4. **DevContainer Config**: `templates/base/devcontainer.json.template`
+7. **DevContainer Config**: `templates/base/devcontainer.json.template`
    - Customized with project name, network name, firewall mode
+   - Must include credentials setup in postCreateCommand
+
+8. **Credentials Setup**: Create `.devcontainer/setup-claude-credentials.sh` for Issue #30
+   - Copies Claude credentials from host mount to container
+   - Essential for credentials persistence across container rebuilds
+
+### Credentials Persistence (Issue #30)
+
+All advanced mode setups must include Claude credentials mounting:
+
+1. **In docker-compose.yml**, add volume mount to app service:
+   ```yaml
+   app:
+     volumes:
+       - .:/workspace:cached
+       - ~/.claude:/tmp/host-claude:ro  # Issue #30: credentials mount
+   ```
+
+2. **Create setup script** `.devcontainer/setup-claude-credentials.sh`:
+   ```bash
+   #!/bin/bash
+   if [ -d "/tmp/host-claude" ]; then
+     mkdir -p ~/.claude
+     cp -r /tmp/host-claude/* ~/.claude/ 2>/dev/null || true
+     echo "Claude credentials copied successfully"
+   fi
+   ```
+
+3. **In devcontainer.json**, add to postCreateCommand:
+   ```json
+   "postStartCommand": ".devcontainer/init-firewall.sh",
+   "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && ..."
+   ```
+
+**Important**: Always read template files and use them as the source of truth. DO NOT use inline configuration examples without reading templates first.
 
 ## Reference Documentation
 
