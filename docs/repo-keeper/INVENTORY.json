@@ -1,6 +1,6 @@
 {
   "$schema": "./inventory.schema.json",
-  "version": "2.2.2",
+  "version": "3.0.0",
   "last_updated": "2025-12-19",
   "repository": "sandbox-maxxing",
   "description": "Repository entity inventory for auditing and organization",
