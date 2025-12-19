@@ -248,19 +248,69 @@ Advanced Mode uses these template sources:
 
 1. **Dockerfile**: `templates/dockerfiles/Dockerfile.<language>`
    - Examples: `Dockerfile.python`, `Dockerfile.node`, `Dockerfile.go`
+   - Multi-stage build with Node.js for corporate proxy support (Issue #29)
    - Customized with base image and pre-install options
 
-2. **Firewall Script**: `templates/firewall/advanced-strict.sh`
+2. **Extensions**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.advanced.json`
+   - Read this file and merge with platform-specific extensions
+   - Includes ~22-28 extensions covering comprehensive development tools
+   - Base + language-specific + productivity + themes
+
+3. **MCP Configuration**: `${CLAUDE_PLUGIN_ROOT}/templates/mcp/mcp.advanced.json`
+   - Includes 8 MCP servers: filesystem, memory, sqlite, fetch, github, postgres, docker, brave-search
+   - Copy to `.devcontainer/mcp.json`
+
+4. **Variables**: `${CLAUDE_PLUGIN_ROOT}/templates/variables/variables.advanced.json`
+   - Build args and container environment variables
+   - Production-like configuration settings
+
+5. **Firewall Script**: `templates/firewall/advanced-strict.sh`
    - Starts with `mode_defaults.advanced` allowlist
    - Customized with user-provided additional domains
    - Category markers added for documentation
 
-3. **Docker Compose**: Extracted from `templates/master/docker-compose.master.yml`
-   - Only includes selected services
-   - Production-like configurations (health checks, resource limits, restart policies)
+6. **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/templates/compose/docker-compose.advanced.yml`
+   - Production-like service configurations
+   - Includes health checks, resource limits, restart policies
+   - Must include credentials mount for Issue #30
 
-4. **DevContainer Config**: `templates/base/devcontainer.json.template`
+7. **DevContainer Config**: `templates/base/devcontainer.json.template`
    - Customized with project name, network name, firewall mode
+   - Must include credentials setup in postCreateCommand
+
+8. **Credentials Setup**: Create `.devcontainer/setup-claude-credentials.sh` for Issue #30
+   - Copies Claude credentials from host mount to container
+   - Essential for credentials persistence across container rebuilds
+
+### Credentials Persistence (Issue #30)
+
+All advanced mode setups must include Claude credentials mounting:
+
+1. **In docker-compose.yml**, add volume mount to app service:
+   ```yaml
+   app:
+     volumes:
+       - .:/workspace:cached
+       - ~/.claude:/tmp/host-claude:ro  # Issue #30: credentials mount
+   ```
+
+2. **Create setup script** `.devcontainer/setup-claude-credentials.sh`:
+   ```bash
+   #!/bin/bash
+   if [ -d "/tmp/host-claude" ]; then
+     mkdir -p ~/.claude
+     cp -r /tmp/host-claude/* ~/.claude/ 2>/dev/null || true
+     echo "Claude credentials copied successfully"
+   fi
+   ```
+
+3. **In devcontainer.json**, add to postCreateCommand:
+   ```json
+   "postStartCommand": ".devcontainer/init-firewall.sh",
+   "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && ..."
+   ```
+
+**Important**: Always read template files and use them as the source of truth. DO NOT use inline configuration examples without reading templates first.
 
 ## Reference Documentation
 

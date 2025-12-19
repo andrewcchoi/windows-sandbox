@@ -70,6 +70,68 @@ Intermediate mode provides a standard Dockerfile-based development sandbox with 
 - **Goal**: Balance between customization and simplicity
 - **Approach**: Provide sensible defaults with clear options
 
+## Template References
+
+When generating configuration, use these template files:
+
+- **Extensions**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.intermediate.json`
+  - Read this file and merge with platform-specific extensions
+  - Includes ~15-20 extensions covering common development tools
+  - Base + language-specific + productivity tools
+
+- **MCP Configuration**: `${CLAUDE_PLUGIN_ROOT}/templates/mcp/mcp.intermediate.json`
+  - Includes 5 MCP servers: filesystem, memory, sqlite, fetch, github
+  - Copy to `.devcontainer/mcp.json`
+
+- **Variables**: `${CLAUDE_PLUGIN_ROOT}/templates/variables/variables.intermediate.json`
+  - Build args and container environment variables
+  - Standard development configuration
+
+- **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/templates/compose/docker-compose.intermediate.yml`
+  - Template with postgres, redis, rabbitmq services
+  - Includes healthchecks and named networks
+
+- **Dockerfile**: `${CLAUDE_PLUGIN_ROOT}/templates/dockerfiles/Dockerfile.<language>`
+  - Language-specific dockerfiles (Python, Node, Go, etc.)
+  - Multi-stage build with Node.js for corporate proxy support (Issue #29)
+
+- **Firewall**: `${CLAUDE_PLUGIN_ROOT}/templates/firewall/intermediate-permissive.sh`
+  - Permissive firewall configuration (no restrictions)
+  - Copy to `.devcontainer/init-firewall.sh`
+
+- **Credentials Setup**: Create `.devcontainer/setup-claude-credentials.sh` for Issue #30
+  - Copies Claude credentials from host mount to container
+  - Essential for credentials persistence across container rebuilds
+
+**Important**: Always read template files and use them as the source of truth. DO NOT use inline configuration examples.
+
+### Credentials Persistence (Issue #30)
+
+All intermediate mode setups must include Claude credentials mounting:
+
+1. **In docker-compose.yml**, add volume mount to app service:
+   ```yaml
+   app:
+     volumes:
+       - .:/workspace:cached
+       - ~/.claude:/tmp/host-claude:ro  # Credentials mount
+   ```
+
+2. **Create setup script** `.devcontainer/setup-claude-credentials.sh`:
+   ```bash
+   #!/bin/bash
+   if [ -d "/tmp/host-claude" ]; then
+     mkdir -p ~/.claude
+     cp -r /tmp/host-claude/* ~/.claude/ 2>/dev/null || true
+     echo "Claude credentials copied successfully"
+   fi
+   ```
+
+3. **In devcontainer.json**, add to postCreateCommand:
+   ```json
+   "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && ..."
+   ```
+
 ## Workflow
 
 ### Step 1: Project Detection
@@ -180,11 +242,13 @@ Examples: postgresql-client, imagemagick, ffmpeg
 
 4. **Generate devcontainer.json**
    - Base template: `templates/base/devcontainer.json.template`
+   - Read extensions from `templates/extensions/extensions.intermediate.json`
+   - Merge base + platform-specific extensions
    - Key settings:
      ```json
      {
        "name": "[PROJECT_NAME]",
-       "dockerComposeFile": "docker-compose.yml",
+       "dockerComposeFile": "../docker-compose.yml",
        "service": "app",
        "workspaceFolder": "/workspace",
        "customizations": {
@@ -193,21 +257,26 @@ Examples: postgresql-client, imagemagick, ffmpeg
              "terminal.integrated.defaultProfile.linux": "bash"
            },
            "extensions": [
-             // Language-specific extensions
+             // From templates/extensions/extensions.intermediate.json
+             // Base: anthropic.claude-code, ms-azuretools.vscode-docker, etc.
+             // Platform-specific: ms-python.python, dbaeumer.vscode-eslint, etc.
            ]
          }
        },
        "features": {},
-       "postCreateCommand": "bash .devcontainer/init-firewall.sh",
+       "postStartCommand": ".devcontainer/init-firewall.sh",
+       "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && echo 'Setup complete!'",
        "remoteEnv": {
          "FIREWALL_MODE": "permissive"
-       }
+       },
+       "remoteUser": "node"
      }
      ```
 
 5. **Create docker-compose.yml**
-   - Base structure from `templates/base/docker-compose.base.yml`
+   - Base structure from `templates/compose/docker-compose.intermediate.yml`
    - Add `app` service with Dockerfile build
+   - Include credentials mount for Issue #30
    - Append extracted services from master template
    - Configure networks and volumes
    - Example structure:
@@ -220,7 +289,9 @@ Examples: postgresql-client, imagemagick, ffmpeg
            context: .
            dockerfile: .devcontainer/Dockerfile
          volumes:
-           - ..:/workspace:cached
+           - .:/workspace:cached
+           - ~/.claude:/tmp/host-claude:ro  # Issue #30: credentials mount
+         working_dir: /workspace
          command: sleep infinity
          networks:
            - dev-network
