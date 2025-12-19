@@ -70,61 +70,35 @@ if [ "$QUIET" = false ]; then
     echo -e "${CYAN}Checking script permissions...${NC}"
 fi
 
-# On WSL/Windows with filemode disabled, skip actual permission checks
-if [ "$IS_WSL" = true ] || [ "$FILEMODE_DISABLED" = true ]; then
-    # Count scripts but don't check permissions
-    for script in "$SCRIPT_DIR"/*.sh; do
-        [ -e "$script" ] || continue
-        script_name=$(basename "$script")
-        [ "$script_name" = "check-permissions.sh" ] && continue
-        ((TOTAL_SCRIPTS++))
-    done
+for script in "$SCRIPT_DIR"/*.sh; do
+    [ -e "$script" ] || continue
+    ((TOTAL_SCRIPTS++)) || true
 
-    if [ -d "$SCRIPT_DIR/lib" ]; then
-        for script in "$SCRIPT_DIR/lib"/*.sh; do
-            [ -e "$script" ] || continue
-            ((TOTAL_SCRIPTS++))
-        done
+    script_name=$(basename "$script")
+
+    if [ ! -x "$script" ]; then
+        echo -e "  ${YELLOW}[WARNING] Not executable: $script_name${NC}"
+        ((WARNING_COUNT++)) || true
+    elif [ "$VERBOSE" = true ]; then
+        echo -e "  ${GRAY}[OK] $script_name is executable${NC}"
     fi
+done
 
-    if [ "$QUIET" = false ]; then
-        echo -e "  ${YELLOW}[SKIPPED] Permission checks not applicable on WSL/Windows${NC}"
-    fi
-else
-    # Normal permission checking on Linux
-    for script in "$SCRIPT_DIR"/*.sh; do
+# Check scripts in lib directory
+if [ -d "$SCRIPT_DIR/lib" ]; then
+    for script in "$SCRIPT_DIR/lib"/*.sh; do
         [ -e "$script" ] || continue
+        ((TOTAL_SCRIPTS++)) || true
 
-        # Skip this script to avoid issues
-        script_name=$(basename "$script")
-        [ "$script_name" = "check-permissions.sh" ] && continue
-
-        ((TOTAL_SCRIPTS++))
+            script_name="lib/$(basename "$script")"
 
         if [ ! -x "$script" ]; then
             echo -e "  ${YELLOW}[WARNING] Not executable: $script_name${NC}"
-            ((WARNING_COUNT++))
+            ((WARNING_COUNT++)) || true
         elif [ "$VERBOSE" = true ]; then
             echo -e "  ${GRAY}[OK] $script_name is executable${NC}"
         fi
     done
-
-    # Check scripts in lib directory
-    if [ -d "$SCRIPT_DIR/lib" ]; then
-        for script in "$SCRIPT_DIR/lib"/*.sh; do
-            [ -e "$script" ] || continue
-            ((TOTAL_SCRIPTS++))
-
-            script_name="lib/$(basename "$script")"
-
-            if [ ! -x "$script" ]; then
-                echo -e "  ${YELLOW}[WARNING] Not executable: $script_name${NC}"
-                ((WARNING_COUNT++))
-            elif [ "$VERBOSE" = true ]; then
-                echo -e "  ${GRAY}[OK] $script_name is executable${NC}"
-            fi
-        done
-    fi
 fi
 
 # Summary
