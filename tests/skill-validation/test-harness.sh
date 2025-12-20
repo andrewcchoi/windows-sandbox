@@ -19,6 +19,63 @@ log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
 log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
 log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
 
+# Generate skill output
+generate_skill_output() {
+    local mode="$1"
+    local test_project="$TEST_DIR/test-project"
+    local output_dir="$GENERATED_DIR/$mode"
+
+    # Create fresh test directory
+    rm -rf "$output_dir"
+    cp -r "$test_project" "$output_dir"
+    cd "$output_dir"
+
+    # Run skill with minimal interaction
+    case "$mode" in
+        basic)
+            # Basic mode with defaults
+            echo -e "test-project\n" | claude skill sandboxxer:basic
+            ;;
+        intermediate)
+            # Intermediate with Python selected
+            echo -e "test-project\npython\nyes\nno\n" | claude skill sandboxxer:intermediate
+            ;;
+        advanced)
+            # Advanced with Python, postgres, redis
+            echo -e "test-project\npython\npostgres,redis\nyes\n" | claude skill sandboxxer:advanced
+            ;;
+        yolo)
+            # YOLO with maximum customization
+            echo -e "test-project\npython\nall\nstrict\nyes\n" | claude skill sandboxxer:yolo
+            ;;
+    esac
+
+    # Return to test directory
+    cd "$TEST_DIR"
+
+    # Verify key files exist
+    if [ ! -f "$output_dir/.devcontainer/devcontainer.json" ]; then
+        log_error "devcontainer.json not generated"
+        return 1
+    fi
+
+    if [ ! -f "$output_dir/docker-compose.yml" ]; then
+        log_error "docker-compose.yml not generated"
+        return 1
+    fi
+
+    return 0
+}
+
+# Cleanup test output
+cleanup_test_output() {
+    local mode="$1"
+    local output_dir="$GENERATED_DIR/$mode"
+
+    log_info "Cleaning up test output for $mode"
+    rm -rf "$output_dir"
+}
+
 # Test a single skill
 test_skill() {
     local mode="$1"
