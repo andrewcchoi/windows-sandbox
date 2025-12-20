@@ -1,6 +1,6 @@
 # Skill Validation Test System
 
-Automated testing framework for continuous validation of Claude Code skills, specifically designed for the sandboxxer plugin sandbox setup skills.
+Automated testing framework for continuous validation of Claude Code skills, specifically designed for the devcontainer-setup plugin (v3.0.0) sandbox setup skills.
 
 ## Overview
 
@@ -595,7 +595,7 @@ Contributions welcome! Areas for enhancement:
 
 ## License
 
-Part of the sandboxxer plugin for Claude Code.
+Part of the devcontainer-setup plugin (v3.0.0) for Claude Code.
 
 ## See Also
 

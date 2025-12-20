@@ -109,7 +109,7 @@ Instead of launching "claude skill" as a bash subprocess, the feed_responses_int
 
 ```markdown
 User: "Test basic mode setup with automated responses"
-Claude: [Uses Skill tool to invoke sandboxxer:basic]
+Claude: [Uses Skill tool to invoke devcontainer-setup:basic]
         [Monitors Skill tool output in real-time]
         [Feeds responses from test-config.yml]
         [Logs conversation]

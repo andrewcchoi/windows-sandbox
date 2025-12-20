@@ -117,7 +117,7 @@ trap "rm -f $PROMPT_FILE" EXIT
 
 # Build the prompt with responses
 cat > "$PROMPT_FILE" <<EOF
-I need you to run the /sandboxxer:$MODE skill in this directory: $OUTPUT_DIR
+I need you to run the /devcontainer-setup:$MODE skill in this directory: $OUTPUT_DIR
 
 Please use these automated responses when the skill asks questions:
 
@@ -151,7 +151,7 @@ log_info ""
 log_warn "MANUAL STEP REQUIRED:"
 log_warn "This wrapper has prepared the skill invocation instructions above."
 log_warn "To complete the test, you need to:"
-log_warn "  1. Use the Skill tool to invoke /sandboxxer:$MODE"
+log_warn "  1. Use the Skill tool to invoke /devcontainer-setup:$MODE"
 log_warn "  2. Feed the numbered responses when questions are asked"
 log_warn "  3. Wait for skill completion"
 log_warn "  4. Verify files are generated in: $OUTPUT_DIR"
@@ -173,7 +173,7 @@ echo ""
 echo "========================================="
 echo "NEXT STEPS:"
 echo "========================================="
-echo "1. The skill should be invoked with: /sandboxxer:$MODE"
+echo "1. The skill should be invoked with: /devcontainer-setup:$MODE"
 echo "2. Provide responses in order when asked:"
 echo ""
 while IFS='|||' read -r pattern response; do
