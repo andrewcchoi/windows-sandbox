@@ -1,22 +1,40 @@
 {
-  "name": "demo-app",
+  "name": "demo-app - Advanced",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+
   "customizations": {
     "vscode": {
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash"
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh"
+          }
+        }
       },
       "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance"
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "PKief.material-icon-theme",
+        "johnpapa.vscode-peacock"
       ]
     }
   },
-  "postStartCommand": "sudo bash .devcontainer/init-firewall.sh",
+
+  "features": {},
+
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh",
+  "postStartCommand": "sudo .devcontainer/init-firewall.sh",
+
+  "forwardPorts": [8000, 3000, 5432, 6379],
+
   "remoteEnv": {
+    "PATH": "/usr/local/bin:${containerEnv:PATH}",
     "FIREWALL_MODE": "strict"
-  },
-  "remoteUser": "vscode"
+  }
 }

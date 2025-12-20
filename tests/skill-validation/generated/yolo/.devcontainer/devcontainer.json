@@ -1,28 +1,40 @@
 {
-  "name": "demo-app (YOLO Mode)",
+  "name": "demo-app - YOLO",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+
   "customizations": {
     "vscode": {
       "settings": {
-        "terminal.integrated.defaultProfile.linux": "bash",
-        "python.defaultInterpreterPath": "/usr/local/bin/python",
-        "python.linting.enabled": true,
-        "python.formatting.provider": "black"
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh"
+          }
+        }
       },
       "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "ms-python.black-formatter",
-        "charliermarsh.ruff"
+        "anthropic.claude-code",
+        "ms-azuretools.vscode-docker",
+        "redhat.vscode-yaml",
+        "eamodio.gitlens",
+        "PKief.material-icon-theme",
+        "johnpapa.vscode-peacock"
       ]
     }
   },
-  "remoteUser": "vscode",
+
   "features": {},
-  "postCreateCommand": "echo 'YOLO mode: No firewall restrictions. Full control enabled.'",
+
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh",
+  "postStartCommand": "sudo .devcontainer/init-firewall.sh",
+
+  "forwardPorts": [8000, 3000, 5432, 6379],
+
   "remoteEnv": {
-    "FIREWALL_MODE": "disabled"
+    "PATH": "/usr/local/bin:${containerEnv:PATH}",
+    "FIREWALL_MODE": "configurable"
   }
 }

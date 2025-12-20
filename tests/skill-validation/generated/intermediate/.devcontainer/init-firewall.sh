@@ -1,25 +1,60 @@
 #!/bin/bash
-set -e
+# ============================================================================
+# CLAUDE CODE SANDBOX - Intermediate Mode Firewall Configuration
+# ============================================================================
+# Intermediate mode uses permissive mode with no network restrictions.
+# This provides maximum flexibility for development while still maintaining
+# container-level isolation.
+#
+# Security model:
+# - Container isolation only (no network restrictions)
+# - All outbound traffic allowed
+# - User responsible for security considerations
+#
+# WARNING: This configuration allows unrestricted network access from the
+# container. Only use in trusted development environments.
+# ============================================================================
 
-echo "🔓 Initializing Permissive Firewall Mode"
-echo "========================================"
+set -euo pipefail  # Exit on error, undefined vars, and pipeline failures
+IFS=$'\n\t'       # Stricter word splitting
 
-# Verify firewall mode
-if [ "${FIREWALL_MODE}" != "permissive" ]; then
-    echo "⚠️  Warning: FIREWALL_MODE is not set to 'permissive'"
-    echo "Expected: FIREWALL_MODE=permissive"
-    echo "Actual: FIREWALL_MODE=${FIREWALL_MODE}"
-fi
+echo "=========================================="
+echo "FIREWALL MODE: PERMISSIVE (INTERMEDIATE)"
+echo "=========================================="
+echo "All outbound traffic will be allowed."
+echo ""
+echo "WARNING: No network restrictions applied."
+echo "This mode provides maximum flexibility but"
+echo "relies solely on container isolation for security."
+echo ""
 
-# No firewall rules to configure - all traffic allowed
-echo "✓ No firewall restrictions applied"
-echo "✓ All outbound traffic allowed"
-echo "✓ All inbound traffic allowed"
+# Clear any existing rules
+echo "Clearing any existing firewall rules..."
+iptables -F 2>/dev/null || true
+iptables -X 2>/dev/null || true
+iptables -t nat -F 2>/dev/null || true
+iptables -t nat -X 2>/dev/null || true
+iptables -t mangle -F 2>/dev/null || true
+iptables -t mangle -X 2>/dev/null || true
+ipset destroy allowed-domains 2>/dev/null || true
+
+# Set default policies to ACCEPT
+echo "Setting permissive policies..."
+iptables -P INPUT ACCEPT 2>/dev/null || true
+iptables -P FORWARD ACCEPT 2>/dev/null || true
+iptables -P OUTPUT ACCEPT 2>/dev/null || true
 
 echo ""
-echo "Security Notice:"
-echo "- This configuration is for development only"
-echo "- No network filtering is active"
-echo "- Use Advanced Mode for production-like environments"
+echo "=========================================="
+echo "FIREWALL CONFIGURED SUCCESSFULLY"
+echo "=========================================="
+echo "Mode: Permissive (Intermediate mode)"
+echo "Network restrictions: None"
 echo ""
-echo "Firewall initialization complete."
+echo "Security considerations:"
+echo "  - Container isolation is your primary protection"
+echo "  - Be cautious about running untrusted code"
+echo "  - Consider upgrading to Advanced mode for network-level restrictions"
+echo "=========================================="
+
+exit 0
