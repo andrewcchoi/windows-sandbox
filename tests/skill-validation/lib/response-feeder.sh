@@ -6,12 +6,79 @@
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
 NC='\033[0m'
 
-# Logging functions
-log_info() { echo -e "${GREEN}[INFO]${NC} $1"; }
-log_warn() { echo -e "${YELLOW}[WARN]${NC} $1"; }
-log_error() { echo -e "${RED}[ERROR]${NC} $1"; }
+# Enhanced logging functions with timestamps
+log_info() {
+    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] [FEEDER] [INFO] $1"
+    echo -e "${GREEN}${msg}${NC}"
+    [ -n "${LOG_FILE:-}" ] && echo "$msg" >> "$LOG_FILE"
+}
+
+log_warn() {
+    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] [FEEDER] [WARN] $1"
+    echo -e "${YELLOW}${msg}${NC}"
+    [ -n "${LOG_FILE:-}" ] && echo "$msg" >> "$LOG_FILE"
+}
+
+log_error() {
+    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] [FEEDER] [ERROR] $1"
+    echo -e "${RED}${msg}${NC}"
+    [ -n "${LOG_FILE:-}" ] && echo "$msg" >> "$LOG_FILE"
+}
+
+log_debug() {
+    local msg="[$(date '+%Y-%m-%d %H:%M:%S')] [FEEDER] [DEBUG] $1"
+    if [ "${DEBUG:-false}" = "true" ]; then
+        echo -e "${BLUE}${msg}${NC}"
+    fi
+    [ -n "${LOG_FILE:-}" ] && echo "$msg" >> "$LOG_FILE"
+}
+
+# Validate config file before use
+validate_config() {
+    local config_file="$1"
+
+    log_debug "Validating config file: $config_file"
+
+    if [ ! -f "$config_file" ]; then
+        log_error "Config file not found: $config_file"
+        return 1
+    fi
+
+    # Check for responses section
+    if ! grep -q "^responses:" "$config_file"; then
+        log_error "Config file missing 'responses:' section"
+        return 1
+    fi
+
+    # Count response entries
+    local response_count=$(grep -c "^\s*-\s*prompt_pattern:" "$config_file" || echo "0")
+
+    if [ "$response_count" -lt 1 ]; then
+        log_error "Config file has no response entries"
+        return 1
+    fi
+
+    if [ "$response_count" -gt 20 ]; then
+        log_error "Config file has too many responses ($response_count > 20)"
+        log_error "This may indicate a parsing issue or malformed config"
+        return 1
+    fi
+
+    # Validate each response has a matching pattern and response
+    local pattern_count=$(grep -c "prompt_pattern:" "$config_file" || echo "0")
+    local response_line_count=$(grep -c "response:" "$config_file" || echo "0")
+
+    if [ "$pattern_count" -ne "$response_line_count" ]; then
+        log_error "Mismatched pattern and response counts: $pattern_count patterns, $response_line_count responses"
+        return 1
+    fi
+
+    log_debug "Config validation passed: $response_count response entries"
+    return 0
+}
 
 # Pre-pipe fallback: Feed default response sequences via stdin
 # This is the Phase 1 implementation - simple and reliable
@@ -235,9 +302,9 @@ feed_responses_interactive() {
     log_info "Config: $config_file"
     log_info "Temp dir: $temp_dir"
 
-    # Validate config file exists
-    if [ ! -f "$config_file" ]; then
-        log_error "Config file not found: $config_file"
+    # Validate config file
+    if ! validate_config "$config_file"; then
+        log_error "Config file validation failed: $config_file"
         log_info "Falling back to pre-pipe method"
         rm -rf "$temp_dir"
         feed_responses_prepipe "$mode"

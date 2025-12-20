@@ -1,311 +1,604 @@
-# Skill Validation Testing Framework
+# Skill Validation Test System
 
-Automated testing framework for sandbox setup skills that validates generated container files against master templates.
+Automated testing framework for continuous validation of Claude Code skills, specifically designed for the sandboxxer plugin sandbox setup skills.
 
 ## Overview
 
-This framework tests 4 skills:
-- **Basic** - `sandbox-setup-basic`
-- **Intermediate** - `sandbox-setup-intermediate`
-- **Advanced** - `sandbox-setup-advanced`
-- **YOLO** - `sandbox-setup-yolo`
+This test system provides:
 
-## Test Cycle
-
-1. **Generate** - Run skill to create files
-2. **Compare** - Validate against master templates
-3. **Evaluate** - Calculate accuracy score
-4. **Fix** - Edit skill if needed
-5. **Cleanup** - Remove test files
-6. **Repeat** - Continue until passing
-
-## Usage
-
-### Interactive Testing (with prompts)
-```bash
-cd tests/skill-validation
-./test-harness.sh
-```
-
-### Continuous Testing (automated)
-```bash
-cd tests/skill-validation
-./run-continuous.sh
-```
-
-### Dry Run (validate setup)
-```bash
-DRY_RUN=true ./run-continuous.sh
-```
-
-## Directory Structure
-
-```
-tests/skill-validation/
-├── test-harness.sh           # Main test orchestrator
-├── run-continuous.sh         # Continuous testing loop
-├── compare-containers.sh     # Comparison engine
-├── lib/
-│   ├── section-parser.sh     # Template section extraction
-│   ├── diff-analyzer.sh      # File comparison logic
-│   ├── skill-fixer.sh        # Auto-fix analysis
-│   └── report-generator.sh   # Report generation
-├── fixtures/                 # Test data
-├── generated/                # Generated test outputs
-├── reports/                  # Test reports
-└── test-project/            # Sample project for testing
-```
+- **Automated skill execution** with pre-configured responses
+- **Container comparison** between generated and reference examples
+- **Continuous testing** with iterative refinement
+- **Comprehensive reporting** with accuracy metrics
+- **Dry-run validation** for configuration testing
 
 ## Architecture
 
-### Test Harness (`test-harness.sh`)
-The main orchestrator that:
-- Coordinates test execution across all modes
-- Manages test iterations and retries
-- Handles user interaction for manual fixes
-- Generates per-iteration reports
+```
+tests/skill-validation/
+├── test-harness.sh              # Main test orchestrator
+├── compare-containers.sh        # Container comparison engine
+├── run-continuous.sh            # Continuous testing wrapper
+├── lib/
+│   ├── response-feeder.sh      # Automated response feeding
+│   ├── python-fallbacks.sh     # Python alternatives for missing tools
+│   └── comparison-utils.sh     # Shared comparison utilities
+├── test-project/               # Minimal test project structure
+├── generated/                  # Generated skill outputs
+├── reports/                    # Test reports and logs
+├── docs/
+│   └── TEST_CONFIG_FORMAT.md  # Configuration format documentation
+└── README.md                   # This file
+```
 
-### Continuous Runner (`run-continuous.sh`)
-Automated test execution without user interaction:
-- Runs all modes sequentially
-- Executes up to 5 iterations per mode
-- Attempts auto-fix analysis between iterations
-- Produces summary reports
+## Quick Start
 
-### Comparison Engine (`compare-containers.sh`)
-Core validation logic that:
-- Compares generated files against master templates
-- Calculates accuracy scores
-- Validates file syntax (JSON/YAML/Dockerfile)
-- Analyzes structural similarity
+### Basic Usage
 
-### Library Components
+Run all skill tests:
+```bash
+cd /workspace/tests/skill-validation
+./test-harness.sh
+```
 
-#### Section Parser (`lib/section-parser.sh`)
-- Extracts sections from master templates
-- Validates section markers in generated files
-- Retrieves section content for comparison
+### Dry-Run Mode
 
-#### Diff Analyzer (`lib/diff-analyzer.sh`)
-- Calculates structural similarity for JSON/YAML files
-- Validates file syntax using `jq`, `python3+PyYAML`
-- Performs key path matching to measure structure accuracy
-- Provides Dockerfile-specific validation
+Validate configuration without executing:
+```bash
+./test-harness.sh --dry-run
+```
 
-#### Skill Fixer (`lib/skill-fixer.sh`)
-- Analyzes test failures to identify issues
-- Checks for missing files, invalid syntax, missing keys
-- Reports issues in test reports
-- Placeholder for future automated fix application
+### Test Specific Mode
 
-#### Report Generator (`lib/report-generator.sh`)
-- Creates per-iteration detailed reports
-- Generates final summary reports in Markdown
-- Aggregates results across all modes
-- Provides test metrics and configuration details
+Test only one skill mode:
+```bash
+./test-harness.sh --mode basic
+```
 
-## Accuracy Metrics
+### Enable Debug Logging
 
-- **Threshold:** 95% accuracy required to pass
-- **Structure:** JSON/YAML key path matching
-- **Syntax:** File format validation (must be valid)
-- **Content:** Section presence and completeness
+See detailed execution information:
+```bash
+DEBUG=true ./test-harness.sh
+```
 
-### How Accuracy is Calculated
+## Test Modes
 
-1. **JSON/YAML Files (devcontainer.json, docker-compose.yml)**
-   - Extract all key paths from template and generated file
-   - Compare key sets to find common keys
-   - Accuracy = (common_keys / total_template_keys) × 100
+The test harness validates four sandbox setup modes:
 
-2. **Dockerfile**
-   - Count `FROM` instructions (multi-stage builds)
-   - Validate against expected stages for mode:
-     - Basic: 1-2 stages (90% if met)
-     - Intermediate/Advanced/YOLO: 2-3 stages (95% if met)
+1. **basic** - Minimal setup with single language
+2. **intermediate** - Standard setup with services (database, etc.)
+3. **advanced** - Full setup with custom firewall rules
+4. **yolo** - Maximum flexibility, no restrictions
 
-3. **Overall Score**
-   - Average of all file scores
-   - All files must pass syntax validation first
+## Configuration
 
-## Files Validated
+### Test Configuration Files
 
-| File | Checks |
-|------|--------|
-| devcontainer.json | JSON syntax, required keys (name, workspaceFolder, customizations), structure |
-| docker-compose.yml | YAML syntax, services, networks, volumes |
-| Dockerfile | FROM instruction, multi-stage build, packages |
+Each mode has a `test-config.yml` defining automated responses:
+
+```yaml
+# /workspace/examples/demo-app-sandbox-basic/test-config.yml
+metadata:
+  mode: basic
+  description: "Basic mode with Python backend, minimal setup"
+
+responses:
+  - prompt_pattern: "project.*name"
+    response: "demo-app"
+  - prompt_pattern: "language|stack"
+    response: "python"
+  - prompt_pattern: "confirm|proceed"
+    response: "yes"
+```
+
+See [TEST_CONFIG_FORMAT.md](docs/TEST_CONFIG_FORMAT.md) for complete documentation.
+
+### Environment Variables
+
+Configure behavior via environment variables:
+
+```bash
+# Dry-run mode - validate without executing
+DRY_RUN=true ./test-harness.sh
+
+# Debug mode - verbose logging
+DEBUG=true ./test-harness.sh
+
+# Custom log file location
+LOG_FILE=/tmp/my-test.log ./test-harness.sh
+
+# Custom accuracy threshold (default: 95%)
+ACCURACY_THRESHOLD=90 ./test-harness.sh
+```
+
+### Command-Line Options
+
+```bash
+Usage: ./test-harness.sh [OPTIONS]
+
+OPTIONS:
+    -h, --help              Show help message
+    -d, --dry-run          Run in dry-run mode
+    -m, --mode MODE        Test specific mode (basic|intermediate|advanced|yolo)
+    -t, --threshold NUM    Set accuracy threshold (default: 95)
+    --debug                Enable debug logging
+    --log-file FILE        Specify log file location
+```
+
+## Features
+
+### 1. Pre-Flight Validation
+
+Before running tests, the harness validates:
+
+- Example directories exist and contain required files
+- Test config files are valid YAML
+- Response patterns are well-formed
+- Response counts are reasonable (1-20 entries)
+- Pattern and response counts match
+
+### 2. Dry-Run Mode
+
+Test configuration without execution:
+
+```bash
+./test-harness.sh --dry-run
+```
+
+Shows what would happen:
+- Which files would be checked
+- Which configs would be used
+- What validation would occur
+- No actual skill execution
+
+### 3. Enhanced Logging
+
+All operations are logged with timestamps:
+
+```
+[2025-12-20 10:30:45] [INFO] Starting test for basic mode
+[2025-12-20 10:30:45] [INFO] Running pre-flight checks for basic mode...
+[2025-12-20 10:30:45] [DEBUG] Validating config file: test-config.yml
+[2025-12-20 10:30:45] [INFO] Pre-flight checks passed for basic mode
+```
+
+Logs are written to:
+- Console (with colors)
+- Log file (default: `reports/test-harness.log`)
+
+### 4. Cleanup on Failure
+
+When tests fail, the system:
+
+- Kills any background processes
+- Preserves failed output for debugging
+- Saves logs to timestamped directories
+- Cleans up temporary files
+
+Failed outputs saved to:
+```
+reports/failed-{mode}-{timestamp}/
+```
+
+### 5. Container Comparison
+
+Compares generated containers against examples:
+
+- **Structural comparison**: Files, directories, permissions
+- **Content comparison**: Line-by-line diff with fuzzy matching
+- **Semantic comparison**: Docker Compose services, DevContainer features
+- **Scoring**: Weighted accuracy percentage
+
+### 6. Continuous Testing
+
+Run tests continuously with skill refinement:
+
+```bash
+./run-continuous.sh
+```
+
+After each failure:
+1. Review the output and logs
+2. Edit the skill to fix issues
+3. Press Enter to retry
+4. Or type 'skip' to move to next mode
+
+## Test Workflow
+
+### Standard Test Flow
+
+1. **Pre-flight checks**
+   - Validate example directory exists
+   - Validate test config is well-formed
+   - Check test project structure
+
+2. **Skill execution**
+   - Copy test project to generated directory
+   - Load response feeder with config
+   - Execute skill with automated responses
+   - Monitor for completion or timeout
+
+3. **Validation**
+   - Check expected files were generated
+   - Validate file contents are reasonable
+
+4. **Comparison**
+   - Compare against example directory
+   - Calculate accuracy score
+   - Generate detailed diff report
+
+5. **Reporting**
+   - Save accuracy metrics
+   - Log pass/fail status
+   - Preserve artifacts for debugging
+
+### Error Handling
+
+The test harness handles various failure modes:
+
+**Timeout (1 minute per skill)**
+- Kills skill process
+- Logs timeout error
+- Preserves partial output
+- Reports timeout in failure log
+
+**Skill Errors**
+- Captures stderr to error.log
+- Detects non-zero exit codes
+- Reports "Generation failed"
+- Skips comparison phase
+
+**Missing Files**
+- Detects expected files not generated
+- Logs specific missing files
+- Triggers cleanup routine
+- Preserves output for debugging
+
+**Configuration Errors**
+- Validates config before use
+- Falls back to pre-piped defaults
+- Logs configuration issues
+- Continues with warnings
+
+## Response Feeding
+
+### Two Feeding Strategies
+
+**1. Pre-pipe (Phase 1)**
+
+Feeds all responses at once via stdin:
+```bash
+echo -e "demo-app\npython\nyes\n" | claude skill sandbox-setup-basic
+```
+
+Pros:
+- Simple and reliable
+- Works in all environments
+- No complex monitoring needed
+
+Cons:
+- Can't adapt to unexpected questions
+- No visibility into skill prompts
+- Fixed response sequence
+
+**2. Interactive (Phase 3+)**
+
+Monitors skill output and responds dynamically:
+```bash
+# Creates named pipes for bidirectional communication
+# Watches for questions in real-time
+# Matches questions against patterns
+# Feeds appropriate responses
+```
+
+Pros:
+- Adapts to question order changes
+- Provides detailed logging
+- Detects unexpected questions
+- Can validate skill behavior
+
+Cons:
+- More complex implementation
+- Requires named pipe support
+- Currently uses fallback to pre-pipe
+
+### Pattern Matching
+
+Questions are matched using:
+
+1. **Ordered matching**: Try response at expected index
+2. **Pattern verification**: Ensure pattern matches question
+3. **Fallback matching**: Try any pattern if ordered fails
+4. **Safe defaults**: Provide reasonable fallback responses
+
+See [TEST_CONFIG_FORMAT.md](docs/TEST_CONFIG_FORMAT.md) for pattern syntax.
 
 ## Reports
 
-Reports are saved to `reports/` directory:
+### Report Directory Structure
 
-### Individual Iteration Reports
-Format: `{mode}-iteration-{N}.txt`
-
-Example:
 ```
-Skill Validation Report
-=======================
-Mode: basic
-Iteration: 1
-Timestamp: 2025-12-20 03:00:00
-Accuracy: 87.50%
-Threshold: 95%
-Status: FAIL
-
-Generated Files:
-/workspace/tests/skill-validation/generated/basic/.devcontainer/devcontainer.json
-/workspace/tests/skill-validation/generated/basic/docker-compose.yml
-...
+reports/
+├── test-harness.log              # Main log file
+├── basic-iteration-1.txt         # Per-mode, per-iteration reports
+├── intermediate-iteration-1.txt
+├── failed-basic-20251220-103045/ # Failed run artifacts
+│   ├── test-harness.log
+│   └── basic/                    # Generated files
+└── comparison-reports/           # Detailed comparison diffs
+    └── basic-vs-example.txt
 ```
 
-### Summary Reports
-Format: `summary-{timestamp}.md`
+### Report Contents
 
-Contains:
-- Test results table for all modes
-- Test configuration details
-- Files validated and methods used
-- Final pass/fail status
+Each iteration report includes:
+- Mode and iteration number
+- Timestamp
+- Accuracy percentage
+- Threshold (pass/fail criteria)
+- Status (PASS/FAIL)
+- List of generated files
 
-## Dependencies
+### Reading Reports
 
-Required tools:
-- **bash** - Test harness execution
-- **jq** - JSON processing and validation
-- **python3** - YAML processing (requires PyYAML)
-- **bc** - Floating point calculations
-- **diff/comm** - File comparison utilities
-- **git** - Version control (for skill file access)
-
-Install dependencies on Ubuntu/Debian:
+**Check overall status:**
 ```bash
-sudo apt-get install -y jq python3 python3-yaml bc diffutils git
+tail -20 reports/test-harness.log
 ```
 
-## Extending the Framework
-
-### Adding New Validation Checks
-
-Edit `compare-containers.sh` to add new comparison functions:
-
+**Review specific mode:**
 ```bash
-# Compare new file type
-compare_newfile() {
-    local generated="$1"
-    local template="$2"
-    local mode="$3"
-
-    # Your validation logic
-    # Return score 0-100
-    echo "95"
-}
+cat reports/basic-iteration-1.txt
 ```
 
-Then add to `compare_with_templates()`:
+**Analyze failures:**
 ```bash
-if [ -f "$generated_dir/newfile.ext" ]; then
-    score=$(compare_newfile "$generated_dir/newfile.ext" "$templates_dir/newfile.master" "$mode")
-    total_score=$(echo "$total_score + $score" | bc)
-    ((file_count++))
-fi
-```
-
-### Adding New Skills to Test
-
-Edit `run-continuous.sh` or `test-harness.sh`:
-
-```bash
-local modes=("basic" "intermediate" "advanced" "yolo" "newmode")
-```
-
-Ensure the skill follows naming convention: `sandbox-setup-{mode}`
-
-### Customizing Accuracy Thresholds
-
-Edit `test-harness.sh`:
-
-```bash
-ACCURACY_THRESHOLD=95  # Change to desired percentage
-```
-
-Or set per-mode:
-```bash
-case "$mode" in
-    basic) THRESHOLD=90 ;;
-    advanced) THRESHOLD=95 ;;
-esac
-```
-
-### Adding Auto-Fix Logic
-
-Edit `lib/skill-fixer.sh` in the `apply_fixes()` function:
-
-```bash
-apply_fixes() {
-    local mode="$1"
-    local skill_file="/workspace/skills/sandbox-setup-$mode/SKILL.md"
-
-    # Add your fix logic here
-    # 1. Parse skill file
-    # 2. Identify problematic sections
-    # 3. Apply targeted fixes
-    # 4. Validate changes
-}
+ls -la reports/failed-*/
+cat reports/failed-basic-*/test-harness.log
 ```
 
 ## Troubleshooting
 
-### Tests Fail with "command not found"
-**Issue:** Missing dependencies
-**Solution:** Install required tools (see Dependencies section)
+### Tests Fail Immediately
 
-### Accuracy Always 0%
-**Issue:** Generated files have syntax errors
-**Solution:** Check individual reports for syntax validation failures
+**Symptom:** Pre-flight checks fail
 
-### Skills Not Running
-**Issue:** Skill invocation fails or hangs
-**Solution:**
-- Verify skills exist in `skills/` directory
-- Check skill frontmatter for correct triggering
-- Test skill manually with the correct skill name (e.g., `sandbox-setup-basic`)
+**Solutions:**
+- Verify example directories exist: `ls /workspace/examples/demo-app-sandbox-*`
+- Check test configs are present: `ls /workspace/examples/*/test-config.yml`
+- Validate YAML syntax: `python3 -c "import yaml; yaml.safe_load(open('test-config.yml'))"`
 
-### Template Comparison Fails
-**Issue:** Master templates not found
-**Solution:** Verify templates exist at `/workspace/templates/master/`
+### Skills Don't Execute
 
-### Reports Not Generated
-**Issue:** Reports directory not writable or doesn't exist
-**Solution:** `mkdir -p tests/skill-validation/reports`
+**Symptom:** Skill times out or hangs
 
-## Contributing
+**Solutions:**
+- Check skill is accessible: `claude skill --list`
+- Verify response patterns match questions: `DEBUG=true ./test-harness.sh`
+- Review conversation log for unexpected questions
+- Try manual execution with same responses
 
-When adding new tests or validation logic:
+### Low Accuracy Scores
 
-1. Follow existing patterns in library components
-2. Add comprehensive error handling
-3. Update this README with new features
-4. Test changes with `DRY_RUN=true` first
-5. Commit with descriptive messages following convention:
-   - `feat:` for new features
-   - `fix:` for bug fixes
-   - `docs:` for documentation changes
-   - `test:` for test changes
+**Symptom:** Tests complete but accuracy < threshold
 
-## Future Enhancements
+**Solutions:**
+- Review comparison report: `cat reports/comparison-reports/*`
+- Check for file differences: `diff -r generated/basic examples/demo-app-sandbox-basic/`
+- Identify discrepancies in generated files
+- Update skill or adjust expectations
 
-Planned improvements:
-- [ ] Full automated fix application (currently manual)
-- [ ] Parallel test execution for faster runs
-- [ ] HTML report generation with visual diffs
-- [ ] Integration with CI/CD pipelines
-- [ ] Template versioning support
-- [ ] Custom validation rule definitions
-- [ ] Performance benchmarking of skills
-- [ ] Historical trend analysis
+### Configuration Errors
+
+**Symptom:** "Config validation failed"
+
+**Solutions:**
+- Check response count: `grep -c "prompt_pattern:" test-config.yml`
+- Verify balanced pairs: patterns should equal responses
+- Validate YAML syntax (indentation, colons, quotes)
+- See [TEST_CONFIG_FORMAT.md](docs/TEST_CONFIG_FORMAT.md)
+
+### Pattern Mismatches
+
+**Symptom:** "No response configured for question"
+
+**Solutions:**
+- Enable debug logging: `DEBUG=true ./test-harness.sh`
+- Review actual question text in logs
+- Update pattern to match variations
+- Use broader patterns with wildcards
+
+## Development
+
+### Adding New Test Modes
+
+1. Create example directory:
+   ```bash
+   mkdir -p /workspace/examples/demo-app-sandbox-newmode
+   ```
+
+2. Generate reference files:
+   ```bash
+   cd /workspace/examples/demo-app-sandbox-newmode
+   claude skill sandbox-setup-newmode
+   # Answer questions manually to create reference
+   ```
+
+3. Create test config:
+   ```bash
+   cat > test-config.yml << 'EOF'
+   metadata:
+     mode: newmode
+     description: "Description of new mode"
+
+   responses:
+     - prompt_pattern: "pattern1"
+       response: "response1"
+   EOF
+   ```
+
+4. Add to test harness:
+   ```bash
+   # Edit test-harness.sh, update modes array
+   local modes=("basic" "intermediate" "advanced" "yolo" "newmode")
+   ```
+
+### Testing the Test System
+
+Run with dry-run to validate:
+```bash
+./test-harness.sh --dry-run
+```
+
+Test specific components:
+```bash
+# Test config validation
+./lib/response-feeder.sh --validate test-config.yml
+
+# Test comparison engine
+./compare-containers.sh generated/basic examples/demo-app-sandbox-basic
+
+# Test with debug logging
+DEBUG=true ./test-harness.sh --mode basic
+```
+
+### Extending Comparison Logic
+
+Edit `compare-containers.sh` to add new comparison types:
+
+```bash
+# Add new comparison function
+compare_new_aspect() {
+    local generated="$1"
+    local example="$2"
+
+    # Your comparison logic
+
+    echo "score_percentage"
+}
+
+# Add to compare_with_examples()
+local new_score=$(compare_new_aspect "$generated_dir" "$example_dir")
+```
+
+## CI/CD Integration
+
+### GitHub Actions Example
+
+```yaml
+name: Skill Validation
+on: [push, pull_request]
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run skill validation tests
+        run: |
+          cd tests/skill-validation
+          ./test-harness.sh
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-reports
+          path: tests/skill-validation/reports/
+```
+
+### Pre-commit Hook
+
+```bash
+#!/bin/bash
+# .git/hooks/pre-commit
+
+echo "Running skill validation tests..."
+cd tests/skill-validation
+./test-harness.sh --dry-run
+
+if [ $? -ne 0 ]; then
+    echo "Skill validation dry-run failed"
+    exit 1
+fi
+```
+
+## Performance
+
+### Execution Time
+
+Typical execution times (per mode):
+- Pre-flight checks: <1 second
+- Skill execution: 30-60 seconds
+- Comparison: 5-10 seconds
+- Total per mode: ~1 minute
+
+All 4 modes: ~5 minutes total
+
+### Optimization Tips
+
+1. **Use dry-run for config validation** (instant)
+2. **Test single modes during development** (`--mode basic`)
+3. **Run full suite before commits** (all modes)
+4. **Cache comparison results** for repeated runs
+5. **Parallelize mode testing** (future enhancement)
+
+## Version History
+
+- **v1.0.0** - Initial release (Phase 1-2)
+  - Basic test harness
+  - Pre-pipe response feeding
+  - Container comparison
+
+- **v1.1.0** - Enhanced validation (Phase 3-5)
+  - Interactive response feeding
+  - Pattern-based matching
+  - Response feeder library
+
+- **v2.0.0** - Production ready (Phase 6)
+  - Dry-run mode
+  - Pre-flight validation
+  - Enhanced logging with timestamps
+  - Cleanup on failure
+  - Comprehensive documentation
+
+## Support
+
+### Getting Help
+
+1. Check this README for common scenarios
+2. Review [TEST_CONFIG_FORMAT.md](docs/TEST_CONFIG_FORMAT.md) for config issues
+3. Enable debug logging: `DEBUG=true ./test-harness.sh`
+4. Check logs: `cat reports/test-harness.log`
+5. Review failed output: `ls -la reports/failed-*/`
+
+### Reporting Issues
+
+When reporting issues, include:
+- Command used to run tests
+- Full log output (with DEBUG=true)
+- Test config being used
+- Expected vs actual behavior
+- Failed output directory contents
+
+### Contributing
+
+Contributions welcome! Areas for enhancement:
+
+- [ ] Parallel test execution
+- [ ] More sophisticated comparison algorithms
+- [ ] Visual diff reports (HTML)
+- [ ] Test result database/history
+- [ ] Performance benchmarking
+- [ ] Additional skill modes
+- [ ] Integration with external CI systems
 
 ## License
 
-Part of the Claude Code sandbox setup project.
+Part of the sandboxxer plugin for Claude Code.
+
+## See Also
+
+- [Automated Skill Testing Design](../../docs/plans/2025-12-20-automated-skill-testing-design.md)
+- [Sandboxxer Plugin Documentation](../../skills/setup/README.md)
+- [Claude Code Documentation](https://docs.anthropic.com/claude-code)
