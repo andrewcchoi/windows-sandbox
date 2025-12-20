@@ -59,6 +59,9 @@ parse_yaml_responses() {
     local current_pattern=""
 
     while IFS= read -r line; do
+        # Strip comments before processing
+        line=$(echo "$line" | sed 's/#.*$//')
+
         # Check if we're entering responses section
         if [[ "$line" =~ ^responses: ]]; then
             in_responses=true
@@ -149,8 +152,11 @@ match_pattern_get_response() {
         fi
     done <<< "$patterns_responses"
 
-    # No match found - provide safe default
-    log_error "No response configured for question: $question" >&2
+    # No match found - provide detailed error and safe default
+    log_error "No response configured for question at index $response_index" >&2
+    log_error "Question text: $question" >&2
+    log_error "Available patterns:" >&2
+    list_configured_patterns "$config_file" >&2
 
     # Safe defaults based on question type
     if [[ "$question_lower" =~ (confirm|proceed|continue|ok) ]]; then
