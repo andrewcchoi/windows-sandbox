@@ -34,19 +34,19 @@ generate_skill_output() {
     case "$mode" in
         basic)
             # Basic mode with defaults
-            echo -e "test-project\n" | claude skill sandboxxer:basic
+            echo -e "test-project\n" | claude skill sandbox-setup-basic
             ;;
         intermediate)
             # Intermediate with Python selected
-            echo -e "test-project\npython\nyes\nno\n" | claude skill sandboxxer:intermediate
+            echo -e "test-project\npython\nyes\nno\n" | claude skill sandbox-setup-intermediate
             ;;
         advanced)
             # Advanced with Python, postgres, redis
-            echo -e "test-project\npython\npostgres,redis\nyes\n" | claude skill sandboxxer:advanced
+            echo -e "test-project\npython\npostgres,redis\nyes\n" | claude skill sandbox-setup-advanced
             ;;
         yolo)
             # YOLO with maximum customization
-            echo -e "test-project\npython\nall\nstrict\nyes\n" | claude skill sandboxxer:yolo
+            echo -e "test-project\npython\nall\nstrict\nyes\n" | claude skill sandbox-setup-yolo
             ;;
     esac
 
