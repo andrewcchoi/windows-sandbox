@@ -8,6 +8,11 @@ GENERATED_DIR="$TEST_DIR/generated"
 REPORTS_DIR="$TEST_DIR/reports"
 ACCURACY_THRESHOLD=95
 
+# Load Python fallbacks for jq and bc if not available
+if ! command -v jq >/dev/null 2>&1 || ! command -v bc >/dev/null 2>&1; then
+    source "$TEST_DIR/lib/python-fallbacks.sh"
+fi
+
 # Load comparison engine
 source "$TEST_DIR/compare-containers.sh"
 
@@ -144,7 +149,7 @@ main() {
         log_info "Starting continuous test for: $mode"
 
         local iteration=1
-        local max_iterations=10
+        local max_iterations=5
 
         while [ $iteration -le $max_iterations ]; do
             if test_skill "$mode" "$iteration"; then
@@ -171,4 +176,7 @@ main() {
     log_info "All skill testing complete"
 }
 
-main "$@"
+# Only run main if not being sourced
+if [ "${BASH_SOURCE[0]}" = "${0}" ]; then
+    main "$@"
+fi
