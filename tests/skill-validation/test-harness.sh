@@ -32,36 +32,33 @@ generate_skill_output() {
     local mode="$1"
     local test_project="$TEST_DIR/test-project"
     local output_dir="$GENERATED_DIR/$mode"
+    local example_dir="/workspace/examples/demo-app-sandbox-$mode"
+    local config_file="$example_dir/test-config.yml"
+
+    log_info "Generating output for $mode mode..."
 
     # Create fresh test directory
     rm -rf "$output_dir"
     cp -r "$test_project" "$output_dir"
     cd "$output_dir"
 
-    # Run skill with minimal interaction
-    case "$mode" in
-        basic)
-            # Basic mode with defaults
-            echo -e "test-project\n" | claude skill sandbox-setup-basic
-            ;;
-        intermediate)
-            # Intermediate with Python selected
-            echo -e "test-project\npython\nyes\nno\n" | claude skill sandbox-setup-intermediate
-            ;;
-        advanced)
-            # Advanced with Python, postgres, redis
-            echo -e "test-project\npython\npostgres,redis\nyes\n" | claude skill sandbox-setup-advanced
-            ;;
-        yolo)
-            # YOLO with maximum customization
-            echo -e "test-project\npython\nall\nstrict\nyes\n" | claude skill sandbox-setup-yolo
-            ;;
-    esac
+    # Load response feeder
+    source "$TEST_DIR/lib/response-feeder.sh"
+
+    # Try interactive monitoring first if config exists
+    if [ -f "$config_file" ]; then
+        log_info "Using test config with response feeder: $config_file"
+        feed_responses_interactive "$mode" "$config_file"
+    else
+        # Fallback: Pre-pipe default responses
+        log_warn "No test config found, using pre-piped defaults"
+        feed_responses_prepipe "$mode"
+    fi
 
     # Return to test directory
     cd "$TEST_DIR"
 
-    # Verify key files exist
+    # Validate generated files exist
     if [ ! -f "$output_dir/.devcontainer/devcontainer.json" ]; then
         log_error "devcontainer.json not generated"
         return 1
@@ -72,6 +69,7 @@ generate_skill_output() {
         return 1
     fi
 
+    log_info "✓ Generated files successfully for $mode mode"
     return 0
 }
 
@@ -122,9 +120,9 @@ test_skill() {
         return 1
     fi
 
-    # Compare against templates
+    # Compare against examples (preferred) or templates (fallback)
     local accuracy
-    accuracy=$(compare_with_templates "$mode")
+    accuracy=$(compare_with_examples "$mode")
 
     log_info "Accuracy: ${accuracy}%"
 

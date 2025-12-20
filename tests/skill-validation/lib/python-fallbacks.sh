@@ -22,9 +22,16 @@ if len(args) == 0:
 elif args[0] == "empty":
     # Validate JSON syntax
     try:
-        json.load(sys.stdin)
-        sys.exit(0)
-    except:
+        # Check if a filename was provided
+        if len(args) > 1:
+            with open(args[1], "r") as f:
+                json.load(f)
+            sys.exit(0)
+        else:
+            json.load(sys.stdin)
+            sys.exit(0)
+    except Exception as e:
+        print(f"JSON validation error: {e}", file=sys.stderr)
         sys.exit(1)
 
 elif args[0] == "-r" and len(args) > 1:
@@ -79,9 +86,11 @@ elif args[0] == "-e":
     else:
         sys.exit(1)
 
-# Default: just pretty print
-data = json.load(sys.stdin)
-print(json.dumps(data, indent=2))
+else:
+    # Default: just pretty print from stdin
+    data = json.load(sys.stdin)
+    print(json.dumps(data, indent=2))
+    sys.exit(0)
 ' "$@"
 }
 
