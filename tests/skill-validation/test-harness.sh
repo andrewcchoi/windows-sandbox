@@ -8,6 +8,9 @@ GENERATED_DIR="$TEST_DIR/generated"
 REPORTS_DIR="$TEST_DIR/reports"
 ACCURACY_THRESHOLD=95
 
+# Load comparison engine
+source "$TEST_DIR/compare-containers.sh"
+
 # Colors
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -76,6 +79,31 @@ cleanup_test_output() {
     rm -rf "$output_dir"
 }
 
+# Generate detailed report
+generate_report() {
+    local mode="$1"
+    local iteration="$2"
+    local accuracy="$3"
+    local report_file="$REPORTS_DIR/${mode}-iteration-${iteration}.txt"
+
+    cat > "$report_file" <<EOF
+Skill Validation Report
+=======================
+Mode: $mode
+Iteration: $iteration
+Timestamp: $(date)
+Accuracy: ${accuracy}%
+Threshold: ${ACCURACY_THRESHOLD}%
+Status: $([ $(echo "$accuracy >= $ACCURACY_THRESHOLD" | bc -l) -eq 1 ] && echo "PASS" || echo "FAIL")
+
+Generated Files:
+EOF
+
+    find "$GENERATED_DIR/$mode" -type f >> "$report_file"
+
+    log_info "Report saved to $report_file"
+}
+
 # Test a single skill
 test_skill() {
     local mode="$1"
@@ -94,6 +122,9 @@ test_skill() {
     accuracy=$(compare_with_templates "$mode")
 
     log_info "Accuracy: ${accuracy}%"
+
+    # Generate report
+    generate_report "$mode" "$iteration" "$accuracy"
 
     # Check threshold
     if (( $(echo "$accuracy >= $ACCURACY_THRESHOLD" | bc -l) )); then
