@@ -5,10 +5,10 @@ Automated testing framework for sandbox setup skills that validates generated co
 ## Overview
 
 This framework tests 4 skills:
-- **Basic** - `/sandboxxer:basic`
-- **Intermediate** - `/sandboxxer:intermediate`
-- **Advanced** - `/sandboxxer:advanced`
-- **YOLO** - `/sandboxxer:yolo`
+- **Basic** - `sandbox-setup-basic`
+- **Intermediate** - `sandbox-setup-intermediate`
+- **Advanced** - `sandbox-setup-advanced`
+- **YOLO** - `sandbox-setup-yolo`
 
 ## Test Cycle
 
@@ -135,7 +135,6 @@ Core validation logic that:
 | devcontainer.json | JSON syntax, required keys (name, workspaceFolder, customizations), structure |
 | docker-compose.yml | YAML syntax, services, networks, volumes |
 | Dockerfile | FROM instruction, multi-stage build, packages |
-| init-firewall.sh | Bash syntax, iptables rules |
 
 ## Reports
 
@@ -221,7 +220,7 @@ Edit `run-continuous.sh` or `test-harness.sh`:
 local modes=("basic" "intermediate" "advanced" "yolo" "newmode")
 ```
 
-Ensure the skill follows naming convention: `sandboxxer:{mode}`
+Ensure the skill follows naming convention: `sandbox-setup-{mode}`
 
 ### Customizing Accuracy Thresholds
 
@@ -271,7 +270,7 @@ apply_fixes() {
 **Solution:**
 - Verify skills exist in `skills/` directory
 - Check skill frontmatter for correct triggering
-- Test skill manually: `claude skill sandboxxer:basic`
+- Test skill manually with the correct skill name (e.g., `sandbox-setup-basic`)
 
 ### Template Comparison Fails
 **Issue:** Master templates not found

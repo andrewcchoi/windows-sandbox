@@ -20,10 +20,10 @@ cd tests/skill-validation
 ### What Gets Tested
 
 The framework validates 4 sandbox setup modes:
-- `/sandboxxer:basic` - Simple Docker Compose setup
-- `/sandboxxer:intermediate` - Dockerfile-based with firewall
-- `/sandboxxer:advanced` - Custom network isolation
-- `/sandboxxer:yolo` - Full control with allowlists
+- `sandbox-setup-basic` - Simple Docker Compose setup
+- `sandbox-setup-intermediate` - Dockerfile-based with firewall
+- `sandbox-setup-advanced` - Custom network isolation
+- `sandbox-setup-yolo` - Full control with allowlists
 
 ### Requirements
 
@@ -136,7 +136,7 @@ echo '{"name": "test"}' > package.json
 
 2. Run the skill:
 ```bash
-claude skill sandboxxer:basic
+# Use the correct skill name (e.g., sandbox-setup-basic)
 ```
 
 3. Verify generated files:

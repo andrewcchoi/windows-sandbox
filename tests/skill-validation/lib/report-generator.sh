@@ -54,7 +54,6 @@ EOF
 - devcontainer.json (JSON syntax, required keys, structure)
 - docker-compose.yml (YAML syntax, services, networks)
 - Dockerfile (FROM instruction, multi-stage, packages)
-- init-firewall.sh (bash syntax, iptables rules)
 
 ## Comparison Method
 
