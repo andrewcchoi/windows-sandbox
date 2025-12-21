@@ -158,7 +158,7 @@ WORKDIR /workspace
 
 # Pre-install backend dependencies
 COPY backend/requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+RUN uv add --no-cache-dir -r /tmp/requirements.txt && \
   rm /tmp/requirements.txt
 
 # Pre-install frontend dependencies
@@ -637,7 +637,7 @@ python -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+uv add -r requirements.txt
 
 # Run backend
 python main.py

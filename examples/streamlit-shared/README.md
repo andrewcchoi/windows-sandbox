@@ -17,7 +17,7 @@ Quick visual validation that your Claude Code sandbox is working correctly. Test
 
 1. Install dependencies:
    ```bash
-   pip install -r requirements.txt
+   uv add -r requirements.txt
    ```
 
 2. Run the app:

@@ -217,7 +217,7 @@ networks:
 **For Python projects**:
 ```bash
 # Check for known vulnerabilities
-pip install safety
+uv add safety
 safety check
 ```
 

@@ -73,7 +73,7 @@ RUN node --version && npm --version && python --version
 FROM nodejs-added AS python-tools
 
 # Install comprehensive Python development tools
-RUN pip install --no-cache-dir \
+RUN uv add --no-cache-dir \
     # Code formatting
     black \
     isort \

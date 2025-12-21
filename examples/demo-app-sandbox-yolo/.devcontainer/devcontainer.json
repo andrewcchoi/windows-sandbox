@@ -145,9 +145,7 @@
         "terminal.integrated.fontSize": 14,
 
         // Testing Configuration
-        "python.testing.pytestArgs": [
-          "backend/tests"
-        ],
+        "python.testing.pytestArgs": ["backend/tests"],
 
         // SQLTools Configuration
         "sqltools.connections": [
@@ -181,7 +179,7 @@
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && cd backend && pip install -r requirements.txt && pip install -r requirements-dev.txt && cd ../frontend && npm install",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && cd backend && uv add -r requirements.txt && uv add -r requirements-dev.txt && cd ../frontend && npm install",
   "forwardPorts": [8000, 5173, 5432, 6379, 9229],
   "portsAttributes": {
     "8000": {

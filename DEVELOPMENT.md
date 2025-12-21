@@ -151,13 +151,13 @@ docker compose ps
 
 # Test basic example
 cd streamlit-sandbox-basic
-uv pip install -r requirements.txt
+uv add -r requirements.txt
 streamlit run app.py
 # Open browser to http://localhost:8501
 
 # Test full demo app (shared services)
 cd ../demo-app-shared/backend
-uv pip install -r requirements.txt
+uv add -r requirements.txt
 alembic upgrade head
 uvicorn app.main:app --reload
 # API available at http://localhost:8000/docs

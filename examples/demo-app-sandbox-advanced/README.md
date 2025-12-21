@@ -363,17 +363,17 @@ According to the plan, Advanced mode is characterized by:
 
 ## Comparing Modes
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| Questions asked | 1-2 | 3-5 | 5-7 | 10-15+ |
-| Configuration style | Auto-detected | Platform-specific | Customizable | Fully explicit |
-| Dockerfile | Sandbox template/official image | Platform template | Configurable | Technology-optimized |
-| VS Code extensions | Essential (2) | Basic (5) | Curated (10+) | Comprehensive (20+) |
-| Firewall | None | Permissive | Strict | Configurable |
-| Services | Essential only | + Message queue | + Resource limits | All available |
-| Build args | None | Python/Node versions | More options | All dependencies |
-| Resource limits | None | None | Yes | Yes (configurable) |
-| Best for | Quick start | Learning | Production dev | Full control |
+| Feature             | Basic                           | Intermediate         | Advanced          | YOLO                 |
+| ------------------- | ------------------------------- | -------------------- | ----------------- | -------------------- |
+| Questions asked     | 1-2                             | 3-5                  | 5-7               | 10-15+               |
+| Configuration style | Auto-detected                   | Platform-specific    | Customizable      | Fully explicit       |
+| Dockerfile          | Sandbox template/official image | Platform template    | Configurable      | Technology-optimized |
+| VS Code extensions  | Essential (2)                   | Basic (5)            | Curated (10+)     | Comprehensive (20+)  |
+| Firewall            | None                            | Permissive           | Strict            | Configurable         |
+| Services            | Essential only                  | + Message queue      | + Resource limits | All available        |
+| Build args          | None                            | Python/Node versions | More options      | All dependencies     |
+| Resource limits     | None                            | None                 | Yes               | Yes (configurable)   |
+| Best for            | Quick start                     | Learning             | Production dev    | Full control         |
 
 ## Troubleshooting
 
@@ -472,7 +472,7 @@ npm run format  # if configured in package.json
 
 For production projects, consider adding Alembic:
 ```bash
-pip install alembic
+uv add alembic
 alembic init migrations
 # Configure and create migrations
 ```

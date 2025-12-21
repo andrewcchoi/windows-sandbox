@@ -155,37 +155,37 @@ examples/
 
 ## Comparison Matrix
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| **Setup** |
-| Questions | 1-2 | 3-5 | 5-7 | 10-15+ |
-| Config files | 4 | 4 | 4 | 7 |
-| Setup time | <1 min | 2 min | 3-4 min | 5-10 min |
-| **Dockerfile** |
-| Build stages | 1 | 1 | 1 | 7 (multi-stage) |
-| Build args | 0 | 2 | 2 | 5+ |
-| Dev tools | Minimal | Basic | Moderate | Comprehensive |
-| **VS Code** |
-| Extensions | 2 | 5 | 10+ | 20+ |
-| Pre-config | Minimal | Basic | Curated | Complete |
-| Format on save | No | No | Yes | Yes + linting |
-| **Development** |
-| Firewall | None | Permissive | Strict | Configurable |
-| Dev dependencies | No | No | Some | Complete |
-| Debugging tools | No | No | Some | Full suite |
-| Testing tools | pytest, jest | pytest, jest | + coverage | + profiling |
-| **Services** |
-| Essential | PostgreSQL, Redis | PostgreSQL, Redis | PostgreSQL, Redis | PostgreSQL, Redis |
-| Additional | None | RabbitMQ | None | All (optional) |
-| **Production** |
-| Resource limits | No | No | Yes | Yes (configurable) |
-| Health checks | Basic | Standard | Standard | Comprehensive |
-| Security hardening | Minimal | Partial | Good | Full |
-| Monitoring hooks | No | No | No | Yes |
-| **Best For** |
-| Use case | Prototypes | Learning | Production dev | Full control |
-| Team size | Solo | Solo/Small | Small | Large |
-| Project phase | Early | Learning | Active dev | Production |
+| Feature            | Basic             | Intermediate      | Advanced          | YOLO               |
+| ------------------ | ----------------- | ----------------- | ----------------- | ------------------ |
+| **Setup**          |
+| Questions          | 1-2               | 3-5               | 5-7               | 10-15+             |
+| Config files       | 4                 | 4                 | 4                 | 7                  |
+| Setup time         | <1 min            | 2 min             | 3-4 min           | 5-10 min           |
+| **Dockerfile**     |
+| Build stages       | 1                 | 1                 | 1                 | 7 (multi-stage)    |
+| Build args         | 0                 | 2                 | 2                 | 5+                 |
+| Dev tools          | Minimal           | Basic             | Moderate          | Comprehensive      |
+| **VS Code**        |
+| Extensions         | 2                 | 5                 | 10+               | 20+                |
+| Pre-config         | Minimal           | Basic             | Curated           | Complete           |
+| Format on save     | No                | No                | Yes               | Yes + linting      |
+| **Development**    |
+| Firewall           | None              | Permissive        | Strict            | Configurable       |
+| Dev dependencies   | No                | No                | Some              | Complete           |
+| Debugging tools    | No                | No                | Some              | Full suite         |
+| Testing tools      | pytest, jest      | pytest, jest      | + coverage        | + profiling        |
+| **Services**       |
+| Essential          | PostgreSQL, Redis | PostgreSQL, Redis | PostgreSQL, Redis | PostgreSQL, Redis  |
+| Additional         | None              | RabbitMQ          | None              | All (optional)     |
+| **Production**     |
+| Resource limits    | No                | No                | Yes               | Yes (configurable) |
+| Health checks      | Basic             | Standard          | Standard          | Comprehensive      |
+| Security hardening | Minimal           | Partial           | Good              | Full               |
+| Monitoring hooks   | No                | No                | No                | Yes                |
+| **Best For**       |
+| Use case           | Prototypes        | Learning          | Production dev    | Full control       |
+| Team size          | Solo              | Solo/Small        | Small             | Large              |
+| Project phase      | Early             | Learning          | Active dev        | Production         |
 
 ## Getting Started
 
@@ -354,7 +354,7 @@ sudo /usr/local/bin/init-firewall.sh
 ### Shared Examples (No DevContainer)
 
 **streamlit-shared/**: Minimal Streamlit app for connection testing
-- Run directly on host: `pip install -r requirements.txt && streamlit run app.py`
+- Run directly on host: `uv add -r requirements.txt && streamlit run app.py`
 - Or use with shared services: `docker compose up -d`
 
 **demo-app-shared/**: Full-stack blog application

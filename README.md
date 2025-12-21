@@ -187,8 +187,8 @@ Claude: sandbox-templates tag?
 
 ## Slash Commands
 
-| Command                 | Description                                                           | Mode         |
-| ----------------------- | --------------------------------------------------------------------- | ------------ |
+| Command                            | Description                                                           | Mode         |
+| ---------------------------------- | --------------------------------------------------------------------- | ------------ |
 | `/devcontainer-setup:basic`        | Quick automatic setup with auto-detection                             | Basic        |
 | `/devcontainer-setup:intermediate` | Balanced control and convenience                                      | Intermediate |
 | `/devcontainer-setup:advanced`     | Security-focused minimal setup                                        | Advanced     |
@@ -392,13 +392,13 @@ The plugin includes comprehensive reference documentation:
 
 This plugin uses consistent naming across different contexts:
 
-| Context | Name | Example |
-|---------|------|---------|
-| Plugin name | devcontainer-setup | Plugin installation and management |
-| GitHub repository | sandbox-maxxing | github.com/andrewcchoi/sandbox-maxxing |
-| Slash commands | /devcontainer-setup:* | /devcontainer-setup:basic, /devcontainer-setup:yolo |
-| Skills | sandbox-* | devcontainer-setup-basic |
-| User-facing title | DevContainer Setup Plugin | In documentation headers |
+| Context           | Name                      | Example                                             |
+| ----------------- | ------------------------- | --------------------------------------------------- |
+| Plugin name       | devcontainer-setup        | Plugin installation and management                  |
+| GitHub repository | sandbox-maxxing           | github.com/andrewcchoi/sandbox-maxxing              |
+| Slash commands    | /devcontainer-setup:*     | /devcontainer-setup:basic, /devcontainer-setup:yolo |
+| Skills            | sandbox-*                 | devcontainer-setup-basic                            |
+| User-facing title | DevContainer Setup Plugin | In documentation headers                            |
 
 **Why different names?**
 - **devcontainer-setup**: Official plugin name used for installation and management
@@ -572,7 +572,7 @@ Minimal Python Streamlit app for 30-second environment validation:
 ```bash
 # Option 1: Use shared services
 cd examples && docker compose up -d
-cd streamlit-shared && pip install -r requirements.txt && streamlit run app.py
+cd streamlit-shared && uv add -r requirements.txt && streamlit run app.py
 
 # Option 2: Self-contained DevContainer
 code examples/streamlit-sandbox-basic  # Open in VS Code
@@ -695,7 +695,7 @@ code .
 cd examples
 docker compose up -d                    # Start PostgreSQL + Redis
 cd basic-streamlit
-uv pip install -r requirements.txt
+uv add -r requirements.txt
 streamlit run app.py
 ```
 

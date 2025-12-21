@@ -502,38 +502,38 @@ The plugin would ask about:
 
 ## Comparing Modes
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| **Setup** |
-| Questions asked | 1-2 | 3-5 | 5-7 | 10-15+ |
-| Configuration time | <1 min | 2 min | 2-3 min | 5-10 min |
-| **Dockerfile** |
-| Build stages | Single | Single | Single | Multi-stage (7) |
-| Image optimization | No | No | Partial | Full |
-| Build args | No | 2 | 2 | 5+ |
-| **VS Code** |
-| Extensions | 2 | 5 | 10 | 20+ |
-| Pre-configured | Minimal | Basic | Moderate | Comprehensive |
-| Settings | Basic | Basic | Curated | Complete |
-| **Services** |
-| Health checks | Basic | Standard | Standard | Comprehensive |
-| Resource limits | No | No | Yes | Yes |
-| Security hardening | Partial | Partial | Good | Full |
-| Admin tools | No | No | No | Optional |
-| **Development** |
-| Dev dependencies | No | No | Some | All |
-| Code quality tools | No | No | Basic | Comprehensive |
-| Debugging tools | No | No | Some | Full suite |
-| Profiling | No | No | No | Yes |
+| Feature                  | Basic       | Intermediate | Advanced     | YOLO              |
+| ------------------------ | ----------- | ------------ | ------------ | ----------------- |
+| **Setup**                |
+| Questions asked          | 1-2         | 3-5          | 5-7          | 10-15+            |
+| Configuration time       | <1 min      | 2 min        | 2-3 min      | 5-10 min          |
+| **Dockerfile**           |
+| Build stages             | Single      | Single       | Single       | Multi-stage (7)   |
+| Image optimization       | No          | No           | Partial      | Full              |
+| Build args               | No          | 2            | 2            | 5+                |
+| **VS Code**              |
+| Extensions               | 2           | 5            | 10           | 20+               |
+| Pre-configured           | Minimal     | Basic        | Moderate     | Comprehensive     |
+| Settings                 | Basic       | Basic        | Curated      | Complete          |
+| **Services**             |
+| Health checks            | Basic       | Standard     | Standard     | Comprehensive     |
+| Resource limits          | No          | No           | Yes          | Yes               |
+| Security hardening       | Partial     | Partial      | Good         | Full              |
+| Admin tools              | No          | No           | No           | Optional          |
+| **Development**          |
+| Dev dependencies         | No          | No           | Some         | All               |
+| Code quality tools       | No          | No           | Basic        | Comprehensive     |
+| Debugging tools          | No          | No           | Some         | Full suite        |
+| Profiling                | No          | No           | No           | Yes               |
 | **Production Readiness** |
-| Config documentation | Minimal | Basic | Moderate | Complete |
-| Environment variables | Few | Some | Some | Comprehensive |
-| Customization options | Limited | Moderate | Good | Extensive |
-| Best practices | Basic | Basic | Good | Industry-standard |
-| **Best For** |
-| Use case | Quick start | Learning | Balanced dev | Production teams |
-| Team size | Solo | Solo/Small | Small team | Large team |
-| Project phase | Prototype | Learning | Development | Production |
+| Config documentation     | Minimal     | Basic        | Moderate     | Complete          |
+| Environment variables    | Few         | Some         | Some         | Comprehensive     |
+| Customization options    | Limited     | Moderate     | Good         | Extensive         |
+| Best practices           | Basic       | Basic        | Good         | Industry-standard |
+| **Best For**             |
+| Use case                 | Quick start | Learning     | Balanced dev | Production teams  |
+| Team size                | Solo        | Solo/Small   | Small team   | Large team        |
+| Project phase            | Prototype   | Learning     | Development  | Production        |
 
 ## Advanced Usage
 
@@ -581,7 +581,7 @@ from line_profiler import LineProfiler
 
 ```bash
 cd backend
-pip install alembic
+uv add alembic
 alembic init migrations
 alembic revision --autogenerate -m "Initial migration"
 alembic upgrade head
@@ -752,7 +752,7 @@ cd frontend && npm audit
 ```bash
 # Python
 pip list --outdated
-pip install --upgrade -r requirements.txt
+uv add --upgrade -r requirements.txt
 
 # Node.js
 npm outdated

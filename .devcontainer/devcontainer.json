@@ -24,10 +24,14 @@
   },
   "remoteUser": "node",
   "postCreateCommand": ".devcontainer/setup-claude-credentials.sh",
+  "postStartCommand": "sudo .devcontainer/init-firewall.sh",
 
-  // Generated using sandbox-maxxing plugin Intermediate mode
-  // Detected: Documentation/Template repository
-  // Languages: Python 3.12 + Node.js 20 (for examples and templates)
-  // Services: PostgreSQL, Redis, RabbitMQ (for testing examples)
+  "forwardPorts": [8000, 3000, 5432, 6379],
+
+  "remoteEnv": {
+    "PATH": "/usr/local/bin:${containerEnv:PATH}",
+    "FIREWALL_MODE": "strict"
+  },
+
   "features": {}
 }

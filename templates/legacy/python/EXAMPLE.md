@@ -142,7 +142,7 @@ WORKDIR /workspace
 
 # Pre-install Python dependencies
 COPY requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && \
+RUN uv add --no-cache-dir -r /tmp/requirements.txt && \
   rm /tmp/requirements.txt
 
 # Install git-delta
@@ -383,7 +383,7 @@ python -m venv .venv
 source .venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+uv add -r requirements.txt
 
 # Run application
 python src/main.py
@@ -471,7 +471,7 @@ sudo /usr/local/bin/init-firewall.sh
 ### Install New Package
 
 ```bash
-pip install package-name
+uv add package-name
 pip freeze > requirements.txt
 ```
 
@@ -518,7 +518,7 @@ export FIREWALL_MODE=permissive
 sudo /usr/local/bin/init-firewall.sh
 
 # Install packages
-pip install -r requirements.txt
+uv add -r requirements.txt
 
 # Switch back to strict
 export FIREWALL_MODE=strict

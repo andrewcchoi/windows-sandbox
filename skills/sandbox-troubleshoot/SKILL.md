@@ -195,7 +195,7 @@ redis-cli -h redis ping
 **Cause**: File ownership mismatch
 **Fix**: `sudo chown -R 1000:1000 /path/to/project` from host
 
-### "npm install" or "pip install" fails
+### "npm install" or "uv add" fails
 **Cause**: Firewall blocking package registries
 **Fix**: Temporarily use permissive mode or whitelist domains
 

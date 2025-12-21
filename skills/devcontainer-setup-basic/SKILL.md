@@ -70,12 +70,12 @@ You will create VS Code DevContainer files in the project's `.devcontainer/` dir
 
 ### YOUR EXCLUSIVE OUTPUT FILES:
 
-| File | Location | Purpose |
-|------|----------|---------|
-| `Dockerfile` | `.devcontainer/Dockerfile` | Multi-stage Docker image |
-| `devcontainer.json` | `.devcontainer/devcontainer.json` | VS Code DevContainer config |
-| `setup-claude-credentials.sh` | `.devcontainer/setup-claude-credentials.sh` | Credentials helper |
-| `docker-compose.yml` | `./docker-compose.yml` | Docker services |
+| File                          | Location                                    | Purpose                     |
+| ----------------------------- | ------------------------------------------- | --------------------------- |
+| `Dockerfile`                  | `.devcontainer/Dockerfile`                  | Multi-stage Docker image    |
+| `devcontainer.json`           | `.devcontainer/devcontainer.json`           | VS Code DevContainer config |
+| `setup-claude-credentials.sh` | `.devcontainer/setup-claude-credentials.sh` | Credentials helper          |
+| `docker-compose.yml`          | `./docker-compose.yml`                      | Docker services             |
 
 **Task Boundary:** This skill generates DevContainer files ONLY. Claude Code configuration is a different feature.
 
@@ -86,13 +86,13 @@ The user will use VS Code's "Dev Containers: Reopen in Container" command to sta
 
 **BEFORE creating ANY file, verify the path:**
 
-| Path Pattern | Valid? | Action |
-|--------------|--------|--------|
-| `.devcontainer/*` | ✓ YES | Proceed |
-| `docker-compose.yml` | ✓ YES | Proceed |
-| `.claude/*` | ✗ NO | STOP - Wrong task |
-| `.claude-code/*` | ✗ NO | STOP - Wrong task |
-| `~/.claude*` | ✗ NO | STOP - Wrong location |
+| Path Pattern         | Valid? | Action                |
+| -------------------- | ------ | --------------------- |
+| `.devcontainer/*`    | ✓ YES  | Proceed               |
+| `docker-compose.yml` | ✓ YES  | Proceed               |
+| `.claude/*`          | ✗ NO   | STOP - Wrong task     |
+| `.claude-code/*`     | ✗ NO   | STOP - Wrong task     |
+| `~/.claude*`         | ✗ NO   | STOP - Wrong location |
 
 **Self-Check:** "Does my file path start with `.devcontainer/` or is it `docker-compose.yml`?"
 If NO → STOP and re-read the TASK IDENTITY section.
@@ -561,7 +561,7 @@ Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basi
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt",
   "forwardPorts": [8000, 5432, 6379]
 }
 ```
@@ -639,7 +639,7 @@ Setup complete! Next steps:
    docker compose ps
 
 3. Install dependencies:
-   - Python: pip install -r requirements.txt
+   - Python: uv add -r requirements.txt
    - Node.js: npm install
    - Ruby: bundle install
 
@@ -691,7 +691,7 @@ services:
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt",
   "forwardPorts": [8000]
 }
 ```
@@ -831,7 +831,7 @@ volumes:
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt && npm install",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt && npm install",
   "forwardPorts": [8000, 3000, 5432, 6379]
 }
 ```

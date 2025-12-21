@@ -29,7 +29,7 @@ This plugin uses itself for development (dogfooding approach), which ensures the
    ```bash
    # Test basic example
    cd examples/streamlit-sandbox-basic
-   uv pip install -r requirements.txt
+   uv add -r requirements.txt
    streamlit run app.py
    ```
    Click the test buttons to verify PostgreSQL and Redis connectivity.
