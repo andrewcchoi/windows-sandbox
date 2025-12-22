@@ -1,15 +1,9 @@
+# Infrastructure
+.internal/
+
 # Test directories
 test-*
 !test-config.yml
-.internal/tests/results/
-.internal/tests/skill-validation/generated/
-.internal/tests/skill-validation/reports/
-
-# Build artifacts
-.internal/bin/
-
-# Node modules
-.internal/node_modules/
 
 # Python
 __pycache__/
