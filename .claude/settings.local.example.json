@@ -19,29 +19,32 @@
     "CC_LANGSMITH_API_KEY": "lsv2_pt_...",
     "CC_LANGSMITH_PROJECT": "pr-project-name-00",
     "CC_LANGSMITH_DEBUG": "true",
-    "CC_LANGSMITH_ENVIRONMENT": "custom-label"
+    "CC_LANGSMITH_ENVIRONMENT": "custom-trace-label"
   },
   "hooks": {
     "Stop": [
       {
         "hooks": [
           {
+            "statusMessage": "For Linux/WSL use: bash ~/.claude/hooks/stop_hook.sh - For Windows native use: powershell -ExecutionPolicy Bypass -File \"%USERPROFILE%\\.claude\\hooks\\stop_hook.ps1\"",
             "type": "command",
-            "comment": "For Linux/macOS/WSL/DevContainer use: bash ~/.claude/hooks/stop_hook.sh",
-            "comment2": "For Windows native use: powershell -ExecutionPolicy Bypass -File \"%USERPROFILE%\\.claude\\hooks\\stop_hook.ps1\"",
             "command": "bash ~/.claude/hooks/stop_hook.sh"
           }
         ]
       }
     ]
   },
+  "enabledPlugins": {
+    "plugin-name-1@marketplace": true,
+    "plugin-name-2@marketplace": true
+  },
   "sandbox": {
     "enabled": true,
     "autoAllowBashIfSandboxed": true,
-    "excludedCommands": ["docker"],
     "network": {
       "allowUnixSockets": ["/var/run/docker.sock"],
       "allowLocalBinding": true
-    }
+    },
+    "excludedCommands": ["docker"]
   }
 }
