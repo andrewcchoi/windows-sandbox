@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 ###
 # Claude Code Stop Hook - LangSmith Tracing Integration
 # Sends Claude Code traces to LangSmith after each response.
@@ -38,8 +38,8 @@ if [ "$(echo "$TRACE_TO_LANGSMITH" | tr '[:upper:]' '[:lower:]')" != "true" ]; t
     exit 0
 fi
 
-# Required commands
-for cmd in jq curl uuidgen; do
+# Required commands (uuidgen has fallbacks, so not required)
+for cmd in jq curl; do
     if ! command -v "$cmd" &> /dev/null; then
         echo "Error: $cmd is required but not installed" >&2
         exit 0
@@ -48,9 +48,47 @@ done
 
 # Config (continued)
 API_KEY="${CC_LANGSMITH_API_KEY:-$LANGSMITH_API_KEY}"
-PROJECT="${CC_LANGSMITH_PROJECT:-claude-code}"
+PROJECT_BASE="${CC_LANGSMITH_PROJECT:-claude-code}"
 API_BASE="https://api.smith.langchain.com"
 STATE_FILE="$HOME/.claude/state/langsmith_state.json"
+
+# Environment detection
+detect_environment() {
+    # OS detection
+    local os_name
+    case "$(uname -s)" in
+        Linux*)   os_name="linux" ;;
+        Darwin*)  os_name="macos" ;;
+        MINGW*|MSYS*|CYGWIN*) os_name="windows" ;;
+        *)        os_name="unknown" ;;
+    esac
+
+    # Container detection
+    local is_container="false"
+    local env_type="native"
+    if [ -f /.dockerenv ] || [ -f /run/.containerenv ]; then
+        is_container="true"
+        env_type="container"
+    fi
+
+    # Export for use in trace data
+    ENV_OS="$os_name"
+    ENV_OS_DETAIL="$(uname -a 2>/dev/null || echo 'unknown')"
+    ENV_IS_CONTAINER="$is_container"
+    ENV_TYPE="$env_type"
+    ENV_HOSTNAME="$(hostname 2>/dev/null || echo 'unknown')"
+    ENV_USERNAME="$(whoami 2>/dev/null || echo 'unknown')"
+    ENV_GIT_BRANCH="$(git branch --show-current 2>/dev/null || echo '')"
+
+    # Allow override via environment variable
+    ENV_LABEL="${CC_LANGSMITH_ENVIRONMENT:-$os_name-$env_type}"
+}
+
+# Run detection
+detect_environment
+
+# Build project name with environment label
+PROJECT="${PROJECT_BASE}-${ENV_LABEL}"
 
 # Global variables
 CURRENT_TURN_ID=""  # Track current turn run for cleanup on exit
@@ -72,6 +110,9 @@ get_microseconds() {
     elif [[ "$OSTYPE" == "darwin"* ]]; then
         # macOS fallback: use Python for microseconds
         python3 -c "import time; print(str(int(time.time() * 1000000) % 1000000).zfill(6))"
+    elif [[ "$OSTYPE" == "msys"* ]] || [[ "$OSTYPE" == "cygwin"* ]]; then
+        # Git Bash/MSYS2 includes GNU date
+        date +%6N
     else
         # Linux/GNU date
         date +%6N
@@ -83,8 +124,28 @@ get_file_size() {
     local file="$1"
     if [[ "$OSTYPE" == "darwin"* ]]; then
         stat -f%z "$file"
+    elif [[ "$OSTYPE" == "msys"* ]] || [[ "$OSTYPE" == "cygwin"* ]]; then
+        # Git Bash uses GNU stat
+        stat -c%s "$file"
     else
         stat -c%s "$file"
+    fi
+}
+
+# Generate UUID portably (Windows doesn't have uuidgen)
+get_uuid() {
+    if command -v uuidgen &> /dev/null; then
+        uuidgen | tr '[:upper:]' '[:lower:]'
+    elif command -v powershell.exe &> /dev/null; then
+        powershell.exe -Command "[guid]::NewGuid().ToString().ToLower()" | tr -d '\r'
+    elif command -v python3 &> /dev/null; then
+        python3 -c "import uuid; print(str(uuid.uuid4()))"
+    elif command -v python &> /dev/null; then
+        python -c "import uuid; print(str(uuid.uuid4()))"
+    else
+        # Last resort: pseudo-random from /dev/urandom
+        cat /dev/urandom | tr -dc 'a-f0-9' | fold -w 32 | head -n 1 | \
+            sed 's/\(.\{8\}\)\(.\{4\}\)\(.\{4\}\)\(.\{4\}\)\(.\{12\}\)/\1-\2-\3-\4-\5/'
     fi
 }
 
@@ -401,7 +462,7 @@ create_trace() {
     local patches_batch="[]"
 
     local turn_id
-    turn_id=$(uuidgen | tr '[:upper:]' '[:lower:]')
+    turn_id=$(get_uuid)
 
     local user_content
     user_content=$(format_content "$user_msg")
@@ -430,6 +491,13 @@ create_trace() {
         --argjson content "$user_content" \
         --arg turn "$turn_num" \
         --arg dotted_order "$turn_dotted_order" \
+        --arg os "$ENV_OS" \
+        --arg os_detail "$ENV_OS_DETAIL" \
+        --arg is_container "$ENV_IS_CONTAINER" \
+        --arg hostname "$ENV_HOSTNAME" \
+        --arg username "$ENV_USERNAME" \
+        --arg git_branch "$ENV_GIT_BRANCH" \
+        --arg env_label "$ENV_LABEL" \
         '{
             id: $id,
             trace_id: $trace_id,
@@ -439,8 +507,17 @@ create_trace() {
             start_time: $time,
             dotted_order: $dotted_order,
             session_name: $project,
-            extra: {metadata: {thread_id: $session}},
-            tags: ["claude-code", ("turn-" + $turn)]
+            extra: {metadata: {
+                thread_id: $session,
+                os: $os,
+                os_detail: $os_detail,
+                is_container: ($is_container == "true"),
+                hostname: $hostname,
+                username: $username,
+                git_branch: $git_branch,
+                environment: $env_label
+            }},
+            tags: ["claude-code", ("turn-" + $turn), $os, (if $is_container == "true" then "container" else "native" end)]
         }')
 
     posts_batch=$(echo "$posts_batch" | jq --argjson data "$turn_data" '. += [$data]')
@@ -474,7 +551,7 @@ create_trace() {
 
         # Create assistant run
         local assistant_id
-        assistant_id=$(uuidgen | tr '[:upper:]' '[:lower:]')
+        assistant_id=$(get_uuid)
 
         local tool_uses
         tool_uses=$(get_tool_uses "$assistant_msg")
@@ -554,7 +631,7 @@ create_trace() {
 
             while IFS= read -r tool; do
                 local tool_id
-                tool_id=$(uuidgen | tr '[:upper:]' '[:lower:]')
+                tool_id=$(get_uuid)
 
                 local tool_name
                 tool_name=$(echo "$tool" | jq -r '.name // "tool"')
