@@ -1,15 +1,15 @@
 # Test directories
 test-*
 !test-config.yml
-tests/results/
-tests/skill-validation/generated/
-tests/skill-validation/reports/
+.internal/tests/results/
+.internal/tests/skill-validation/generated/
+.internal/tests/skill-validation/reports/
 
 # Build artifacts
-bin/
+.internal/bin/
 
 # Node modules
-node_modules/
+.internal/node_modules/
 
 # Python
 __pycache__/
