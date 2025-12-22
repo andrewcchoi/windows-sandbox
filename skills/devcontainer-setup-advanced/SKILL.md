@@ -27,10 +27,12 @@ Then:
 
 **Response order for advanced mode:**
 1. Project name (e.g., "demo-app")
-2. Programming language (e.g., "python", "node")
+2. Additional languages (e.g., "none", "go", "rust", or comma-separated)
 3. Services needed (e.g., "postgres", "redis", or comma-separated)
-4. Firewall ports to allow (e.g., "443,8080" or "80,443,8000")
-5. Confirmation (e.g., "yes", "y")
+4. Proxy-friendly mode (e.g., "yes", "no")
+5. Firewall mode (e.g., "permissive", "strict")
+6. Firewall ports to allow (e.g., "443,8080" or "80,443,8000")
+7. Confirmation (e.g., "yes", "y")
 
 **Example automated invocation:**
 ```
@@ -128,10 +130,8 @@ If the directory is missing, STOP and report the error.
 # Create .devcontainer directory
 mkdir -p .devcontainer
 
-# Copy ALL templates from skill folder
+# Copy configuration files from skill folder
 cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml
-cp "$TEMPLATES/Dockerfile.python" .devcontainer/Dockerfile.python
-cp "$TEMPLATES/Dockerfile.node" .devcontainer/Dockerfile.node
 cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
 cp "$TEMPLATES/devcontainer.json" .devcontainer/devcontainer.json
 cp "$TEMPLATES/init-firewall.sh" .devcontainer/init-firewall.sh
@@ -144,94 +144,155 @@ cp "$TEMPLATES/variables.json" .devcontainer/variables.json
 chmod +x .devcontainer/setup-claude-credentials.sh .devcontainer/init-firewall.sh
 ```
 
-**NOTE:** Advanced mode INCLUDES strict firewall script.
+**NOTE:** Dockerfile will be composed from base + partials. Advanced mode INCLUDES firewall script (permissive or strict).
 
 ### Step 1C: Verify Files
 
 ```bash
 echo "=== File Verification ==="
 test -f docker-compose.yml && echo "✓ docker-compose.yml" || echo "✗ MISSING"
-test -f .devcontainer/Dockerfile.python && echo "✓ Dockerfile.python" || echo "✗ MISSING"
-test -f .devcontainer/Dockerfile.node && echo "✓ Dockerfile.node" || echo "✗ MISSING"
 test -f .devcontainer/devcontainer.json && echo "✓ devcontainer.json" || echo "✗ MISSING"
-test -f .devcontainer/init-firewall.sh && echo "✓ init-firewall.sh (strict)" || echo "✗ MISSING"
+test -f .devcontainer/init-firewall.sh && echo "✓ init-firewall.sh" || echo "✗ MISSING"
 test -f .devcontainer/setup-claude-credentials.sh && echo "✓ setup-claude-credentials.sh" || echo "✗ MISSING"
-test -f .env.template && echo "✓ .env.template" || echo "✗ MISSING"
-test -f .devcontainer/extensions.json && echo "✓ extensions.json" || echo "✗ MISSING"
-test -f .devcontainer/mcp.json && echo "✓ mcp.json" || echo "✗ MISSING"
-test -f .devcontainer/variables.json && echo "✓ variables.json" || echo "✗ MISSING"
-echo "Dockerfile.python lines: $(wc -l < .devcontainer/Dockerfile.python)"
+test -f "$TEMPLATES/base.dockerfile" && echo "✓ base.dockerfile available" || echo "✗ MISSING"
+
+# Verify base template
+grep -c "# === LANGUAGE PARTIALS ===" "$TEMPLATES/base.dockerfile" && echo "✓ Composition marker found" || echo "✗ WARNING"
 ```
 
 **If ANY file is missing, STOP.**
 
-## STEP 2: CUSTOMIZE TEMPLATE FILES
+## STEP 2: DETECT LANGUAGES, SELECT FIREWALL MODE, AND COMPOSE DOCKERFILE
 
-### Step 2A: Detect Project Type & Rename Dockerfile
+The base Dockerfile includes Python 3.12 + Node 20 + common tools. Now detect additional languages and compose with firewall configuration.
+
+### Step 2A: Auto-Detect Additional Languages
 
 ```bash
-# For Python: mv .devcontainer/Dockerfile.python .devcontainer/Dockerfile && rm .devcontainer/Dockerfile.node
-# For Node.js: mv .devcontainer/Dockerfile.node .devcontainer/Dockerfile && rm .devcontainer/Dockerfile.python
+# Same detection logic as Basic mode
+DETECTED_LANGUAGES=()
+[ -f go.mod ] || [ -f go.sum ] && DETECTED_LANGUAGES+=("go")
+[ -f Cargo.toml ] && DETECTED_LANGUAGES+=("rust")
+[ -f pom.xml ] || [ -f build.gradle ] || [ -f build.gradle.kts ] && DETECTED_LANGUAGES+=("java")
+[ -f Gemfile ] && DETECTED_LANGUAGES+=("ruby")
+[ -f composer.json ] && DETECTED_LANGUAGES+=("php")
+[ -f CMakeLists.txt ] || [ -f Makefile ] && DETECTED_LANGUAGES+=("cpp-gcc")
+grep -q "postgresql\|psycopg\|pgvector" package.json requirements.txt 2>/dev/null && DETECTED_LANGUAGES+=("postgres")
+echo "Auto-detected languages: ${DETECTED_LANGUAGES[*]:-none}"
 ```
 
-### Step 2B: Customize Placeholders
+### Step 2B: Ask User Questions
 
-Use Edit tool to replace `{{PROJECT_NAME}}` and add language-specific extensions.
+**Question 1: Proxy-Friendly Mode**
+```
+Use AskUserQuestion tool:
 
-## MANDATORY DOCKERFILE REQUIREMENTS
-
-When generating a Dockerfile (not using docker-compose image directly), ALL Dockerfiles MUST include:
-
-### Multi-Stage Build (Required for Python projects)
-```dockerfile
-# Stage 1: Get Node.js from official image (Issue #29)
-FROM node:20-slim AS node-source
-
-# Stage 2: Get uv from official Astral image (Python projects)
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS uv-source
-
-# Stage 3: Main build
-FROM <base-image>
+Question: "Are you behind a corporate proxy?"
+Options:
+- No: Install all dev tools and shell extras (default)
+- Yes: Minimal build - skip GitHub downloads (git-delta, zsh plugins, dev tools)
 ```
 
-### Mandatory Base Packages (ALWAYS install these)
-```dockerfile
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  # Core utilities
-  git vim nano less procps sudo unzip wget curl ca-certificates gnupg gnupg2 \
-  # JSON processing and manual pages
-  jq man-db \
-  # Shell and CLI enhancements
-  zsh fzf \
-  # GitHub CLI
-  gh \
-  # Network security tools (firewall)
-  iptables ipset iproute2 dnsutils \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
+If "Yes", configure build args in docker-compose.yml:
+```yaml
+services:
+  app:
+    build:
+      args:
+        INSTALL_SHELL_EXTRAS: "false"
+        INSTALL_DEV_TOOLS: "false"
 ```
 
-### Mandatory Tools (ALWAYS install these)
-1. **git-delta** - Enhanced git diff
-2. **ZSH with Powerlevel10k** - Full shell experience
-3. **Claude Code CLI** - `npm install -g @anthropic-ai/claude-code`
-4. **DeepAgents + Tavily** - AI/LLM tools (via uv/pip)
-5. **Mermaid CLI** - Diagram generation
+**Question 2: Firewall Mode**
+```
+Question: "Select firewall mode:"
+Options:
+- Permissive: Allow all outbound traffic (development convenience)
+- Strict: Only allow domains in allowlist (security-focused) [Recommended]
+```
 
-## CRITICAL: USE ACTUAL TEMPLATE FILES
+**Question 3: Additional Languages**
+```
+Question: "Additional languages to include?"
+Options:
+- Use detected: [list] (if any detected)
+- Add specific: go, rust, java, ruby, php, cpp-gcc, cpp-clang, postgres
+- None (Python + Node only)
+```
 
-**DO NOT generate simplified Dockerfiles.** Always:
-1. READ `${CLAUDE_PLUGIN_ROOT}/templates/dockerfiles/Dockerfile.<language>`
-2. COPY the template content EXACTLY
-3. Only modify placeholder values (PROJECT_NAME, etc.)
+### Step 2C: Compose Dockerfile from Base + Partials
 
-The templates contain:
-- Proper multi-stage builds
-- All mandatory packages
-- ZSH + Powerlevel10k configuration
-- AI tools (DeepAgents, Tavily)
-- Claude Code CLI
+```bash
+# Same composition function as Basic mode
+compose_dockerfile() {
+    local base_file="$TEMPLATES/base.dockerfile"
+    local output_file=".devcontainer/Dockerfile"
+    local partials=("$@")
 
-**If you generate a Dockerfile with fewer than 50 lines, you are doing it wrong.**
+    local marker_line=$(grep -n "# === LANGUAGE PARTIALS ===" "$base_file" | cut -d: -f1)
+
+    # Create output: everything before marker
+    head -n "$marker_line" "$base_file" > "$output_file"
+    echo "" >> "$output_file"
+
+    # Insert each partial
+    for partial in "${partials[@]}"; do
+        local partial_file="$TEMPLATES/partial-${partial}.dockerfile"
+        if [ -f "$partial_file" ]; then
+            cat "$partial_file" >> "$output_file"
+            echo "" >> "$output_file"
+            echo "  ✓ Added $partial partial"
+        fi
+    done
+
+    # Append everything after marker
+    tail -n +$((marker_line + 1)) "$base_file" >> "$output_file"
+    echo "✓ Dockerfile composed ($(wc -l < "$output_file") lines)"
+}
+
+# Compose with selected languages
+compose_dockerfile "${DETECTED_LANGUAGES[@]}"
+```
+
+### Step 2D: Configure Firewall Mode
+
+Edit `.devcontainer/init-firewall.sh` to set firewall mode based on user selection:
+
+```bash
+# Set FIREWALL_MODE environment variable in init-firewall.sh
+# FIREWALL_MODE="permissive" or FIREWALL_MODE="strict"
+```
+
+### Step 2E: Customize Placeholders
+
+Use Edit tool to replace `{{PROJECT_NAME}}` in configuration files and add language-specific extensions to devcontainer.json.
+
+## BASE DOCKERFILE INCLUDES
+
+The base.dockerfile template automatically includes all standard development tools and security configurations:
+
+### Multi-Stage Build
+- Stage 1: Python 3.12 + uv from `ghcr.io/astral-sh/uv:python3.12-bookworm-slim`
+- Stage 2: Main build from `node:20-bookworm-slim`
+
+### Pre-installed Tools
+- **Languages**: Python 3.12, Node 20 (always included)
+- **Package Managers**: uv, pip, npm, yarn, pnpm, poetry, ruff
+- **Database Clients**: postgresql-client, mysql-client, sqlite3, redis-tools, pgcli
+- **Core Utilities**: git, vim, nano, curl, wget, jq, gh (GitHub CLI)
+- **Shell**: ZSH with Powerlevel10k theme
+- **Development**: git-delta, Claude Code CLI, Mermaid CLI, DeepAgents, Tavily
+- **Build Tools**: build-essential, gcc, g++
+- **Network Tools**: iptables, ipset, iproute2, dnsutils (for firewall)
+
+### Language Partials
+Additional languages are added via partials:
+- Go, Rust, Java, Ruby, PHP, C++ (GCC or Clang), PostgreSQL dev tools
+
+### Security Features
+- Firewall initialization script (permissive or strict mode)
+- Domain allowlist integration
+- Non-root user with sudo access
 
 ## Overview
 
@@ -239,11 +300,11 @@ Advanced Mode provides security-focused development environments with strict fir
 
 ## Usage
 
-This skill is invoked via the `/devcontainer-setup:advanced` command or by selecting "Advanced Mode" from the `/devcontainer-setup:setup` interactive mode selector.
+This skill is invoked via the `/devcontainer:advanced` command or by selecting "Advanced Mode" from the `/devcontainer:setup` interactive mode selector.
 
 **Command:**
 ```
-/devcontainer-setup:advanced
+/devcontainer:advanced
 ```
 
 The skill will:
@@ -450,11 +511,11 @@ Ask these questions with brief explanations:
 Use templates from `${CLAUDE_PLUGIN_ROOT}/templates/`:
 
 **Dockerfile**:
-- Source: `templates/dockerfiles/Dockerfile.<language>` (e.g., `Dockerfile.python`, `Dockerfile.node`)
+- Source: `skills/devcontainer-setup-advanced/templates/Dockerfile.<language>` (e.g., `Dockerfile.python`, `Dockerfile.node`)
 - Customize with selected base image and pre-install options
 
 **Firewall Script**:
-- Source: `templates/firewall/advanced-strict.sh`
+- Source: `skills/devcontainer-setup-advanced/templates/init-firewall.sh`
 - Customize allowlist based on user selections and additional domains
 
 **Docker Compose**:
@@ -533,35 +594,35 @@ Ask: "Would you like me to run the startup commands now?"
 
 Advanced Mode uses these template sources:
 
-1. **Dockerfile**: `templates/dockerfiles/Dockerfile.<language>`
+1. **Dockerfile**: `skills/devcontainer-setup-advanced/templates/Dockerfile.<language>`
    - Examples: `Dockerfile.python`, `Dockerfile.node`, `Dockerfile.go`
    - Multi-stage build with Node.js for corporate proxy support (Issue #29)
    - Customized with base image and pre-install options
 
-2. **Extensions**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.advanced.json`
+2. **Extensions**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-advanced/templates/extensions.json`
    - Read this file and merge with platform-specific extensions
    - Includes ~22-28 extensions covering comprehensive development tools
    - Base + language-specific + productivity + themes
 
-3. **MCP Configuration**: `${CLAUDE_PLUGIN_ROOT}/templates/mcp/mcp.advanced.json`
+3. **MCP Configuration**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-advanced/templates/mcp.json`
    - Includes 8 MCP servers: filesystem, memory, sqlite, fetch, github, postgres, docker, brave-search
    - Copy to `.devcontainer/mcp.json`
 
-4. **Variables**: `${CLAUDE_PLUGIN_ROOT}/templates/variables/variables.advanced.json`
+4. **Variables**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-advanced/templates/variables.json`
    - Build args and container environment variables
    - Production-like configuration settings
 
-5. **Firewall Script**: `templates/firewall/advanced-strict.sh`
+5. **Firewall Script**: `skills/devcontainer-setup-advanced/templates/init-firewall.sh`
    - Starts with `mode_defaults.advanced` allowlist
    - Customized with user-provided additional domains
    - Category markers added for documentation
 
-6. **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/templates/compose/docker-compose.advanced.yml`
+6. **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-advanced/templates/docker-compose.yml`
    - Production-like service configurations
    - Includes health checks, resource limits, restart policies
    - Must include credentials mount for Issue #30
 
-7. **DevContainer Config**: `templates/base/devcontainer.json.template`
+7. **DevContainer Config**: `skills/devcontainer-setup-advanced/templates/devcontainer.json`
    - Customized with project name, network name, firewall mode
    - Must include credentials setup in postCreateCommand
 
@@ -601,7 +662,7 @@ All advanced mode setups must include Claude credentials mounting:
 
 ## Reference Documentation
 
-For detailed information, refer to embedded documentation in `references/`:
+For detailed information, refer to documentation in `docs/features/`:
 - `customization.md` - Full customization guide
 - `security.md` - Security model and best practices
 - `troubleshooting.md` - Common issues and solutions

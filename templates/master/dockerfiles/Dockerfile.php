@@ -69,7 +69,7 @@ RUN npm install -g @anthropic-ai/claude-code
 RUN npm install -g @mermaid-js/mermaid-cli
 
 # Install DeepAgents + Tavily (AI/LLM Tools)
-RUN uv pip install --system deepagents tavily-python
+RUN uv add --system deepagents tavily-python
 
 # Configure PHP
 RUN echo "memory_limit = 512M" >> /usr/local/etc/php/conf.d/custom.ini && \

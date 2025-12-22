@@ -101,7 +101,7 @@ networks:
 Run commands after container creation (first time only):
 
 ```json
-"postCreateCommand": "npm install && pip install -r requirements.txt",
+"postCreateCommand": "npm install && uv add -r requirements.txt",
 ```
 
 ## Dockerfile Customization
@@ -173,7 +173,7 @@ RUN cd /workspace && npm ci
 
 ```dockerfile
 COPY requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.txt
+RUN uv add --no-cache-dir -r /tmp/requirements.txt && rm /tmp/requirements.txt
 ```
 
 **Python with uv:**
@@ -194,7 +194,7 @@ RUN cd /workspace/frontend && npm ci
 
 # Backend dependencies
 COPY backend/requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN uv add --no-cache-dir -r /tmp/requirements.txt
 ```
 
 #### 4. Configure Environment Variables
@@ -392,7 +392,7 @@ RUN uv sync --locked --no-install-project
 **With pip:**
 ```dockerfile
 COPY requirements.txt ./
-RUN pip install --no-cache-dir -r requirements.txt
+RUN uv add --no-cache-dir -r requirements.txt
 ```
 
 #### 3. Environment Variables
@@ -494,7 +494,7 @@ RUN cd /workspace/frontend && npm ci
 
 # Install backend dependencies
 COPY backend/requirements.txt /tmp/
-RUN pip install --no-cache-dir -r /tmp/requirements.txt
+RUN uv add --no-cache-dir -r /tmp/requirements.txt
 ```
 
 ## Testing Your Configuration
@@ -594,7 +594,7 @@ And update firewall for AI provider APIs.
 
 - Review [security model](security-model.md) to understand the security model
 - Check [troubleshooting](TROUBLESHOOTING.md) for common issues
-- Browse [examples/](../../examples/) for complete configuration examples
+- Browse [examples/](../examples/) for complete configuration examples
 
 ---
 

@@ -27,7 +27,7 @@ Then:
 
 **Response order for basic mode:**
 1. Project name (e.g., "demo-app")
-2. Programming language (e.g., "python", "node")
+2. Additional languages (e.g., "none", "go", "rust", or comma-separated)
 3. Services needed (e.g., "none", "postgres", "redis", or comma-separated)
 4. Confirmation (e.g., "yes", "y")
 
@@ -70,12 +70,12 @@ You will create VS Code DevContainer files in the project's `.devcontainer/` dir
 
 ### YOUR EXCLUSIVE OUTPUT FILES:
 
-| File | Location | Purpose |
-|------|----------|---------|
-| `Dockerfile` | `.devcontainer/Dockerfile` | Multi-stage Docker image |
-| `devcontainer.json` | `.devcontainer/devcontainer.json` | VS Code DevContainer config |
-| `setup-claude-credentials.sh` | `.devcontainer/setup-claude-credentials.sh` | Credentials helper |
-| `docker-compose.yml` | `./docker-compose.yml` | Docker services |
+| File                          | Location                                    | Purpose                     |
+| ----------------------------- | ------------------------------------------- | --------------------------- |
+| `Dockerfile`                  | `.devcontainer/Dockerfile`                  | Multi-stage Docker image    |
+| `devcontainer.json`           | `.devcontainer/devcontainer.json`           | VS Code DevContainer config |
+| `setup-claude-credentials.sh` | `.devcontainer/setup-claude-credentials.sh` | Credentials helper          |
+| `docker-compose.yml`          | `./docker-compose.yml`                      | Docker services             |
 
 **Task Boundary:** This skill generates DevContainer files ONLY. Claude Code configuration is a different feature.
 
@@ -86,13 +86,13 @@ The user will use VS Code's "Dev Containers: Reopen in Container" command to sta
 
 **BEFORE creating ANY file, verify the path:**
 
-| Path Pattern | Valid? | Action |
-|--------------|--------|--------|
-| `.devcontainer/*` | ✓ YES | Proceed |
-| `docker-compose.yml` | ✓ YES | Proceed |
-| `.claude/*` | ✗ NO | STOP - Wrong task |
-| `.claude-code/*` | ✗ NO | STOP - Wrong task |
-| `~/.claude*` | ✗ NO | STOP - Wrong location |
+| Path Pattern         | Valid? | Action                |
+| -------------------- | ------ | --------------------- |
+| `.devcontainer/*`    | ✓ YES  | Proceed               |
+| `docker-compose.yml` | ✓ YES  | Proceed               |
+| `.claude/*`          | ✗ NO   | STOP - Wrong task     |
+| `.claude-code/*`     | ✗ NO   | STOP - Wrong task     |
+| `~/.claude*`         | ✗ NO   | STOP - Wrong location |
 
 **Self-Check:** "Does my file path start with `.devcontainer/` or is it `docker-compose.yml`?"
 If NO → STOP and re-read the TASK IDENTITY section.
@@ -124,10 +124,8 @@ ls -la "$TEMPLATES/"
 # Create .devcontainer directory
 mkdir -p .devcontainer
 
-# Copy ALL templates from the skill folder
+# Copy configuration files from the skill folder
 cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml
-cp "$TEMPLATES/Dockerfile.python" .devcontainer/Dockerfile.python
-cp "$TEMPLATES/Dockerfile.node" .devcontainer/Dockerfile.node
 cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
 cp "$TEMPLATES/devcontainer.json" .devcontainer/devcontainer.json
 cp "$TEMPLATES/.env.template" ./.env.template
@@ -139,7 +137,7 @@ cp "$TEMPLATES/variables.json" .devcontainer/variables.json
 chmod +x .devcontainer/setup-claude-credentials.sh
 ```
 
-**NOTE:** Basic mode has NO firewall script.
+**NOTE:** Dockerfile will be composed from base + partials in Step 2. Basic mode has NO firewall script.
 
 ### Step 1C: Verify Files Were Copied
 
@@ -151,45 +149,112 @@ test -f docker-compose.yml && echo "✓ docker-compose.yml" || echo "✗ MISSING
 test -d .devcontainer && echo "✓ .devcontainer/" || echo "✗ MISSING: .devcontainer/"
 test -f .devcontainer/devcontainer.json && echo "✓ devcontainer.json" || echo "✗ MISSING"
 test -f .devcontainer/setup-claude-credentials.sh && echo "✓ setup-claude-credentials.sh" || echo "✗ MISSING"
-test -f .devcontainer/Dockerfile.python && echo "✓ Dockerfile.python" || echo "✗ MISSING"
-test -f .devcontainer/Dockerfile.node && echo "✓ Dockerfile.node" || echo "✗ MISSING"
+test -f "$TEMPLATES/base.dockerfile" && echo "✓ base.dockerfile available" || echo "✗ MISSING"
 
-# Verify Dockerfile has multi-stage build
-echo "Dockerfile.python lines: $(wc -l < .devcontainer/Dockerfile.python)"
-grep -c "^FROM.*AS" .devcontainer/Dockerfile.python && echo "✓ Multi-stage build" || echo "✗ WARNING: No multi-stage"
+# Verify base template exists
+echo "Base template lines: $(wc -l < \"$TEMPLATES/base.dockerfile\" 2>/dev/null || echo "0")"
+grep -c "# === LANGUAGE PARTIALS ===" "$TEMPLATES/base.dockerfile" && echo "✓ Composition marker found" || echo "✗ WARNING: No marker"
 ```
 
 **If ANY required file is missing, STOP. Debug the copy step before continuing.**
 
-## STEP 2: CUSTOMIZE TEMPLATE FILES
+## STEP 2: DETECT LANGUAGES AND COMPOSE DOCKERFILE
 
-After copying templates, customize them for the user's project:
+The base Dockerfile includes Python 3.12 + Node 20 + common tools. Now detect additional languages and compose the final Dockerfile.
 
-### Step 2A: Detect Project Type
-
-```bash
-# Detect language from project files
-ls -la requirements.txt package.json Gemfile go.mod Cargo.toml composer.json pom.xml
-```
-
-**Detection Logic:**
-- `requirements.txt` or `pyproject.toml` → Python (use Dockerfile.python)
-- `package.json` → Node.js (use Dockerfile.node)
-- Others → Ask user for language
-
-### Step 2B: Rename Dockerfile for Detected Language
+### Step 2A: Auto-Detect Additional Languages
 
 ```bash
-# For Python projects:
-mv .devcontainer/Dockerfile.python .devcontainer/Dockerfile
-rm .devcontainer/Dockerfile.node
+# Detect additional languages from project files
+DETECTED_LANGUAGES=()
 
-# For Node.js projects:
-mv .devcontainer/Dockerfile.node .devcontainer/Dockerfile
-rm .devcontainer/Dockerfile.python
+# Go detection
+[ -f go.mod ] || [ -f go.sum ] && DETECTED_LANGUAGES+=("go") && echo "Detected: Go"
+
+# Rust detection
+[ -f Cargo.toml ] && DETECTED_LANGUAGES+=("rust") && echo "Detected: Rust"
+
+# Java detection
+[ -f pom.xml ] || [ -f build.gradle ] || [ -f build.gradle.kts ] && DETECTED_LANGUAGES+=("java") && echo "Detected: Java"
+
+# Ruby detection
+[ -f Gemfile ] && DETECTED_LANGUAGES+=("ruby") && echo "Detected: Ruby"
+
+# PHP detection
+[ -f composer.json ] && DETECTED_LANGUAGES+=("php") && echo "Detected: PHP"
+
+# C++ detection
+[ -f CMakeLists.txt ] || [ -f Makefile ] && DETECTED_LANGUAGES+=("cpp-gcc") && echo "Detected: C++"
+
+# PostgreSQL detection (if database libraries detected)
+grep -q "postgresql\|psycopg\|pgvector" package.json requirements.txt 2>/dev/null && DETECTED_LANGUAGES+=("postgres") && echo "Detected: PostgreSQL usage"
+
+echo "Auto-detected languages: ${DETECTED_LANGUAGES[*]:-none}"
 ```
 
-### Step 2C: Customize docker-compose.yml
+### Step 2B: Ask User About Additional Languages
+
+If languages were detected, confirm with user. Otherwise ask if they want to add any:
+
+```
+Use AskUserQuestion tool:
+
+Question: "Additional languages to include?"
+Options:
+- Use detected: [list] (if languages detected)
+- Add specific: go, rust, java, ruby, php, cpp-gcc, cpp-clang, postgres
+- None (Python + Node only)
+```
+
+### Step 2C: Compose Dockerfile from Base + Partials
+
+```bash
+# Function to compose Dockerfile
+compose_dockerfile() {
+    local base_file="$TEMPLATES/base.dockerfile"
+    local output_file=".devcontainer/Dockerfile"
+    shift 2
+    local partials=("$@")
+
+    # Find marker line
+    local marker_line=$(grep -n "# === LANGUAGE PARTIALS ===" "$base_file" | cut -d: -f1)
+
+    if [ -z "$marker_line" ]; then
+        echo "ERROR: Marker not found in base dockerfile"
+        return 1
+    fi
+
+    echo "Composing Dockerfile with ${#partials[@]} language partials..."
+
+    # Create output: everything before marker
+    head -n "$marker_line" "$base_file" > "$output_file"
+
+    # Add blank line after marker
+    echo "" >> "$output_file"
+
+    # Insert each partial
+    for partial in "${partials[@]}"; do
+        local partial_file="$TEMPLATES/partial-${partial}.dockerfile"
+        if [ -f "$partial_file" ]; then
+            cat "$partial_file" >> "$output_file"
+            echo "" >> "$output_file"
+            echo "  ✓ Added $partial partial"
+        else
+            echo "  ⚠ Partial not found: $partial_file"
+        fi
+    done
+
+    # Append everything after marker
+    tail -n +$((marker_line + 1)) "$base_file" >> "$output_file"
+
+    echo "✓ Dockerfile composed ($(wc -l < "$output_file") lines)"
+}
+
+# Compose with selected languages
+compose_dockerfile "$TEMPLATES/base.dockerfile" ".devcontainer/Dockerfile" "${DETECTED_LANGUAGES[@]}"
+```
+
+### Step 2D: Customize docker-compose.yml
 
 Use the Edit tool to replace placeholders:
 
@@ -198,66 +263,50 @@ Use the Edit tool to replace placeholders:
 {{NETWORK_NAME}} → actual-project-name-network
 ```
 
-### Step 2D: Customize devcontainer.json
+### Step 2E: Customize devcontainer.json
 
 Use the Edit tool to:
 1. Replace `{{PROJECT_NAME}}` with actual project name
-2. Add language-specific extensions
+2. Add language-specific extensions based on detected/selected languages
 
-**For Python**, add to extensions array:
-```json
-"ms-python.python",
-"ms-python.vscode-pylance"
+**Extension recommendations:**
+- Go: `golang.go`
+- Rust: `rust-lang.rust-analyzer`
+- Java: `vscjava.vscode-java-pack`
+- Ruby: `rebornix.ruby`
+- PHP: `bmewburn.vscode-intelephense-client`
+- C++: `ms-vscode.cpptools`
+
+### Step 2F: Verify Composed Dockerfile
+
+```bash
+# Verify final Dockerfile
+test -f .devcontainer/Dockerfile && echo "✓ Dockerfile created" || echo "✗ FAILED"
+grep -c "^FROM.*AS" .devcontainer/Dockerfile && echo "✓ Multi-stage build" || echo "✗ WARNING"
+echo "Dockerfile lines: $(wc -l < .devcontainer/Dockerfile)"
 ```
 
-**For Node.js**, add to extensions array:
-```json
-"dbaeumer.vscode-eslint",
-"esbenp.prettier-vscode"
-```
+## BASE DOCKERFILE INCLUDES
 
-### Step 2E: Update docker-compose.yml build context
+The base.dockerfile template automatically includes all standard development tools:
 
-The template uses `build:` with Dockerfile. Verify this is correct in docker-compose.yml.
+### Multi-Stage Build
+- Stage 1: Python 3.12 + uv from `ghcr.io/astral-sh/uv:python3.12-bookworm-slim`
+- Stage 2: Main build from `node:20-bookworm-slim`
 
-## MANDATORY DOCKERFILE REQUIREMENTS
+### Pre-installed Tools
+- **Languages**: Python 3.12, Node 20 (always included)
+- **Package Managers**: uv, pip, npm, yarn, pnpm, poetry, ruff
+- **Database Clients**: postgresql-client, mysql-client, sqlite3, redis-tools, pgcli
+- **Core Utilities**: git, vim, nano, curl, wget, jq, gh (GitHub CLI)
+- **Shell**: ZSH with Powerlevel10k theme
+- **Development**: git-delta, Claude Code CLI, Mermaid CLI, DeepAgents, Tavily
+- **Build Tools**: build-essential, gcc, g++
+- **Network Tools**: iptables, ipset, iproute2, dnsutils
 
-When generating a Dockerfile (not using docker-compose image directly), ALL Dockerfiles MUST include:
-
-### Multi-Stage Build (Required for Python projects)
-```dockerfile
-# Stage 1: Get Node.js from official image (Issue #29)
-FROM node:20-slim AS node-source
-
-# Stage 2: Get uv from official Astral image (Python projects)
-FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS uv-source
-
-# Stage 3: Main build
-FROM <base-image>
-```
-
-### Mandatory Base Packages (ALWAYS install these)
-```dockerfile
-RUN apt-get update && apt-get install -y --no-install-recommends \
-  # Core utilities
-  git vim nano less procps sudo unzip wget curl ca-certificates gnupg gnupg2 \
-  # JSON processing and manual pages
-  jq man-db \
-  # Shell and CLI enhancements
-  zsh fzf \
-  # GitHub CLI
-  gh \
-  # Network security tools (firewall)
-  iptables ipset iproute2 dnsutils \
-  && apt-get clean && rm -rf /var/lib/apt/lists/*
-```
-
-### Mandatory Tools (ALWAYS install these)
-1. **git-delta** - Enhanced git diff
-2. **ZSH with Powerlevel10k** - Full shell experience
-3. **Claude Code CLI** - `npm install -g @anthropic-ai/claude-code`
-4. **DeepAgents + Tavily** - AI/LLM tools (via uv/pip)
-5. **Mermaid CLI** - Diagram generation
+### Language Partials
+Additional languages are added via partials:
+- Go, Rust, Java, Ruby, PHP, C++ (GCC or Clang), PostgreSQL dev tools
 
 ## Overview
 
@@ -273,11 +322,11 @@ Basic mode gets developers up and running in minutes using battle-tested base im
 
 ## Usage
 
-This skill is invoked via the `/devcontainer-setup:basic` command or by selecting "Basic Mode" from the `/devcontainer-setup:setup` interactive mode selector.
+This skill is invoked via the `/devcontainer:basic` command or by selecting "Basic Mode" from the `/devcontainer:setup` interactive mode selector.
 
 **Command:**
 ```
-/devcontainer-setup:basic
+/devcontainer:basic
 ```
 
 The skill will:
@@ -405,18 +454,18 @@ Reference: `${CLAUDE_PLUGIN_ROOT}/data/official-images.json`
 
 When generating configuration, use these template files:
 
-- **Extensions**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basic.json`
+- **Extensions**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-basic/templates/extensions.json`
   - Read this file and merge base extensions with platform-specific extensions
   - Base extensions: `anthropic.claude-code`, `ms-azuretools.vscode-docker`, `redhat.vscode-yaml`, `eamodio.gitlens`, `PKief.material-icon-theme`, `johnpapa.vscode-peacock`
   - Platform extensions: Python (`ms-python.python`, `ms-python.vscode-pylance`), Node (`dbaeumer.vscode-eslint`, `esbenp.prettier-vscode`), etc.
 
-- **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/templates/compose/docker-compose.basic.yml`
+- **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-basic/templates/docker-compose.yml`
   - Template includes postgres and redis services
   - Add app service with credentials mount
 
-- **Firewall**: `${CLAUDE_PLUGIN_ROOT}/templates/firewall/basic-no-firewall.sh`
-  - No-op script that relies on sandbox isolation
-  - Copy to `.devcontainer/init-firewall.sh`
+- **Firewall**: No firewall script needed (Basic mode relies on sandbox isolation)
+  - No-op approach that relies on sandbox isolation
+  - No firewall file to create
 
 - **Credentials Setup**: Create `.devcontainer/setup-claude-credentials.sh` for Issue #30
   - Copies Claude credentials from host mount to container
@@ -512,7 +561,7 @@ services:
     command: sleep infinity
     # Add depends_on if services needed (postgres, redis, etc.)
 
-  # Add services from templates/compose/docker-compose.basic.yml if needed
+  # Add services from docker-compose.yml template if needed
   # postgres:
   #   image: postgres:16-bookworm
   #   environment:
@@ -535,7 +584,7 @@ services:
 
 #### File 2: `.devcontainer/devcontainer.json`
 
-Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basic.json` and merge with platform-specific extensions.
+Read extensions from `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-basic/templates/extensions.json` and merge with platform-specific extensions.
 
 ```json
 {
@@ -547,7 +596,7 @@ Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basi
   "customizations": {
     "vscode": {
       "extensions": [
-        // Base extensions from templates/extensions/extensions.basic.json
+        // Base extensions from templates/extensions.json
         "anthropic.claude-code",
         "ms-azuretools.vscode-docker",
         "redhat.vscode-yaml",
@@ -561,14 +610,14 @@ Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basi
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt",
   "forwardPorts": [8000, 5432, 6379]
 }
 ```
 
 #### File 3: `.devcontainer/init-firewall.sh`
 
-Copy from `${CLAUDE_PLUGIN_ROOT}/templates/firewall/basic-no-firewall.sh`:
+Basic mode doesn't use a firewall script (relying on sandbox isolation):
 
 ```bash
 #!/bin/bash
@@ -639,7 +688,7 @@ Setup complete! Next steps:
    docker compose ps
 
 3. Install dependencies:
-   - Python: pip install -r requirements.txt
+   - Python: uv add -r requirements.txt
    - Node.js: npm install
    - Ruby: bundle install
 
@@ -691,7 +740,7 @@ services:
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt",
   "forwardPorts": [8000]
 }
 ```
@@ -831,7 +880,7 @@ volumes:
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt && npm install",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt && npm install",
   "forwardPorts": [8000, 3000, 5432, 6379]
 }
 ```

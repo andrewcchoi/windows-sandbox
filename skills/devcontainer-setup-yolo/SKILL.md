@@ -27,8 +27,9 @@ Then:
 
 **Response order for yolo mode:**
 1. Project name (e.g., "demo-app")
-2. Programming language (e.g., "python", "node")
-3. Confirmation (e.g., "yes", "y")
+2. Additional languages (e.g., "none", "go,rust", or comma-separated)
+3. Firewall mode (e.g., "disabled", "permissive", "strict")
+4. Confirmation (e.g., "yes", "y")
 
 **Example automated invocation:**
 ```
@@ -150,10 +151,8 @@ Use Bash to copy all YOLO mode template files:
 # Create .devcontainer directory
 mkdir -p .devcontainer
 
-# Copy ALL templates from skill folder
+# Copy configuration files from skill folder
 cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml
-cp "$TEMPLATES/Dockerfile.python" .devcontainer/Dockerfile.python
-cp "$TEMPLATES/Dockerfile.node" .devcontainer/Dockerfile.node
 cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
 cp "$TEMPLATES/devcontainer.json" .devcontainer/devcontainer.json
 cp "$TEMPLATES/init-firewall.sh" .devcontainer/init-firewall.sh
@@ -166,6 +165,8 @@ cp "$TEMPLATES/variables.json" .devcontainer/variables.json
 chmod +x .devcontainer/init-firewall.sh
 chmod +x .devcontainer/setup-claude-credentials.sh
 ```
+
+**NOTE:** Dockerfile will be composed from base + selected partials. YOLO mode allows disabling firewall entirely.
 
 ### Step 1C: Verify Files Were Copied
 
@@ -521,11 +522,40 @@ For each service, ask:
 
 #### E. Build Arguments
 Ask which build args to customize:
+
+**Proxy-Friendly Build Args** (for corporate environments):
+- `INSTALL_SHELL_EXTRAS` - Install git-delta, zsh plugins (default: true)
+  - Set to `false` to skip GitHub downloads behind proxies
+- `INSTALL_DEV_TOOLS` - Install language dev tools like linters, LSPs (default: true)
+  - Set to `false` for minimal builds
+
+**Per-Language Dev Tool Overrides** (inherit from INSTALL_DEV_TOOLS):
+- `INSTALL_GO_TOOLS` - gopls, golangci-lint, delve (default: ${INSTALL_DEV_TOOLS})
+- `INSTALL_RUST_TOOLS` - rustfmt, clippy, cargo extensions (default: ${INSTALL_DEV_TOOLS})
+- `INSTALL_RUBY_TOOLS` - rubocop, rspec, rake (default: ${INSTALL_DEV_TOOLS})
+- `INSTALL_CPP_TOOLS` - vcpkg (default: ${INSTALL_DEV_TOOLS})
+
+**Standard Build Args**:
 - `TZ` - Timezone (default: America/Los_Angeles)
 - `CLAUDE_CODE_VERSION` - Claude Code version (default: latest)
 - `GIT_DELTA_VERSION` - git-delta version (default: 0.18.2)
 - `ZSH_IN_DOCKER_VERSION` - ZSH installer version (default: 1.2.0)
 - Custom build args?
+
+**Example docker-compose.yml for proxy-friendly build:**
+```yaml
+services:
+  app:
+    build:
+      context: .
+      dockerfile: .devcontainer/Dockerfile
+      args:
+        INSTALL_SHELL_EXTRAS: "false"
+        INSTALL_DEV_TOOLS: "false"
+        # Or selectively disable specific language tools:
+        INSTALL_GO_TOOLS: "false"
+        INSTALL_RUST_TOOLS: "true"
+```
 
 #### F. VS Code Configuration
 Ask which VS Code extensions to include:
@@ -809,7 +839,7 @@ Even in YOLO mode, perform basic validation:
 YOLO mode uses the complete master templates with full customization. Always read these template files:
 
 ### 1. Extensions Template
-**File**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.yolo.json`
+**File**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-yolo/templates/extensions.json`
 - Comprehensive extension list (35+ extensions)
 - All language extensions (Python, JS, Go, Rust, Java, Ruby, PHP, C++)
 - Productivity tools (GitLens, Error Lens, TODO Tree, Code Spell Checker)
@@ -818,13 +848,13 @@ YOLO mode uses the complete master templates with full customization. Always rea
 - **Important**: Read this file and merge with platform-specific extensions
 
 ### 2. MCP Configuration Template
-**File**: `${CLAUDE_PLUGIN_ROOT}/templates/mcp/mcp.yolo.json`
+**File**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-yolo/templates/mcp.json`
 - All 11+ MCP servers available
 - Includes: filesystem, memory, sqlite, fetch, github, postgres, docker, brave-search, puppeteer, slack, google-drive, custom
 - Copy to `.devcontainer/mcp.json` with user selections
 
 ### 3. Variables Template
-**File**: `${CLAUDE_PLUGIN_ROOT}/templates/variables/variables.yolo.json`
+**File**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-yolo/templates/variables.json`
 - User-defined build args and container environment variables
 - Custom configuration based on user needs
 - Copy to `.devcontainer/variables.json`
