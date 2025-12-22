@@ -27,8 +27,9 @@ Then:
 
 **Response order for yolo mode:**
 1. Project name (e.g., "demo-app")
-2. Programming language (e.g., "python", "node")
-3. Confirmation (e.g., "yes", "y")
+2. Additional languages (e.g., "none", "go,rust", or comma-separated)
+3. Firewall mode (e.g., "disabled", "permissive", "strict")
+4. Confirmation (e.g., "yes", "y")
 
 **Example automated invocation:**
 ```
@@ -150,10 +151,8 @@ Use Bash to copy all YOLO mode template files:
 # Create .devcontainer directory
 mkdir -p .devcontainer
 
-# Copy ALL templates from skill folder
+# Copy configuration files from skill folder
 cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml
-cp "$TEMPLATES/Dockerfile.python" .devcontainer/Dockerfile.python
-cp "$TEMPLATES/Dockerfile.node" .devcontainer/Dockerfile.node
 cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/setup-claude-credentials.sh
 cp "$TEMPLATES/devcontainer.json" .devcontainer/devcontainer.json
 cp "$TEMPLATES/init-firewall.sh" .devcontainer/init-firewall.sh
@@ -166,6 +165,8 @@ cp "$TEMPLATES/variables.json" .devcontainer/variables.json
 chmod +x .devcontainer/init-firewall.sh
 chmod +x .devcontainer/setup-claude-credentials.sh
 ```
+
+**NOTE:** Dockerfile will be composed from base + selected partials. YOLO mode allows disabling firewall entirely.
 
 ### Step 1C: Verify Files Were Copied
 
