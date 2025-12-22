@@ -273,11 +273,11 @@ Basic mode gets developers up and running in minutes using battle-tested base im
 
 ## Usage
 
-This skill is invoked via the `/devcontainer-setup:basic` command or by selecting "Basic Mode" from the `/devcontainer-setup:setup` interactive mode selector.
+This skill is invoked via the `/devcontainer:basic` command or by selecting "Basic Mode" from the `/devcontainer:setup` interactive mode selector.
 
 **Command:**
 ```
-/devcontainer-setup:basic
+/devcontainer:basic
 ```
 
 The skill will:

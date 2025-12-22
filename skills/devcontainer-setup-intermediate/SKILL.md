@@ -247,11 +247,11 @@ Intermediate mode provides a standard Dockerfile-based development sandbox with 
 
 ## Usage
 
-This skill is invoked via the `/devcontainer-setup:intermediate` command or by selecting "Intermediate Mode" from the `/devcontainer-setup:setup` interactive mode selector.
+This skill is invoked via the `/devcontainer:intermediate` command or by selecting "Intermediate Mode" from the `/devcontainer:setup` interactive mode selector.
 
 **Command:**
 ```
-/devcontainer-setup:intermediate
+/devcontainer:intermediate
 ```
 
 The skill will:

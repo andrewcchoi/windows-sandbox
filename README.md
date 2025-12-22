@@ -396,7 +396,7 @@ This plugin uses consistent naming across different contexts:
 | ----------------- | ------------------------- | --------------------------------------------------- |
 | Plugin name       | devcontainer-setup        | Plugin installation and management                  |
 | GitHub repository | sandbox-maxxing           | github.com/andrewcchoi/sandbox-maxxing              |
-| Slash commands    | /devcontainer-setup:*     | /devcontainer:basic, /devcontainer:yolo |
+| Slash commands    | /devcontainer:*           | /devcontainer:basic, /devcontainer:yolo |
 | Skills            | sandbox-*                 | devcontainer-setup-basic                            |
 | User-facing title | DevContainer Setup Plugin | In documentation headers                            |
 

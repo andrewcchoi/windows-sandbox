@@ -239,11 +239,11 @@ Advanced Mode provides security-focused development environments with strict fir
 
 ## Usage
 
-This skill is invoked via the `/devcontainer-setup:advanced` command or by selecting "Advanced Mode" from the `/devcontainer-setup:setup` interactive mode selector.
+This skill is invoked via the `/devcontainer:advanced` command or by selecting "Advanced Mode" from the `/devcontainer:setup` interactive mode selector.
 
 **Command:**
 ```
-/devcontainer-setup:advanced
+/devcontainer:advanced
 ```
 
 The skill will:
