@@ -1,6 +1,6 @@
-# Generated using sandboxxer-maxxing plugin Intermediate mode
-# Development container for plugin development with services
-# Includes PostgreSQL, Redis, RabbitMQ for testing examples
+# Base Dockerfile for Sandboxxer DevContainer
+# Includes Python 3.12 + Node 20 + common development tools
+# Language-specific additions are inserted at the marker below
 
 # Stage 1: Get Python + uv from official Astral image
 FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS python-uv-source
@@ -8,7 +8,7 @@ FROM ghcr.io/astral-sh/uv:python3.12-bookworm-slim AS python-uv-source
 # Stage 2: Main build
 FROM node:20-bookworm-slim
 
-# Timezeone configuration
+# Timezone configuration
 ARG TZ=America/Los_Angeles
 ENV TZ="$TZ"
 
@@ -166,41 +166,7 @@ ENV PATH="/home/node/.local/bin:$PATH"
 RUN uv tool install ruff && \
     uv tool install poetry
 
-# The langgraph.json file has the assistant ID as the key:
-#   "graphs": {
-#     "research": "./agent.py:agent"
-#   },
-
-# export ANTHROPIC_API_KEY=your_anthropic_api_key_here  # Required for Claude model
-# export GOOGLE_API_KEY=your_google_api_key_here        # Required for Gemini model ([get one here](https://ai.google.dev/gemini-api/docs))
-# export TAVILY_API_KEY=your_tavily_api_key_here        # Required for web search ([get one here](https://www.tavily.com/)) with a generous free tier
-# export LANGSMITH_API_KEY=your_langsmith_api_key_here  # [LangSmith API key](https://smith.langchain.com/settings) (free to sign up)
-# export NEXT_PUBLIC_LANGSMITH_API_KEY="lsv2_xxxx"
-
-# $ git clone https://github.com/langchain-ai/deepagents-quickstarts.git
-# $ cd deepagents-quickstarts/deep_research
-# $ uv build
-# $ langgraph dev
-
-# deep-agents-ui configuration 
-# env.local settings
-# NEXT_PUBLIC_DEPLOYMENT_URL="http://127.0.0.1:2024"
-# NEXT_PUBLIC_AGENT_ID="research"
-
-# $ git clone https://github.com/langchain-ai/deep-agents-ui.git
-# $ cd deep-agents-ui
-# $ yarn install
-# $ yarn dev
-
-# ╦  ┌─┐┌┐┌┌─┐╔═╗┬─┐┌─┐┌─┐┬ ┬
-# ║  ├─┤││││ ┬║ ╦├┬┘├─┤├─┘├─┤
-# ╩═╝┴ ┴┘└┘└─┘╚═╝┴└─┴ ┴┴  ┴ ┴
-
-# - 🚀 API: http://127.0.0.1:2024
-# - 🎨 Studio UI: https://smith.langchain.com/studio/?baseUrl=http://127.0.0.1:2024
-# - 📚 API Docs: http://127.0.0.1:2024/docs
-# - ⚙️ Deepagents UI: http://localhost:3000
-# ...
+# === LANGUAGE PARTIALS ===
 
 # Firewall initialization script
 COPY .devcontainer/init-firewall.sh /usr/local/bin/

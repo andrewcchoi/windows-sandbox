@@ -29,7 +29,7 @@ services:
         condition: service_healthy
 
   postgres:
-    image: postgres:16-bookworm
+    image: pgvector/pgvector:pg16
     container_name: sandboxxer-plugin-postgres
     restart: unless-stopped
     environment:
@@ -41,6 +41,7 @@ services:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
     healthcheck:
       test:
         [
