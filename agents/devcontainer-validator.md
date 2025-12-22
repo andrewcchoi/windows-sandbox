@@ -1,7 +1,7 @@
 ---
 name: devcontainer-validator
 description: Validates that devcontainer skills created files in correct locations
-whenToUse: Run after devcontainer/sandbox-setup skills complete to verify correct files exist and wrong files do NOT exist
+whenToUse: Run after devcontainer-setup-* skills complete to verify correct files exist and wrong files do NOT exist
 model: haiku
 color: orange
 tools: ["Bash", "Glob", "Read"]

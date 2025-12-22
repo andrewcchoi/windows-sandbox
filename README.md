@@ -208,7 +208,7 @@ The plugin automatically activates when you:
 **Example**:
 ```
 You: I need to set up a Docker development environment for my Python project
-Claude: [Automatically uses sandbox-setup skill]
+Claude: [Automatically uses /devcontainer:setup command]
       What mode would you like?
       • Basic (Zero config, 1-2 min)
       • Intermediate (Balanced, 3-5 min)
@@ -326,10 +326,10 @@ Templates use these placeholders:
 
 ## Skills Reference
 
-### sandbox-setup
+### /devcontainer:setup (Interactive Router)
 Interactive setup wizard with four experience modes.
 
-**Note:** This is a router skill that delegates to mode-specific skills:
+**Note:** This is a router command that delegates to mode-specific skills:
 - `devcontainer-setup-basic` - Basic mode setup
 - `devcontainer-setup-intermediate` - Intermediate mode setup
 - `devcontainer-setup-advanced` - Advanced mode setup
