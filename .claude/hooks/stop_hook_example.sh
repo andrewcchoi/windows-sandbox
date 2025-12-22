@@ -48,7 +48,7 @@ done
 
 # Config (continued)
 API_KEY="${CC_LANGSMITH_API_KEY:-$LANGSMITH_API_KEY}"
-PROJECT_BASE="${CC_LANGSMITH_PROJECT:-claude-code}"
+NAME_BASE="${claude-code}"
 API_BASE="https://api.smith.langchain.com"
 STATE_FILE="$HOME/.claude/state/langsmith_state.json"
 
@@ -88,7 +88,8 @@ detect_environment() {
 detect_environment
 
 # Build project name with environment label
-PROJECT="${PROJECT_BASE}-${ENV_LABEL}"
+TRACE_NAME="${NAME_BASE}-${ENV_LABEL}"
+PROJECT="${CC_LANGSMITH_PROJECT}"
 
 # Global variables
 CURRENT_TURN_ID=""  # Track current turn run for cleanup on exit
@@ -484,7 +485,7 @@ create_trace() {
     turn_data=$(jq -n \
         --arg id "$turn_id" \
         --arg trace_id "$turn_id" \
-        --arg name "Claude Code" \
+        --arg name "$TRACE_NAME" \
         --arg project "$PROJECT" \
         --arg session "$session_id" \
         --arg time "$now" \
