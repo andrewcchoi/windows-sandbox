@@ -316,7 +316,7 @@
       "description": "PyPI authentication token",
       "mount_type": "secret",
       "mount_path": "/run/secrets/pypi_token",
-      "usage": "RUN --mount=type=secret,id=pypi_token during pip install"
+      "usage": "RUN --mount=type=secret,id=pypi_token during uv add"
     },
     {
       "id": "gem_token",

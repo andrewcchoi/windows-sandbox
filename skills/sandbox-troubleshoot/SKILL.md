@@ -11,11 +11,11 @@ Diagnoses and resolves common issues with Claude Code Docker sandbox environment
 
 ## Usage
 
-This skill is invoked via the `/devcontainer-setup:troubleshoot` command.
+This skill is invoked via the `/devcontainer:troubleshoot` command.
 
 **Command:**
 ```
-/devcontainer-setup:troubleshoot
+/devcontainer:troubleshoot
 ```
 
 The skill will:
@@ -38,8 +38,8 @@ Use this skill when:
 - Claude Code CLI not working
 
 Do NOT use this skill when:
-- Setting up a new sandbox (use `sandbox-setup` instead)
-- Performing security audit (use `sandbox-security` instead)
+- Setting up a new sandbox (use `/devcontainer:setup` instead)
+- Performing security audit (use `/devcontainer:audit` instead)
 
 ## Usage
 
@@ -129,7 +129,7 @@ docker inspect <container-name> | grep Networks -A 5
 
 ### 3. Apply Systematic Fixes
 
-Based on the diagnostic results, apply fixes from the reference documentation (`references/troubleshooting.md`).
+Based on the diagnostic results, apply fixes from the reference documentation (`docs/features/TROUBLESHOOTING.md`).
 
 #### Container Won't Start
 1. Check Docker is running: `docker ps`
@@ -195,7 +195,7 @@ redis-cli -h redis ping
 **Cause**: File ownership mismatch
 **Fix**: `sudo chown -R 1000:1000 /path/to/project` from host
 
-### "npm install" or "pip install" fails
+### "npm install" or "uv add" fails
 **Cause**: Firewall blocking package registries
 **Fix**: Temporarily use permissive mode or whitelist domains
 
@@ -229,7 +229,7 @@ docker compose up -d
 
 ## Reference Documentation
 
-For detailed troubleshooting steps, refer to `references/troubleshooting.md` which contains comprehensive solutions for all common issues.
+For detailed troubleshooting steps, refer to `docs/features/TROUBLESHOOTING.md` which contains comprehensive solutions for all common issues.
 
 ## Key Principles
 
@@ -248,7 +248,7 @@ User reports container won't start:
 ```
 User: My container won't build. It says "ERROR: failed to solve"
 Assistant: I'll help troubleshoot this build failure.
-/devcontainer-setup:troubleshoot
+/devcontainer:troubleshoot
 ```
 
 The skill guides through checking Docker logs, Dockerfile syntax, network connectivity during build, and provides specific fix for the identified issue.
@@ -260,7 +260,7 @@ User can't connect to PostgreSQL:
 ```
 User: My app can't connect to PostgreSQL. Connection refused on port 5432.
 Assistant: I'll diagnose this database connectivity issue.
-/devcontainer-setup:troubleshoot
+/devcontainer:troubleshoot
 ```
 
 The skill checks if PostgreSQL service is running, verifies port mappings, tests connectivity from container, and ensures connection string is correct.
@@ -272,7 +272,7 @@ User's API calls are being blocked:
 ```
 User: I'm getting network errors when calling the OpenAI API. It works outside the container.
 Assistant: This sounds like a firewall configuration issue. Let me troubleshoot.
-/devcontainer-setup:troubleshoot
+/devcontainer:troubleshoot
 ```
 
 The skill checks firewall mode, reviews allowed domains list, tests connectivity to specific domain, and provides guidance on adding OpenAI domains to allowlist.

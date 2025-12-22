@@ -70,12 +70,12 @@ You will create VS Code DevContainer files in the project's `.devcontainer/` dir
 
 ### YOUR EXCLUSIVE OUTPUT FILES:
 
-| File | Location | Purpose |
-|------|----------|---------|
-| `Dockerfile` | `.devcontainer/Dockerfile` | Multi-stage Docker image |
-| `devcontainer.json` | `.devcontainer/devcontainer.json` | VS Code DevContainer config |
-| `setup-claude-credentials.sh` | `.devcontainer/setup-claude-credentials.sh` | Credentials helper |
-| `docker-compose.yml` | `./docker-compose.yml` | Docker services |
+| File                          | Location                                    | Purpose                     |
+| ----------------------------- | ------------------------------------------- | --------------------------- |
+| `Dockerfile`                  | `.devcontainer/Dockerfile`                  | Multi-stage Docker image    |
+| `devcontainer.json`           | `.devcontainer/devcontainer.json`           | VS Code DevContainer config |
+| `setup-claude-credentials.sh` | `.devcontainer/setup-claude-credentials.sh` | Credentials helper          |
+| `docker-compose.yml`          | `./docker-compose.yml`                      | Docker services             |
 
 **Task Boundary:** This skill generates DevContainer files ONLY. Claude Code configuration is a different feature.
 
@@ -86,13 +86,13 @@ The user will use VS Code's "Dev Containers: Reopen in Container" command to sta
 
 **BEFORE creating ANY file, verify the path:**
 
-| Path Pattern | Valid? | Action |
-|--------------|--------|--------|
-| `.devcontainer/*` | ✓ YES | Proceed |
-| `docker-compose.yml` | ✓ YES | Proceed |
-| `.claude/*` | ✗ NO | STOP - Wrong task |
-| `.claude-code/*` | ✗ NO | STOP - Wrong task |
-| `~/.claude*` | ✗ NO | STOP - Wrong location |
+| Path Pattern         | Valid? | Action                |
+| -------------------- | ------ | --------------------- |
+| `.devcontainer/*`    | ✓ YES  | Proceed               |
+| `docker-compose.yml` | ✓ YES  | Proceed               |
+| `.claude/*`          | ✗ NO   | STOP - Wrong task     |
+| `.claude-code/*`     | ✗ NO   | STOP - Wrong task     |
+| `~/.claude*`         | ✗ NO   | STOP - Wrong location |
 
 **Self-Check:** "Does my file path start with `.devcontainer/` or is it `docker-compose.yml`?"
 If NO → STOP and re-read the TASK IDENTITY section.
@@ -273,11 +273,11 @@ Basic mode gets developers up and running in minutes using battle-tested base im
 
 ## Usage
 
-This skill is invoked via the `/devcontainer-setup:basic` command or by selecting "Basic Mode" from the `/devcontainer-setup:setup` interactive mode selector.
+This skill is invoked via the `/devcontainer:basic` command or by selecting "Basic Mode" from the `/devcontainer:setup` interactive mode selector.
 
 **Command:**
 ```
-/devcontainer-setup:basic
+/devcontainer:basic
 ```
 
 The skill will:
@@ -405,18 +405,18 @@ Reference: `${CLAUDE_PLUGIN_ROOT}/data/official-images.json`
 
 When generating configuration, use these template files:
 
-- **Extensions**: `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basic.json`
+- **Extensions**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-basic/templates/extensions.json`
   - Read this file and merge base extensions with platform-specific extensions
   - Base extensions: `anthropic.claude-code`, `ms-azuretools.vscode-docker`, `redhat.vscode-yaml`, `eamodio.gitlens`, `PKief.material-icon-theme`, `johnpapa.vscode-peacock`
   - Platform extensions: Python (`ms-python.python`, `ms-python.vscode-pylance`), Node (`dbaeumer.vscode-eslint`, `esbenp.prettier-vscode`), etc.
 
-- **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/templates/compose/docker-compose.basic.yml`
+- **Docker Compose**: `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-basic/templates/docker-compose.yml`
   - Template includes postgres and redis services
   - Add app service with credentials mount
 
-- **Firewall**: `${CLAUDE_PLUGIN_ROOT}/templates/firewall/basic-no-firewall.sh`
-  - No-op script that relies on sandbox isolation
-  - Copy to `.devcontainer/init-firewall.sh`
+- **Firewall**: No firewall script needed (Basic mode relies on sandbox isolation)
+  - No-op approach that relies on sandbox isolation
+  - No firewall file to create
 
 - **Credentials Setup**: Create `.devcontainer/setup-claude-credentials.sh` for Issue #30
   - Copies Claude credentials from host mount to container
@@ -512,7 +512,7 @@ services:
     command: sleep infinity
     # Add depends_on if services needed (postgres, redis, etc.)
 
-  # Add services from templates/compose/docker-compose.basic.yml if needed
+  # Add services from docker-compose.yml template if needed
   # postgres:
   #   image: postgres:16-bookworm
   #   environment:
@@ -535,7 +535,7 @@ services:
 
 #### File 2: `.devcontainer/devcontainer.json`
 
-Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basic.json` and merge with platform-specific extensions.
+Read extensions from `${CLAUDE_PLUGIN_ROOT}/skills/devcontainer-setup-basic/templates/extensions.json` and merge with platform-specific extensions.
 
 ```json
 {
@@ -547,7 +547,7 @@ Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basi
   "customizations": {
     "vscode": {
       "extensions": [
-        // Base extensions from templates/extensions/extensions.basic.json
+        // Base extensions from templates/extensions.json
         "anthropic.claude-code",
         "ms-azuretools.vscode-docker",
         "redhat.vscode-yaml",
@@ -561,14 +561,14 @@ Read extensions from `${CLAUDE_PLUGIN_ROOT}/templates/extensions/extensions.basi
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt",
   "forwardPorts": [8000, 5432, 6379]
 }
 ```
 
 #### File 3: `.devcontainer/init-firewall.sh`
 
-Copy from `${CLAUDE_PLUGIN_ROOT}/templates/firewall/basic-no-firewall.sh`:
+Basic mode doesn't use a firewall script (relying on sandbox isolation):
 
 ```bash
 #!/bin/bash
@@ -639,7 +639,7 @@ Setup complete! Next steps:
    docker compose ps
 
 3. Install dependencies:
-   - Python: pip install -r requirements.txt
+   - Python: uv add -r requirements.txt
    - Node.js: npm install
    - Ruby: bundle install
 
@@ -691,7 +691,7 @@ services:
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt",
   "forwardPorts": [8000]
 }
 ```
@@ -831,7 +831,7 @@ volumes:
     }
   },
   "postStartCommand": ".devcontainer/init-firewall.sh",
-  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && pip install -r requirements.txt && npm install",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt && npm install",
   "forwardPorts": [8000, 3000, 5432, 6379]
 }
 ```

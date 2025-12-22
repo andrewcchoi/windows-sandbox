@@ -262,7 +262,7 @@ RUN npm install -g @anthropic-ai/claude-code@${CLAUDE_CODE_VERSION}
 # INSTALL DEEPAGENTS + TAVILY (AI/LLM Tools)
 # ============================================================================
 # Install via uv for fast, reliable installation
-RUN uv pip install --system deepagents tavily-python
+RUN uv add --system deepagents tavily-python
 # ===SECTION_END:deepagents_tavily===
 
 # ===SECTION_START:mermaid_cli===
@@ -276,7 +276,7 @@ RUN npm install -g @mermaid-js/mermaid-cli
 # ============================================================================
 # PYTHON COMMON PACKAGES
 # ============================================================================
-RUN python3 -m pip install --user --no-cache-dir \
+RUN uv add --no-cache-dir \
   pytest \
   black \
   flake8 \

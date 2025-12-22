@@ -4,78 +4,78 @@ This guide helps you choose the right sandbox mode for your project and understa
 
 ## Quick Reference Table
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| **Target Audience** | Beginners, rapid prototyping | Regular developers, team projects | Security-conscious, production prep | Experts, custom environments |
-| **Setup Time** | 1-2 minutes | 3-5 minutes | 8-12 minutes | 15-30 minutes |
-| **Questions Asked** | 2-3 | 5-8 | 10-15 | 15-20+ |
-| **Base Images** | sandbox-templates (latest, claude-code) | Official images (python:3.12-slim) | Security-hardened official | Any (including nightly/experimental) |
-| **Firewall** | None (container isolation) | Permissive (no restrictions) | Strict (customizable allowlist) | Optional or fully custom |
-| **VS Code Extensions** | 5-8 essential | 10-15 curated | 20+ comprehensive | User-controlled |
-| **Dockerfile Complexity** | Single-stage | Single-stage with build args | Multi-stage optimized | Fully custom |
-| **Auto-Detection** | Yes | Partial | No | No |
-| **Service Defaults** | PostgreSQL + Redis | User choice | User choice | User choice |
-| **Network Security** | High (default DROP) | Medium (expanded whitelist) | Maximum (minimal whitelist) | User-controlled |
-| **Customization** | Minimal | Moderate | High | Complete |
-| **Production Ready** | No | Development/staging | Yes | Depends on config |
-| **Learning Curve** | Easy | Easy-Moderate | Moderate-Hard | Expert |
-| **Maintenance** | Low | Low-Medium | Medium-High | High |
+| Feature                   | Basic                                   | Intermediate                       | Advanced                            | YOLO                                 |
+| ------------------------- | --------------------------------------- | ---------------------------------- | ----------------------------------- | ------------------------------------ |
+| **Target Audience**       | Beginners, rapid prototyping            | Regular developers, team projects  | Security-conscious, production prep | Experts, custom environments         |
+| **Setup Time**            | 1-2 minutes                             | 3-5 minutes                        | 8-12 minutes                        | 15-30 minutes                        |
+| **Questions Asked**       | 2-3                                     | 5-8                                | 10-15                               | 15-20+                               |
+| **Base Images**           | sandbox-templates (latest, claude-code) | Official images (python:3.12-slim) | Security-hardened official          | Any (including nightly/experimental) |
+| **Firewall**              | None (container isolation)              | Permissive (no restrictions)       | Strict (customizable allowlist)     | Optional or fully custom             |
+| **VS Code Extensions**    | 5-8 essential                           | 10-15 curated                      | 20+ comprehensive                   | User-controlled                      |
+| **Dockerfile Complexity** | Single-stage                            | Single-stage with build args       | Multi-stage optimized               | Fully custom                         |
+| **Auto-Detection**        | Yes                                     | Partial                            | No                                  | No                                   |
+| **Service Defaults**      | PostgreSQL + Redis                      | User choice                        | User choice                         | User choice                          |
+| **Network Security**      | High (default DROP)                     | Medium (expanded whitelist)        | Maximum (minimal whitelist)         | User-controlled                      |
+| **Customization**         | Minimal                                 | Moderate                           | High                                | Complete                             |
+| **Production Ready**      | No                                      | Development/staging                | Yes                                 | Depends on config                    |
+| **Learning Curve**        | Easy                                    | Easy-Moderate                      | Moderate-Hard                       | Expert                               |
+| **Maintenance**           | Low                                     | Low-Medium                         | Medium-High                         | High                                 |
 
 ### MCP Server Configuration
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| MCP Servers | 2 | 5 | 8 | 11+ |
-| filesystem | ✓ | ✓ | ✓ | ✓ |
-| memory | ✓ | ✓ | ✓ | ✓ |
-| sqlite | - | ✓ | ✓ | ✓ |
-| fetch | - | ✓ | ✓ | ✓ |
-| github | - | ✓ | ✓ | ✓ |
-| postgres | - | - | ✓ | ✓ |
-| docker | - | - | ✓ | ✓ |
-| brave-search | - | - | ✓ | ✓ |
-| puppeteer | - | - | - | ✓ |
-| slack | - | - | - | ✓ |
-| google-drive | - | - | - | ✓ |
+| Feature      | Basic | Intermediate | Advanced | YOLO |
+| ------------ | ----- | ------------ | -------- | ---- |
+| MCP Servers  | 2     | 5            | 8        | 11+  |
+| filesystem   | ✓     | ✓            | ✓        | ✓    |
+| memory       | ✓     | ✓            | ✓        | ✓    |
+| sqlite       | -     | ✓            | ✓        | ✓    |
+| fetch        | -     | ✓            | ✓        | ✓    |
+| github       | -     | ✓            | ✓        | ✓    |
+| postgres     | -     | -            | ✓        | ✓    |
+| docker       | -     | -            | ✓        | ✓    |
+| brave-search | -     | -            | ✓        | ✓    |
+| puppeteer    | -     | -            | -        | ✓    |
+| slack        | -     | -            | -        | ✓    |
+| google-drive | -     | -            | -        | ✓    |
 
 See [MCP Configuration Guide](MCP.md) for details.
 
 ### VS Code Extensions
 
-| Category | Basic | Intermediate | Advanced | YOLO |
-|----------|-------|--------------|----------|------|
-| Essential | 3 | 5 | 7 | 7 |
-| Language | 2+ | 4+ | 4+ | 6+ |
-| Themes | 1 | 3 | 5 | 9 |
-| Productivity | 0 | 2 | 4 | 4 |
-| Fun | 1 | 3 | 4 | 7 |
-| **Total** | **6-8** | **15-20** | **22-28** | **35+** |
+| Category     | Basic   | Intermediate | Advanced  | YOLO    |
+| ------------ | ------- | ------------ | --------- | ------- |
+| Essential    | 3       | 5            | 7         | 7       |
+| Language     | 2+      | 4+           | 4+        | 6+      |
+| Themes       | 1       | 3            | 5         | 9       |
+| Productivity | 0       | 2            | 4         | 4       |
+| Fun          | 1       | 3            | 4         | 7       |
+| **Total**    | **6-8** | **15-20**    | **22-28** | **35+** |
 
 See [Extensions Reference](EXTENSIONS.md) for details.
 
 ### Variables Configuration
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| Build ARGs | 5 (BASE_IMAGE, TZ, versions) | 8 (+ messaging, DB options) | 12+ (+ cloud, API configs) | Custom |
-| Runtime ENVs | 6 (NODE_ENV, paths) | 12 (+ service configs) | 20+ (comprehensive) | Custom |
-| VS Code Inputs | 0 | 2-3 (DB creds) | 5+ (all services) | Custom |
-| .env Template | Minimal | Standard | Comprehensive | Full |
-| Secret Mounts | 0 | 0 | 5+ | Custom |
+| Feature        | Basic                        | Intermediate                | Advanced                   | YOLO   |
+| -------------- | ---------------------------- | --------------------------- | -------------------------- | ------ |
+| Build ARGs     | 5 (BASE_IMAGE, TZ, versions) | 8 (+ messaging, DB options) | 12+ (+ cloud, API configs) | Custom |
+| Runtime ENVs   | 6 (NODE_ENV, paths)          | 12 (+ service configs)      | 20+ (comprehensive)        | Custom |
+| VS Code Inputs | 0                            | 2-3 (DB creds)              | 5+ (all services)          | Custom |
+| .env Template  | Minimal                      | Standard                    | Comprehensive              | Full   |
+| Secret Mounts  | 0                            | 0                           | 5+                         | Custom |
 
 See [Variables Guide](VARIABLES.md) for details.
 
 ### Secrets Management
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| Secret Handling | Development defaults | VS Code inputs | Docker secrets + inputs | All methods |
-| Git Authentication | None | VS Code input | VS Code input + SSH | All methods |
-| Database Credentials | Hardcoded defaults | Optional input override | Required inputs | Custom |
-| API Keys | None | GitHub token (optional) | All APIs (required) | Custom |
-| Cloud Credentials | None | None | Host mounts | Custom |
-| Build Secrets | None | None | NPM, PyPI, gems | Custom |
-| SSL/TLS Certificates | None | None | Docker secrets | Custom |
+| Feature              | Basic                | Intermediate            | Advanced                | YOLO        |
+| -------------------- | -------------------- | ----------------------- | ----------------------- | ----------- |
+| Secret Handling      | Development defaults | VS Code inputs          | Docker secrets + inputs | All methods |
+| Git Authentication   | None                 | VS Code input           | VS Code input + SSH     | All methods |
+| Database Credentials | Hardcoded defaults   | Optional input override | Required inputs         | Custom      |
+| API Keys             | None                 | GitHub token (optional) | All APIs (required)     | Custom      |
+| Cloud Credentials    | None                 | None                    | Host mounts             | Custom      |
+| Build Secrets        | None                 | None                    | NPM, PyPI, gems         | Custom      |
+| SSL/TLS Certificates | None                 | None                    | Docker secrets          | Custom      |
 
 See [Secrets Management Guide](SECRETS.md) for details.
 
@@ -282,7 +282,7 @@ Claude: **Step 2: Base Image Selection**
   ```dockerfile
   # Stage 1: Builder
   FROM python:3.12-slim-bookworm AS builder
-  RUN pip install --user --no-cache-dir -r requirements.txt
+  RUN uv add --no-cache-dir -r requirements.txt
 
   # Stage 2: Runtime (minimal)
   FROM python:3.12-slim-bookworm
@@ -528,29 +528,29 @@ START: What's your primary goal?
 
 ### Threat Model Coverage
 
-| Threat | Basic | Intermediate | Advanced | YOLO |
-|--------|-------|--------------|----------|------|
-| Malicious dependency (data exfiltration) | Protected | Protected | Maximum protection | User-controlled |
-| Compromised package manager | Protected | Protected | Maximum protection | User-controlled |
-| Container escape | Mitigated | Mitigated | Maximum mitigation | User-controlled |
-| Credential leakage | Detected | Detected | Prevented | User-controlled |
-| Supply chain attack | Reduced risk | Reduced risk | Minimal risk | User-controlled |
-| Network eavesdropping | N/A (firewall blocks) | N/A (firewall blocks) | N/A (firewall blocks) | Depends on config |
-| Privilege escalation | Mitigated (non-root) | Mitigated (non-root) | Prevented (hardened) | User-controlled |
+| Threat                                   | Basic                 | Intermediate          | Advanced              | YOLO              |
+| ---------------------------------------- | --------------------- | --------------------- | --------------------- | ----------------- |
+| Malicious dependency (data exfiltration) | Protected             | Protected             | Maximum protection    | User-controlled   |
+| Compromised package manager              | Protected             | Protected             | Maximum protection    | User-controlled   |
+| Container escape                         | Mitigated             | Mitigated             | Maximum mitigation    | User-controlled   |
+| Credential leakage                       | Detected              | Detected              | Prevented             | User-controlled   |
+| Supply chain attack                      | Reduced risk          | Reduced risk          | Minimal risk          | User-controlled   |
+| Network eavesdropping                    | N/A (firewall blocks) | N/A (firewall blocks) | N/A (firewall blocks) | Depends on config |
+| Privilege escalation                     | Mitigated (non-root)  | Mitigated (non-root)  | Prevented (hardened)  | User-controlled   |
 
 ### Security Feature Matrix
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
-|---------|-------|--------------|----------|------|
-| Default DROP firewall | Yes | Yes | Yes | Optional |
-| Non-root user | Yes | Yes | Yes | Optional |
-| Minimal capabilities | No | No | Yes | Optional |
-| Read-only filesystem | No | No | Yes | Optional |
-| Resource limits | No | No | Yes | Optional |
-| Multi-stage builds | No | No | Yes | Optional |
-| Security scanning | No | No | Yes | Optional |
-| Secrets management | Basic | Basic | Advanced | Optional |
-| Network segmentation | Basic | Basic | Advanced | Optional |
+| Feature               | Basic | Intermediate | Advanced | YOLO     |
+| --------------------- | ----- | ------------ | -------- | -------- |
+| Default DROP firewall | Yes   | Yes          | Yes      | Optional |
+| Non-root user         | Yes   | Yes          | Yes      | Optional |
+| Minimal capabilities  | No    | No           | Yes      | Optional |
+| Read-only filesystem  | No    | No           | Yes      | Optional |
+| Resource limits       | No    | No           | Yes      | Optional |
+| Multi-stage builds    | No    | No           | Yes      | Optional |
+| Security scanning     | No    | No           | Yes      | Optional |
+| Secrets management    | Basic | Basic        | Advanced | Optional |
+| Network segmentation  | Basic | Basic        | Advanced | Optional |
 
 ### Firewall Domain Counts
 
@@ -563,12 +563,12 @@ START: What's your primary goal?
 
 ### File Sizes (typical)
 
-| Mode | devcontainer.json | Dockerfile | docker-compose.yml | init-firewall.sh | Total Lines |
-|------|-------------------|------------|-------------------|-----------------|-------------|
-| Basic | 80 lines | 50 lines | 60 lines | 100 lines | ~290 |
-| Intermediate | 120 lines | 80 lines | 100 lines | 200 lines | ~500 |
-| Advanced | 180 lines | 150 lines | 150 lines | 150 lines | ~630 |
-| YOLO | Varies | Varies | Varies | Varies | ~200-1000+ |
+| Mode         | devcontainer.json | Dockerfile | docker-compose.yml | init-firewall.sh | Total Lines |
+| ------------ | ----------------- | ---------- | ------------------ | ---------------- | ----------- |
+| Basic        | 80 lines          | 50 lines   | 60 lines           | 100 lines        | ~290        |
+| Intermediate | 120 lines         | 80 lines   | 100 lines          | 200 lines        | ~500        |
+| Advanced     | 180 lines         | 150 lines  | 150 lines          | 150 lines        | ~630        |
+| YOLO         | Varies            | Varies     | Varies             | Varies           | ~200-1000+  |
 
 ### Maintainability
 

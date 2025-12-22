@@ -1,0 +1,15 @@
+{
+  "name": "streamlit-sandbox-basic",
+  "dockerComposeFile": "../docker-compose.yml",
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+  "customizations": {
+    "vscode": {
+      "extensions": ["ms-python.python"]
+    }
+  },
+  "postStartCommand": ".devcontainer/init-firewall.sh",
+  "postCreateCommand": ".devcontainer/setup-claude-credentials.sh && uv add -r requirements.txt",
+  "forwardPorts": [8501, 5432, 6379]
+}

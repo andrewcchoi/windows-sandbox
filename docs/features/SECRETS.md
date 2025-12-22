@@ -18,15 +18,15 @@ This guide covers secure credential handling in DevContainers, including Docker 
 
 ## Quick Reference
 
-| Secret Type | Best Method | Mode | Example |
-|-------------|-------------|------|---------|
-| API Keys (dev) | VS Code Input | Intermediate+ | GitHub token, OpenAI key |
-| API Keys (prod) | Docker Secret | Advanced+ | Production API credentials |
-| Database Passwords | VS Code Input (dev) / Secret (prod) | Basic+ | PostgreSQL password |
-| Git Auth | VS Code Input or SSH | Intermediate+ | GitHub/GitLab tokens |
-| Cloud Credentials | Host Mount | Advanced+ | ~/.aws, ~/.gcloud |
-| Private Registry | Docker Build Secret | Advanced+ | NPM, PyPI tokens |
-| SSL Certificates | Docker Secret | Advanced+ | TLS cert and key |
+| Secret Type        | Best Method                         | Mode          | Example                    |
+| ------------------ | ----------------------------------- | ------------- | -------------------------- |
+| API Keys (dev)     | VS Code Input                       | Intermediate+ | GitHub token, OpenAI key   |
+| API Keys (prod)    | Docker Secret                       | Advanced+     | Production API credentials |
+| Database Passwords | VS Code Input (dev) / Secret (prod) | Basic+        | PostgreSQL password        |
+| Git Auth           | VS Code Input or SSH                | Intermediate+ | GitHub/GitLab tokens       |
+| Cloud Credentials  | Host Mount                          | Advanced+     | ~/.aws, ~/.gcloud          |
+| Private Registry   | Docker Build Secret                 | Advanced+     | NPM, PyPI tokens           |
+| SSL Certificates   | Docker Secret                       | Advanced+     | TLS cert and key           |
 
 ## Why Secrets Management Matters
 
@@ -155,10 +155,10 @@ RUN --mount=type=secret,id=pypi_token \
         PYPI_TOKEN=$(cat /run/secrets/pypi_token) && \
         pip config set global.extra-index-url \
             https://token:${PYPI_TOKEN}@pypi.example.com/simple && \
-        pip install -r requirements.txt && \
+        uv add -r requirements.txt && \
         pip config unset global.extra-index-url; \
     else \
-        pip install -r requirements.txt; \
+        uv add -r requirements.txt; \
     fi
 ```
 
@@ -799,8 +799,8 @@ secrets:
 ## Reference Files
 
 - `data/secrets.json` - Complete secrets catalog
-- `templates/env/*.template` - Environment templates with secret placeholders
-- `templates/variables/*.json` - Variable configurations per mode
+- `skills/devcontainer-setup-*/templates/.env.template` - Environment templates with secret placeholders
+- `skills/devcontainer-setup-*/templates/variables.json` - Variable configurations per mode
 
 ---
 

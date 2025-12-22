@@ -1,15 +1,9 @@
+# Infrastructure
+.internal/
+
 # Test directories
 test-*
 !test-config.yml
-tests/results/
-tests/skill-validation/generated/
-tests/skill-validation/reports/
-
-# Build artifacts
-bin/
-
-# Node modules
-node_modules/
 
 # Python
 __pycache__/
@@ -30,3 +24,4 @@ Thumbs.db
 .env.local
 .claude/settings.local.json
 .claude/settings.json
+.claude/state

@@ -72,9 +72,9 @@ Skills are invoked through slash commands in Claude Code. When you use a command
 **Location:** `skills/devcontainer-setup-advanced/SKILL.md`
 
 **Reference Documentation:**
-- `skills/devcontainer-setup-advanced/references/customization.md` - Customization guide
-- `skills/devcontainer-setup-advanced/references/security.md` - Security best practices
-- `skills/devcontainer-setup-advanced/references/troubleshooting.md` - Common issues
+- `docs/features/CUSTOMIZATION.md` - Customization guide
+- `docs/features/security-model.md` - Security best practices
+- `docs/features/TROUBLESHOOTING.md` - Common issues
 
 ---
 
@@ -176,7 +176,7 @@ skills/
 │   └── SKILL.md
 ├── devcontainer-setup-advanced/
 │   ├── SKILL.md
-│   └── references/                    # Additional documentation
+│   └── templates/                     # Mode-specific templates
 │       ├── customization.md
 │       ├── security.md
 │       └── troubleshooting.md
@@ -198,12 +198,10 @@ skills/
 - Verification steps
 - Error handling
 
-**references/** (optional)
-- Supplementary documentation
-- Detailed guides
-- Reference tables
-- Best practices
-- Advanced topics
+**templates/** (required)
+- Mode-specific template files
+- Dockerfile templates, configuration files
+- Extensions, MCP, variables, compose files
 
 ## How Skills Work
 
@@ -336,13 +334,13 @@ Test skills with various scenarios:
 Each skill is demonstrated in example projects:
 
 ### Setup Skill Examples
-- `examples/demo-app-sandbox-basic/` - Basic mode result
-- `examples/demo-app-sandbox-intermediate/` - Intermediate mode result
-- `examples/demo-app-sandbox-advanced/` - Advanced mode result
-- `examples/demo-app-sandbox-yolo/` - YOLO mode result
-- `examples/streamlit-sandbox-basic/` - Basic mode (Python-only)
+- `docs/examples/demo-app-sandbox-basic/` - Basic mode result
+- `docs/examples/demo-app-sandbox-intermediate/` - Intermediate mode result
+- `docs/examples/demo-app-sandbox-advanced/` - Advanced mode result
+- `docs/examples/demo-app-sandbox-yolo/` - YOLO mode result
+- `docs/examples/streamlit-sandbox-basic/` - Basic mode (Python-only)
 
-See [Examples README](../examples/README.md) for detailed walkthroughs.
+See [Examples README](../docs/examples/README.md) for detailed walkthroughs.
 
 ## Command Quick Reference
 
@@ -360,7 +358,7 @@ See [Commands README](../commands/README.md) for full command documentation.
 
 1. **Interactive Commands**: Use `/devcontainer:troubleshoot` for problems
 2. **Documentation**: Check relevant guides in `docs/`
-3. **Examples**: Review example projects in `examples/`
+3. **Examples**: Review example projects in `docs/examples/`
 4. **GitHub Issues**: Report bugs or request features
 5. **GitHub Discussions**: Ask questions and share knowledge
 
