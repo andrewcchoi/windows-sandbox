@@ -71,7 +71,7 @@ RUN npm install -g @anthropic-ai/claude-code
 RUN npm install -g @mermaid-js/mermaid-cli
 
 # Install DeepAgents + Tavily (AI/LLM Tools)
-RUN uv pip install --system deepagents tavily-python
+RUN uv add --system deepagents tavily-python
 
 # Set Java environment variables
 ENV JAVA_HOME=/usr/local/openjdk-21 \

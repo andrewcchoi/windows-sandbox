@@ -20,17 +20,17 @@ This guide helps diagnose and resolve common issues with Claude Code sandbox env
 
 Common problems and their immediate fixes:
 
-| Problem | Quick Fix | Details |
-|---------|-----------|---------|
-| Cannot connect to Docker daemon | Start Docker Desktop | [Container Issues](#container-issues) |
-| Container won't start | `docker compose down && docker compose up -d` | [Container Issues](#container-issues) |
-| Network not found | Start docker-compose services first | [Container Issues](#container-issues) |
-| Can't reach external sites | Check firewall mode, whitelist domains | [Network Issues](#network-issues) |
-| Can't connect to postgres/redis | Use service name (not localhost) | [Service Connectivity](#service-connectivity) |
-| npm/pip install fails | Firewall blocking, whitelist registries | [Firewall Issues](#firewall-issues) |
-| Permission denied | Fix file ownership: `sudo chown -R 1000:1000 .` | [Permission Errors](#permission-errors) |
-| Port already in use | Stop conflicting service or change port | [Service Connectivity](#service-connectivity) |
-| VS Code extension not loading | Rebuild container without cache | [VS Code DevContainer Problems](#vs-code-devcontainer-problems) |
+| Problem                         | Quick Fix                                       | Details                                                         |
+| ------------------------------- | ----------------------------------------------- | --------------------------------------------------------------- |
+| Cannot connect to Docker daemon | Start Docker Desktop                            | [Container Issues](#container-issues)                           |
+| Container won't start           | `docker compose down && docker compose up -d`   | [Container Issues](#container-issues)                           |
+| Network not found               | Start docker-compose services first             | [Container Issues](#container-issues)                           |
+| Can't reach external sites      | Check firewall mode, whitelist domains          | [Network Issues](#network-issues)                               |
+| Can't connect to postgres/redis | Use service name (not localhost)                | [Service Connectivity](#service-connectivity)                   |
+| npm/uv add fails                | Firewall blocking, whitelist registries         | [Firewall Issues](#firewall-issues)                             |
+| Permission denied               | Fix file ownership: `sudo chown -R 1000:1000 .` | [Permission Errors](#permission-errors)                         |
+| Port already in use             | Stop conflicting service or change port         | [Service Connectivity](#service-connectivity)                   |
+| VS Code extension not loading   | Rebuild container without cache                 | [VS Code DevContainer Problems](#vs-code-devcontainer-problems) |
 
 ## Claude Code Installation
 
@@ -313,7 +313,7 @@ docker network ls
 
 **Symptoms:**
 - `npm install` fails during build
-- `pip install` fails during build
+- `uv add` fails during build
 - Package registry unreachable
 
 **Cause:** Firewall blocking package registries during build, or network issues.
@@ -590,7 +590,7 @@ Services may take time to initialize, especially PostgreSQL. Wait 30-60 seconds 
 
 **Symptoms:**
 - `npm install` hangs or fails
-- `pip install <package>` fails with connection error
+- `uv add <package>` fails with connection error
 - `cargo build` can't fetch dependencies
 
 **Cause:** Strict firewall mode blocking package registries.
@@ -637,16 +637,16 @@ sudo /usr/local/bin/init-firewall.sh
 
 **Common Package Registry Domains:**
 
-| Language | Domains to Whitelist |
-|----------|---------------------|
-| Python | `pypi.org`, `files.pythonhosted.org` |
-| Node.js | `registry.npmjs.org`, `yarnpkg.com` |
-| Rust | `crates.io`, `static.crates.io` |
-| Ruby | `rubygems.org`, `api.rubygems.org` |
-| Go | `proxy.golang.org`, `sum.golang.org` |
-| Java/Maven | `repo.maven.org`, `repo1.maven.org` |
+| Language     | Domains to Whitelist                  |
+| ------------ | ------------------------------------- |
+| Python       | `pypi.org`, `files.pythonhosted.org`  |
+| Node.js      | `registry.npmjs.org`, `yarnpkg.com`   |
+| Rust         | `crates.io`, `static.crates.io`       |
+| Ruby         | `rubygems.org`, `api.rubygems.org`    |
+| Go           | `proxy.golang.org`, `sum.golang.org`  |
+| Java/Maven   | `repo.maven.org`, `repo1.maven.org`   |
 | PHP/Composer | `packagist.org`, `repo.packagist.org` |
-| .NET/NuGet | `nuget.org`, `api.nuget.org` |
+| .NET/NuGet   | `nuget.org`, `api.nuget.org`          |
 
 **Temporary Workaround:**
 
@@ -1268,7 +1268,7 @@ pip config set global.trusted-host files.pythonhosted.org
 Only use this for testing in controlled environments:
 ```bash
 # For pip
-pip install --trusted-host pypi.org --trusted-host files.pythonhosted.org package-name
+uv add --trusted-host pypi.org --trusted-host files.pythonhosted.org package-name
 
 # For npm
 npm config set strict-ssl false

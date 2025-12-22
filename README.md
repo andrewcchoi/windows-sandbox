@@ -1,7 +1,7 @@
 # DevContainer Setup Plugin
 
 > **Repository:** [andrewcchoi/sandbox-maxxing](https://github.com/andrewcchoi/sandbox-maxxing)
-> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer-setup:basic, /devcontainer-setup:advanced, etc.)
+> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer:basic, /devcontainer:advanced, etc.)
 
 Interactive assistant for creating VS Code DevContainer configurations with Docker Compose support. Four-mode system (Basic, Intermediate, Advanced, YOLO) with security firewall options and comprehensive tooling.
 
@@ -30,22 +30,22 @@ claude plugins list
 
 ```bash
 # Quick setup with auto-detection (Basic mode)
-/devcontainer-setup:basic
+/devcontainer:basic
 
 # Balanced control and convenience (Intermediate mode)
-/devcontainer-setup:intermediate
+/devcontainer:intermediate
 
 # Security-focused minimal setup (Advanced mode)
-/devcontainer-setup:advanced
+/devcontainer:advanced
 
 # Full customization and control (YOLO mode)
-/devcontainer-setup:yolo
+/devcontainer:yolo
 
 # Troubleshoot existing DevContainer
-/devcontainer-setup:troubleshoot
+/devcontainer:troubleshoot
 
 # Security audit
-/devcontainer-setup:audit
+/devcontainer:audit
 ```
 
 ### Claude Code Installation
@@ -67,7 +67,7 @@ claude --version
 If the installation script cannot be downloaded or the Anthropic servers are unreachable:
 1. Pre-download the installation script on a connected machine
 2. Include it in your project or mount it as a volume
-3. Run the local script instead: `sh ./scripts/install-claude.sh`
+3. Run the local script instead: `sh ./.internal/scripts/install-claude.sh`
 
 See [TROUBLESHOOTING.md](docs/features/TROUBLESHOOTING.md#claude-code-installation) for details.
 
@@ -91,7 +91,7 @@ See [MODES.md](docs/features/MODES.md) for comprehensive comparison guide.
 
 **Example**:
 ```
-You: /devcontainer-setup:basic
+You: /devcontainer:basic
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
@@ -114,7 +114,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
 
 **Example**:
 ```
-You: /devcontainer-setup:intermediate
+You: /devcontainer:intermediate
 Claude: What's your primary language?
         • Python • Node.js • Ruby • Go • PHP
 You: Python
@@ -140,7 +140,7 @@ Claude: What database?
 
 **Example**:
 ```
-You: /devcontainer-setup:advanced
+You: /devcontainer:advanced
 Claude: This mode creates security-hardened configurations.
 
         **Step 1: Base Configuration**
@@ -169,7 +169,7 @@ Claude: This mode creates security-hardened configurations.
 
 **Example**:
 ```
-You: /devcontainer-setup:yolo
+You: /devcontainer:yolo
 Claude: YOLO mode - You're in control!
 
         ⚠️  Warning: Maximum flexibility, minimal safety rails.
@@ -187,15 +187,15 @@ Claude: sandbox-templates tag?
 
 ## Slash Commands
 
-| Command                 | Description                                                           | Mode         |
-| ----------------------- | --------------------------------------------------------------------- | ------------ |
-| `/devcontainer-setup:basic`        | Quick automatic setup with auto-detection                             | Basic        |
-| `/devcontainer-setup:intermediate` | Balanced control and convenience                                      | Intermediate |
-| `/devcontainer-setup:advanced`     | Security-focused minimal setup                                        | Advanced     |
-| `/devcontainer-setup:yolo`         | Full customization and control                                        | YOLO         |
-| `/devcontainer-setup:setup`        | Interactive mode selection (or use `--basic`, `--intermediate`, etc.) | All          |
-| `/devcontainer-setup:troubleshoot` | Diagnose and fix sandbox issues                                       | All          |
-| `/devcontainer-setup:audit`        | Security audit and recommendations                                    | All          |
+| Command                            | Description                                                           | Mode         |
+| ---------------------------------- | --------------------------------------------------------------------- | ------------ |
+| `/devcontainer:basic`        | Quick automatic setup with auto-detection                             | Basic        |
+| `/devcontainer:intermediate` | Balanced control and convenience                                      | Intermediate |
+| `/devcontainer:advanced`     | Security-focused minimal setup                                        | Advanced     |
+| `/devcontainer:yolo`         | Full customization and control                                        | YOLO         |
+| `/devcontainer:setup`        | Interactive mode selection (or use `--basic`, `--intermediate`, etc.) | All          |
+| `/devcontainer:troubleshoot` | Diagnose and fix sandbox issues                                       | All          |
+| `/devcontainer:audit`        | Security audit and recommendations                                    | All          |
 
 ## Auto-Detection
 
@@ -208,7 +208,7 @@ The plugin automatically activates when you:
 **Example**:
 ```
 You: I need to set up a Docker development environment for my Python project
-Claude: [Automatically uses sandbox-setup skill]
+Claude: [Automatically uses /devcontainer:setup command]
       What mode would you like?
       • Basic (Zero config, 1-2 min)
       • Intermediate (Balanced, 3-5 min)
@@ -283,7 +283,7 @@ The troubleshooter handles:
 ### Example Troubleshooting Session
 
 ```
-You: /devcontainer-setup:troubleshoot
+You: /devcontainer:troubleshoot
 Claude: What issue are you experiencing?
 You: Can't connect to PostgreSQL
 Claude: Let me diagnose...
@@ -326,10 +326,10 @@ Templates use these placeholders:
 
 ## Skills Reference
 
-### sandbox-setup
+### /devcontainer:setup (Interactive Router)
 Interactive setup wizard with four experience modes.
 
-**Note:** This is a router skill that delegates to mode-specific skills:
+**Note:** This is a router command that delegates to mode-specific skills:
 - `devcontainer-setup-basic` - Basic mode setup
 - `devcontainer-setup-intermediate` - Intermediate mode setup
 - `devcontainer-setup-advanced` - Advanced mode setup
@@ -384,21 +384,21 @@ Performs comprehensive security audits.
 ## Reference Documentation
 
 The plugin includes comprehensive reference documentation:
-- `skills/devcontainer-setup-advanced/references/customization.md` - Customization guide
-- `skills/devcontainer-setup-advanced/references/security.md` - Security model and best practices
-- `skills/devcontainer-setup-advanced/references/troubleshooting.md` - Detailed troubleshooting guide
+- `docs/features/CUSTOMIZATION.md` - Customization guide
+- `docs/features/security-model.md` - Security model and best practices
+- `docs/features/TROUBLESHOOTING.md` - Detailed troubleshooting guide
 
 ## Naming Convention
 
 This plugin uses consistent naming across different contexts:
 
-| Context | Name | Example |
-|---------|------|---------|
-| Plugin name | devcontainer-setup | Plugin installation and management |
-| GitHub repository | sandbox-maxxing | github.com/andrewcchoi/sandbox-maxxing |
-| Slash commands | /devcontainer-setup:* | /devcontainer-setup:basic, /devcontainer-setup:yolo |
-| Skills | sandbox-* | devcontainer-setup-basic |
-| User-facing title | DevContainer Setup Plugin | In documentation headers |
+| Context           | Name                      | Example                                             |
+| ----------------- | ------------------------- | --------------------------------------------------- |
+| Plugin name       | devcontainer-setup        | Plugin installation and management                  |
+| GitHub repository | sandbox-maxxing           | github.com/andrewcchoi/sandbox-maxxing              |
+| Slash commands    | /devcontainer:*           | /devcontainer:basic, /devcontainer:yolo |
+| Skills            | sandbox-*                 | devcontainer-setup-basic                            |
+| User-facing title | DevContainer Setup Plugin | In documentation headers                            |
 
 **Why different names?**
 - **devcontainer-setup**: Official plugin name used for installation and management
@@ -438,13 +438,13 @@ sandbox-maxxing/
 │   ├── sandbox-troubleshoot/    # Troubleshooting assistant
 │   └── sandbox-security/        # Security auditor
 ├── commands/
-│   ├── basic.md                 # /devcontainer-setup:basic
-│   ├── intermediate.md          # /devcontainer-setup:intermediate
-│   ├── advanced.md              # /devcontainer-setup:advanced
-│   ├── yolo.md                  # /devcontainer-setup:yolo
-│   ├── setup.md                 # /devcontainer-setup:setup (router)
-│   ├── troubleshoot.md          # /devcontainer-setup:troubleshoot
-│   └── audit.md                 # /devcontainer-setup:audit
+│   ├── basic.md                 # /devcontainer:basic
+│   ├── intermediate.md          # /devcontainer:intermediate
+│   ├── advanced.md              # /devcontainer:advanced
+│   ├── yolo.md                  # /devcontainer:yolo
+│   ├── setup.md                 # /devcontainer:setup (router)
+│   ├── troubleshoot.md          # /devcontainer:troubleshoot
+│   └── audit.md                 # /devcontainer:audit
 ├── templates/
 │   ├── master/                  # Master templates with section markers
 │   │   ├── devcontainer.json.master
@@ -455,7 +455,7 @@ sandbox-maxxing/
 │   ├── dockerfiles/            # Language-specific Dockerfile sections
 │   ├── firewall/               # Mode-specific firewall configs
 │   └── legacy/                 # Deprecated monolithic templates
-└── examples/                    # Working example applications
+└── docs/examples/                    # Working example applications
     ├── streamlit-sandbox-basic/
     ├── demo-app-sandbox-basic/
     ├── demo-app-sandbox-intermediate/
@@ -468,7 +468,7 @@ sandbox-maxxing/
 ### Example 1: Quick Python Setup (Basic Mode)
 
 ```
-You: /devcontainer-setup:basic
+You: /devcontainer:basic
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
@@ -490,7 +490,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
 ### Example 2: Node.js with Customization (Intermediate Mode)
 
 ```
-You: /devcontainer-setup:intermediate
+You: /devcontainer:intermediate
 Claude: What's your primary language?
 You: Node.js
 Claude: Node.js version?
@@ -512,7 +512,7 @@ Claude: Generating configuration for Node.js 20 + MongoDB 7 + Redis...
 ### Example 3: Security Audit
 
 ```
-You: /devcontainer-setup:audit
+You: /devcontainer:audit
 Claude: Running security audit...
 
         # Security Audit Report
@@ -540,12 +540,12 @@ Claude: Running security audit...
 
 ## Example Applications
 
-The plugin includes comprehensive working examples in the `examples/` directory, demonstrating all four experience modes (Basic, Intermediate, Advanced, YOLO) with real applications.
+The plugin includes comprehensive working examples in the `docs/examples/` directory, demonstrating all four experience modes (Basic, Intermediate, Advanced, YOLO) with real applications.
 
 ### Example Structure
 
 ```
-examples/
+docs/examples/
 ├── README.md                        # Comprehensive examples guide
 ├── docker-compose.yml               # Shared PostgreSQL + Redis services
 │
@@ -561,8 +561,8 @@ examples/
 
 ### Quick Validation: Streamlit App
 
-**Shared Code**: `examples/streamlit-shared/`
-**Sandbox Example**: `examples/streamlit-sandbox-basic/` (Basic mode)
+**Shared Code**: `docs/examples/streamlit-shared/`
+**Sandbox Example**: `docs/examples/streamlit-sandbox-basic/` (Basic mode)
 
 Minimal Python Streamlit app for 30-second environment validation:
 - PostgreSQL connection test with visual feedback
@@ -572,16 +572,16 @@ Minimal Python Streamlit app for 30-second environment validation:
 ```bash
 # Option 1: Use shared services
 cd examples && docker compose up -d
-cd streamlit-shared && pip install -r requirements.txt && streamlit run app.py
+cd streamlit-shared && uv add -r requirements.txt && streamlit run app.py
 
 # Option 2: Self-contained DevContainer
-code examples/streamlit-sandbox-basic  # Open in VS Code
+code docs/examples/streamlit-sandbox-basic  # Open in VS Code
 # Reopen in Container → Auto-starts all services
 ```
 
 ### Production Demo: Blog Application
 
-**Shared Code**: `examples/demo-app-shared/`
+**Shared Code**: `docs/examples/demo-app-shared/`
 
 A complete full-stack blogging platform with:
 - **Backend**: FastAPI + SQLAlchemy + PostgreSQL + Redis
@@ -592,7 +592,7 @@ A complete full-stack blogging platform with:
 **Four Example Sandbox Modes Available**:
 
 #### 1. Basic Mode - Quick Start
-**Location**: `examples/demo-app-sandbox-basic/`
+**Location**: `docs/examples/demo-app-sandbox-basic/`
 
 **What's included**:
 - Auto-detected Python + Node.js stack
@@ -604,7 +604,7 @@ A complete full-stack blogging platform with:
 **Best for**: Prototypes, solo developers, quick start
 
 #### 2. Advanced Mode - Balanced
-**Location**: `examples/demo-app-sandbox-advanced/`
+**Location**: `docs/examples/demo-app-sandbox-advanced/`
 
 **What's included**:
 - Configurable Python/Node.js versions (build args)
@@ -616,7 +616,7 @@ A complete full-stack blogging platform with:
 **Best for**: Team development, active projects, customization needs
 
 #### 3. YOLO Mode - Full Control
-**Location**: `examples/demo-app-sandbox-yolo/`
+**Location**: `docs/examples/demo-app-sandbox-yolo/`
 
 **What's included**:
 - Multi-stage optimized Dockerfile (7 stages)
@@ -633,14 +633,14 @@ A complete full-stack blogging platform with:
 
 **Quick validation** (Streamlit):
 ```bash
-cd examples/streamlit-sandbox-basic
+cd docs/examples/streamlit-sandbox-basic
 # Open in VS Code → Reopen in Container
 streamlit run app.py
 ```
 
 **Full-stack demo** (any mode):
 ```bash
-cd examples/demo-app-sandbox-basic  # or -advanced or -yolo
+cd docs/examples/demo-app-sandbox-basic  # or -advanced or -yolo
 # Open in VS Code → Reopen in Container
 
 # Terminal 1: Backend
@@ -666,7 +666,7 @@ cd frontend && npm run dev
 3. **Explore features**: `demo-app-sandbox-advanced/` - See customization options
 4. **Study production**: `demo-app-sandbox-yolo/` - Learn best practices
 
-See `examples/README.md` for detailed comparison and customization guides
+See `docs/examples/README.md` for detailed comparison and customization guides
 
 ### Dogfooding Approach
 
@@ -695,7 +695,7 @@ code .
 cd examples
 docker compose up -d                    # Start PostgreSQL + Redis
 cd basic-streamlit
-uv pip install -r requirements.txt
+uv add -r requirements.txt
 streamlit run app.py
 ```
 
@@ -716,18 +716,18 @@ MIT License - See LICENSE file for details
 ## Support
 
 - **Issues**: https://github.com/andrewcchoi/sandbox-maxxing/issues
-- **Documentation**: See `skills/*/references/` directories
+- **Documentation**: See `docs/features/` directory
 - **Claude Code Docs**: https://claude.ai/code
 
 ## Repository Maintenance
 
-For contributors and maintainers, see [`docs/repo-keeper/`](docs/repo-keeper/):
+For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-keeper/):
 
-- **Organization Checklist**: [`ORGANIZATION_CHECKLIST.md`](docs/repo-keeper/ORGANIZATION_CHECKLIST.md) - 18-category maintenance checklist
-- **Inventory**: [`INVENTORY.json`](docs/repo-keeper/INVENTORY.json) - Entity inventory for auditing
-- **Automation Scripts**: [`scripts/`](docs/repo-keeper/scripts/) - Version sync, link checking, inventory validation
-- **GitHub Workflows**: [`workflows/`](docs/repo-keeper/workflows/) - CI/CD templates for automated validation
-- **Issue/PR Templates**: [`templates/`](docs/repo-keeper/templates/) - Standardized templates for contributors
+- **Organization Checklist**: [`ORGANIZATION_CHECKLIST.md`](.internal/repo-keeper/ORGANIZATION_CHECKLIST.md) - 18-category maintenance checklist
+- **Inventory**: [`INVENTORY.json`](.internal/repo-keeper/INVENTORY.json) - Entity inventory for auditing
+- **Automation Scripts**: [`scripts/`](.internal/repo-keeper/.internal/scripts/) - Version sync, link checking, inventory validation
+- **GitHub Workflows**: [`workflows/`](.internal/repo-keeper/workflows/) - CI/CD templates for automated validation
+- **Issue/PR Templates**: [`templates/`](.internal/repo-keeper/templates/) - Standardized templates for contributors
 
 ## Changelog
 
@@ -739,7 +739,7 @@ For contributors and maintainers, see [`docs/repo-keeper/`](docs/repo-keeper/):
   - `allowable-domains.json`: Mode-specific firewall whitelists
 - Modular template system with section markers
 - Enhanced firewall with mode-specific domain sets (30-100+ domains)
-- Updated slash commands: `/devcontainer-setup:basic`, `/devcontainer-setup:intermediate`, `/devcontainer-setup:advanced`, `/devcontainer-setup:yolo`
+- Updated slash commands: `/devcontainer:basic`, `/devcontainer:intermediate`, `/devcontainer:advanced`, `/devcontainer:yolo`
 - Comprehensive mode comparison guide (MODES.md)
 - Migration from Basic/Advanced/YOLO to new four-mode system
 

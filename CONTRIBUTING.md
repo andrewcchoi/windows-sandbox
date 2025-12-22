@@ -28,8 +28,8 @@ This plugin uses itself for development (dogfooding approach), which ensures the
 4. **Verify setup**:
    ```bash
    # Test basic example
-   cd examples/streamlit-sandbox-basic
-   uv pip install -r requirements.txt
+   cd docs/examples/streamlit-sandbox-basic
+   uv add -r requirements.txt
    streamlit run app.py
    ```
    Click the test buttons to verify PostgreSQL and Redis connectivity.
@@ -93,18 +93,18 @@ After modifying templates:
 
 ### Working on Example Applications
 
-The `examples/` directory contains working applications that validate the plugin:
+The `docs/examples/` directory contains working applications that validate the plugin:
 
 #### Streamlit Examples
-- **Shared**: `examples/streamlit-shared/` - Quick validation app for testing service connectivity
-- **Basic Mode**: `examples/streamlit-sandbox-basic/` - Self-contained DevContainer
+- **Shared**: `docs/examples/streamlit-shared/` - Quick validation app for testing service connectivity
+- **Basic Mode**: `docs/examples/streamlit-sandbox-basic/` - Self-contained DevContainer
 
 #### Demo Blog Application
-- **Shared**: `examples/demo-app-shared/` - Full-stack application code
-- **Basic Mode**: `examples/demo-app-sandbox-basic/` - Minimal DevContainer configuration
-- **Intermediate Mode**: `examples/demo-app-sandbox-intermediate/` - Standard DevContainer with permissive firewall
-- **Advanced Mode**: `examples/demo-app-sandbox-advanced/` - Balanced DevContainer with customization
-- **YOLO Mode**: `examples/demo-app-sandbox-yolo/` - Full-control DevContainer with comprehensive tooling
+- **Shared**: `docs/examples/demo-app-shared/` - Full-stack application code
+- **Basic Mode**: `docs/examples/demo-app-sandbox-basic/` - Minimal DevContainer configuration
+- **Intermediate Mode**: `docs/examples/demo-app-sandbox-intermediate/` - Standard DevContainer with permissive firewall
+- **Advanced Mode**: `docs/examples/demo-app-sandbox-advanced/` - Balanced DevContainer with customization
+- **YOLO Mode**: `docs/examples/demo-app-sandbox-yolo/` - Full-control DevContainer with comprehensive tooling
 
 When modifying examples:
 1. Make your changes
@@ -129,7 +129,7 @@ If you modify the templates and want to regenerate this repository's devcontaine
    ```
    Then ask Claude:
    ```
-   Please regenerate the devcontainer configuration for this plugin using the sandbox-setup skill in basic mode
+   Please regenerate the devcontainer configuration for this plugin using /devcontainer:basic
    ```
 
 3. **Review changes**:
@@ -144,7 +144,7 @@ If you modify the templates and want to regenerate this repository's devcontaine
    # Press F1 → Dev Containers: Rebuild Container
 
    # Verify services
-   cd examples/streamlit-sandbox-basic
+   cd docs/examples/streamlit-sandbox-basic
    streamlit run app.py
    ```
 
@@ -197,7 +197,7 @@ Run all tests before submitting:
 
 ## Repository Organization
 
-Before submitting changes, please review the [`docs/repo-keeper/ORGANIZATION_CHECKLIST.md`](docs/repo-keeper/ORGANIZATION_CHECKLIST.md) to ensure your contribution maintains repository consistency.
+Before submitting changes, please review the [`.internal/repo-keeper/ORGANIZATION_CHECKLIST.md`](.internal/repo-keeper/ORGANIZATION_CHECKLIST.md) to ensure your contribution maintains repository consistency.
 
 **Key guidelines:**
 
@@ -209,12 +209,12 @@ Before submitting changes, please review the [`docs/repo-keeper/ORGANIZATION_CHE
    **Version:** X.Y.Z
    ```
 
-2. **Inventory**: Update [`docs/repo-keeper/INVENTORY.json`](docs/repo-keeper/INVENTORY.json) when adding/removing files
+2. **Inventory**: Update [`.internal/repo-keeper/INVENTORY.json`](.internal/repo-keeper/INVENTORY.json) when adding/removing files
 
 3. **Cross-References**: Use relative paths for internal links (not absolute `/workspace/` paths)
 
 4. **Naming Conventions**:
-   - Commands: `/devcontainer-setup:{action}`
+   - Commands: `/devcontainer:{action}`
    - Skills: `sandbox-{action}[-mode]/SKILL.md`
    - Templates: `{component}.{mode}.{ext}`
 
@@ -230,7 +230,7 @@ Before submitting changes, please review the [`docs/repo-keeper/ORGANIZATION_CHE
    .\docs\repo-keeper\scripts\validate-inventory.ps1
    ```
 
-See the full [Organization Checklist](docs/repo-keeper/ORGANIZATION_CHECKLIST.md) for complete guidelines.
+See the full [Organization Checklist](.internal/repo-keeper/ORGANIZATION_CHECKLIST.md) for complete guidelines.
 
 ---
 

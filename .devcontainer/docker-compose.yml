@@ -10,16 +10,16 @@ services:
     build:
       context: ..
       dockerfile: .devcontainer/Dockerfile
-    container_name: sandbox-plugin-dev
+    container_name: sandboxxer-plugin-dev
     restart: unless-stopped
     volumes:
       - ..:/workspace:cached
-      - ~/.claude:/tmp/host-claude:ro  # Host Claude config (read-only)
+      - ~/.claude:/tmp/host-claude:ro # Host Claude config (read-only)
     command: sleep infinity
     cap_add:
       - NET_ADMIN
     networks:
-      - sandbox-dev-network
+      - sandboxxer-dev-network
     depends_on:
       postgres:
         condition: service_healthy
@@ -29,30 +29,35 @@ services:
         condition: service_healthy
 
   postgres:
-    image: postgres:16-bookworm
-    container_name: sandbox-plugin-postgres
+    image: pgvector/pgvector:pg16
+    container_name: sandboxxer-plugin-postgres
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${POSTGRES_DB:-sandbox_dev}
-      POSTGRES_USER: ${POSTGRES_USER:-sandbox_user}
+      POSTGRES_DB: ${POSTGRES_DB:-sandboxxer_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-sandboxxer_user}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword}
       POSTGRES_INITDB_ARGS: "--encoding=UTF8 --locale=C"
     ports:
       - "${POSTGRES_PORT:-5432}:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+      - ./init-postgres.sql:/docker-entrypoint-initdb.d/init-postgres.sql:ro
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sandbox_user} -d ${POSTGRES_DB:-sandbox_dev}"]
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U ${POSTGRES_USER:-sandboxxer_user} -d ${POSTGRES_DB:-sandboxxer_dev}",
+        ]
       interval: 10s
       timeout: 5s
       retries: 5
       start_period: 30s
     networks:
-      - sandbox-dev-network
+      - sandboxxer-dev-network
 
   redis:
     image: redis:7-alpine
-    container_name: sandbox-plugin-redis
+    container_name: sandboxxer-plugin-redis
     restart: unless-stopped
     command: redis-server --appendonly yes --requirepass ${REDIS_PASSWORD:-devpassword}
     ports:
@@ -66,11 +71,11 @@ services:
       retries: 5
       start_period: 10s
     networks:
-      - sandbox-dev-network
+      - sandboxxer-dev-network
 
   rabbitmq:
     image: rabbitmq:3.13-management
-    container_name: sandbox-plugin-rabbitmq
+    container_name: sandboxxer-plugin-rabbitmq
     restart: unless-stopped
     environment:
       RABBITMQ_DEFAULT_USER: ${RABBITMQ_USER:-guest}
@@ -88,7 +93,7 @@ services:
       retries: 5
       start_period: 30s
     networks:
-      - sandbox-dev-network
+      - sandboxxer-dev-network
 
 volumes:
   postgres_data:
@@ -99,6 +104,6 @@ volumes:
     driver: local
 
 networks:
-  sandbox-dev-network:
-    name: sandbox-dev-network
+  sandboxxer-dev-network:
+    name: sandboxxer-dev-network
     driver: bridge
