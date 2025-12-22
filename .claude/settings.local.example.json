@@ -27,6 +27,8 @@
         "hooks": [
           {
             "type": "command",
+            "comment": "For Linux/macOS/WSL/DevContainer use: bash ~/.claude/hooks/stop_hook.sh",
+            "comment2": "For Windows native use: powershell -ExecutionPolicy Bypass -File \"%USERPROFILE%\\.claude\\hooks\\stop_hook.ps1\"",
             "command": "bash ~/.claude/hooks/stop_hook.sh"
           }
         ]
