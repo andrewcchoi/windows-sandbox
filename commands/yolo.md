@@ -1,16 +1,17 @@
 ---
-description: Setup YOLO devcontainer by copying templates from skills/_shared/templates/
+description: Quick DevContainer setup with no questions - Python+Node base, no firewall
 argument-hint: "[project-name]"
 allowed-tools: [Bash]
 ---
 
 # YOLO DevContainer Setup
 
-Copy DevContainer templates from `skills/_shared/templates/` and replace placeholders.
+**Quick setup with zero questions.** Creates a DevContainer with:
+- Python 3.12 + Node 20 (multi-language base image)
+- No firewall (Docker isolation only)
+- All standard development tools
 
-**Security Level:** Permissive firewall - minimal restrictions for maximum flexibility.
-
-⚠️ **WARNING:** YOLO mode provides minimal security restrictions. The firewall is permissive and allows broad network access. Only use this mode if you understand the security implications and trust the code you'll be running.
+**Need customization?** Use `/devcontainer:setup` for interactive mode with project type selection and firewall options.
 
 ## Determine Project Name
 
@@ -21,18 +22,16 @@ Copy DevContainer templates from `skills/_shared/templates/` and replace placeho
 
 ### Step 1: Find Plugin Directory
 
-First, determine where the plugin is located:
-
 ```bash
-# Method 1: Use CLAUDE_PLUGIN_ROOT if available (inline/development plugins)
+# Method 1: Use CLAUDE_PLUGIN_ROOT if available
 if [ -n "${CLAUDE_PLUGIN_ROOT}" ]; then
   PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT}"
   echo "Using CLAUDE_PLUGIN_ROOT: $PLUGIN_ROOT"
-# Method 2: Try to find plugin in installed location
+# Method 2: Find plugin in installed location
 elif FOUND_ROOT=$(find ~/.claude/plugins -type f -name "plugin.json" -exec grep -l '"name": "devcontainer-setup"' {} \; 2>/dev/null | head -1 | xargs dirname 2>/dev/null); then
   PLUGIN_ROOT="$FOUND_ROOT"
   echo "Found installed plugin: $PLUGIN_ROOT"
-# Method 3: Fall back to current directory if templates exist here
+# Method 3: Fall back to current directory
 elif [ -f skills/_shared/templates/base.dockerfile ]; then
   PLUGIN_ROOT="."
   echo "Using current directory as plugin root"
@@ -44,27 +43,20 @@ fi
 
 ### Step 2: Copy Templates and Process Placeholders
 
-Determine the project name, then copy templates and replace placeholders:
-
 ```bash
-# Set project name (replace with actual value)
 PROJECT_NAME="$(basename $(pwd))"
-
-# Set paths
 TEMPLATES="$PLUGIN_ROOT/skills/_shared/templates"
 DATA="$PLUGIN_ROOT/skills/_shared/data"
 
 # Create directories
 mkdir -p .devcontainer data
 
-# Copy and rename template files
+# Copy templates
 cp "$TEMPLATES/base.dockerfile" .devcontainer/Dockerfile
 cp "$TEMPLATES/devcontainer.json" .devcontainer/
 cp "$TEMPLATES/docker-compose.yml" ./
 cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/
-cp "$TEMPLATES/init-firewall/permissive.sh" .devcontainer/init-firewall.sh
-
-# Copy data file required by Dockerfile
+cp "$TEMPLATES/init-firewall/disabled.sh" .devcontainer/init-firewall.sh
 cp "$DATA/allowable-domains.json" data/
 
 # Replace placeholders
@@ -73,26 +65,28 @@ sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" .devcontainer/devcontainer.json dock
 # Make scripts executable
 chmod +x .devcontainer/*.sh
 
-# List created files
-echo "✓ Created files:"
-ls -lh .devcontainer/ docker-compose.yml data/allowable-domains.json
+echo "=========================================="
+echo "DevContainer Created (YOLO Mode)"
+echo "=========================================="
+echo "Project: $PROJECT_NAME"
+echo "Language: Python 3.12 + Node 20"
+echo "Firewall: Disabled"
+echo ""
+echo "Files created:"
+echo "  .devcontainer/Dockerfile"
+echo "  .devcontainer/devcontainer.json"
+echo "  .devcontainer/init-firewall.sh"
+echo "  .devcontainer/setup-claude-credentials.sh"
+echo "  docker-compose.yml"
+echo "  data/allowable-domains.json"
+echo ""
+echo "Next: Open in VS Code → 'Reopen in Container'"
+echo "=========================================="
 ```
 
-**Note:** If the user provided a project name argument, replace `"$(basename $(pwd))"` with that argument value in the PROJECT_NAME assignment.
-
-## Expected Output
-
-After running, you should see:
-- `.devcontainer/Dockerfile` (from base.dockerfile)
-- `.devcontainer/devcontainer.json` (with project name)
-- `.devcontainer/init-firewall.sh` (permissive firewall - minimal restrictions)
-- `.devcontainer/setup-claude-credentials.sh`
-- `docker-compose.yml` (at project root, with project name in network)
-- `data/allowable-domains.json` (required by Dockerfile)
-
-Report the results to the user, including file sizes and confirmation that all files were created.
+**Note:** If the user provided a project name argument, replace `"$(basename $(pwd))"` with that argument in the PROJECT_NAME assignment.
 
 ---
 
 **Last Updated:** 2025-12-23
-**Version:** 4.2.1
+**Version:** 4.3.0 (Quick Setup Path)

@@ -1,13 +1,13 @@
 # DevContainer Setup Plugin
 
 > **Repository:** [andrewcchoi/sandbox-maxxing](https://github.com/andrewcchoi/sandbox-maxxing)
-> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer:basic, /devcontainer:advanced, etc.)
+> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer:setup, /devcontainer:yolo)
 
-Interactive assistant for creating VS Code DevContainer configurations with Docker Compose support. Four-mode system (Basic, Intermediate, Advanced, YOLO) with security firewall options and comprehensive tooling.
+Interactive assistant for creating VS Code DevContainer configurations with Docker Compose support. Choose between interactive setup with project type selection and firewall customization, or quick one-command setup with defaults.
 
 ## Features
 
-- **🚀 Four-Mode Setup System** - Choose your experience level: Basic (quick auto), Intermediate (balanced), Advanced (secure minimal), or YOLO (full control)
+- **🚀 Two-Path Setup System** - Interactive setup with project type selection, or YOLO mode for instant defaults (Python+Node, no firewall)
 - **📊 Data-Driven Templates** - Configurations generated from curated registries of official Docker images and allowable domains
 - **🔧 Troubleshooting Assistant** - Diagnose and fix common sandbox issues automatically
 - **🔒 Security Auditor** - Review and harden sandbox configurations against best practices
@@ -29,13 +29,10 @@ claude plugins list
 ### Basic Usage
 
 ```bash
-# Quick setup with auto-detection (Basic mode - recommended)
-/devcontainer:basic
+# Interactive setup - choose project type and firewall options
+/devcontainer:setup
 
-# Security-focused setup with strict firewall (Advanced mode)
-/devcontainer:advanced
-
-# Full customization and control (YOLO mode - expert users)
+# Quick setup - no questions, instant DevContainer (Python+Node, no firewall)
 /devcontainer:yolo
 
 # Troubleshoot existing DevContainer
@@ -45,7 +42,7 @@ claude plugins list
 /devcontainer:audit
 ```
 
-**Note:** v4.0.0 introduces planning mode for all setup commands - Claude scans your project, creates a plan, and gets your approval before implementing.
+**Note:** v4.3.0 introduces project-type selection and interactive firewall customization. Use `/devcontainer:yolo` for the fastest path with sensible defaults.
 
 ### Claude Code Installation
 
@@ -183,16 +180,14 @@ Claude: sandbox-templates tag?
 
 ## Slash Commands
 
-| Command                            | Description                                                           | Mode         |
-| ---------------------------------- | --------------------------------------------------------------------- | ------------ |
-| `/devcontainer:basic`        | Quick setup with planning mode (auto-detection)                       | Basic        |
-| `/devcontainer:advanced`     | Security-focused setup with planning mode (strict firewall)           | Advanced     |
-| `/devcontainer:yolo`         | Full customization with planning mode (expert users)                  | YOLO         |
-| `/devcontainer:setup`        | Interactive mode selection (or use `--basic`, `--advanced`, etc.)     | All          |
-| `/devcontainer:troubleshoot` | Diagnose and fix sandbox issues                                       | All          |
-| `/devcontainer:audit`        | Security audit and recommendations                                    | All          |
+| Command                            | Description                                                           |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| `/devcontainer:setup`        | Interactive setup - choose project type and firewall options          |
+| `/devcontainer:yolo`         | Quick setup - no questions, sensible defaults (Python+Node)           |
+| `/devcontainer:troubleshoot` | Diagnose and fix sandbox issues                                       |
+| `/devcontainer:audit`        | Security audit and recommendations                                    |
 
-**v4.0.0:** All setup commands now include a mandatory planning phase.
+**v4.3.0:** Setup now offers interactive project-type selection or instant YOLO defaults.
 
 ## Auto-Detection
 
@@ -742,4 +737,4 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
 ---
 
 **Last Updated:** 2025-12-16
-**Version:** 4.2.1
+**Version:** 4.3.0

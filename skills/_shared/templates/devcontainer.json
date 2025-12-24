@@ -1,5 +1,5 @@
 {
-  "name": "{{PROJECT_NAME}} - Basic",
+  "name": "{{PROJECT_NAME}}",
   "dockerComposeFile": "../docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
@@ -26,14 +26,14 @@
     }
   },
 
-  "features": {},
-
   "postCreateCommand": ".devcontainer/setup-claude-credentials.sh",
   "postStartCommand": "echo 'Basic DevContainer ready!'",
 
-  "forwardPorts": [8000, 3000],
+  "forwardPorts": [8000, 3000, 5432, 6379],
 
   "remoteEnv": {
-    "PATH": "/usr/local/bin:${containerEnv:PATH}"
-  }
+    "PATH": "/usr/local/bin:${containerEnv:PATH}",
+    "FIREWALL_MODE": "permissive"
+  },
+  "features": {}
 }

@@ -365,4 +365,4 @@ Skills can invoke each other for related tasks:
 ---
 
 **Last Updated:** 2025-12-22
-**Version:** 4.2.1
+**Version:** 4.3.0
