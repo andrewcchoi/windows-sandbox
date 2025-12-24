@@ -52,4 +52,4 @@ Based on selection, invoke the appropriate skill using the Skill tool:
 ---
 
 **Last Updated:** 2025-12-22
-**Version:** 4.0.0 (Planning Mode Integration, Intermediate Mode Deprecated)
+**Version:** 4.2.1 (Planning Mode Integration, Intermediate Mode Deprecated)

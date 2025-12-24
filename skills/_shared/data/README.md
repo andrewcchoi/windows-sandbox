@@ -322,4 +322,4 @@ For questions about data file structure or usage, see:
 ---
 
 **Last Updated:** 2025-12-22
-**Version:** 4.0.0
+**Version:** 4.2.1

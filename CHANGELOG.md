@@ -332,4 +332,4 @@ All notable changes to this project will be documented in this file.
 ---
 
 **Last Updated:** 2025-12-22
-**Version:** 4.0.0
+**Version:** 4.2.1
