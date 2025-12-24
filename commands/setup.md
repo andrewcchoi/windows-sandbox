@@ -13,28 +13,157 @@ Create a customized VS Code DevContainer configuration with:
 
 **Quick path:** Use `/devcontainer:yolo` for instant setup with no questions (Python+Node, no firewall).
 
-## Step 1: Ask About Project Type
+## Step 1: Initialize Tool Selection Tracking
 
-Use AskUserQuestion to determine which language tools to include:
+```bash
+# Array to track all selected partial dockerfiles
+SELECTED_PARTIALS=()
+
+# Track which categories have been selected (to avoid duplicates in loop)
+SELECTED_CATEGORIES=()
+```
+
+## Step 2: Ask About Tool Category (LOOP START)
+
+Use AskUserQuestion:
 
 ```
-What type of project are you setting up?
+What additional tools do you need? (Base includes Python 3.12 + Node 20)
 
 Options:
-1. Python/Node (Base only - Python 3.12 + Node 20)
-2. Go (Adds Go 1.22 toolchain and linters)
-3. Ruby (Adds Ruby 3.3 and bundler)
-4. Rust (Adds Rust toolchain and Cargo)
-5. Java (Adds OpenJDK 21, Maven, Gradle)
-6. C++ (Clang) (Adds Clang 17, CMake, Ninja, vcpkg)
-7. C++ (GCC) (Adds GCC, CMake, Ninja, vcpkg)
-8. PHP (Adds PHP 8.3, Composer, extensions)
-9. PostgreSQL Dev (Adds PostgreSQL client and dev tools)
+1. Backend language (Go, Rust, Java, Ruby, PHP)
+2. Database tools (PostgreSQL client + extensions)
+3. C++ development
+4. None - use base only
 ```
 
-Store the answer as `PROJECT_TYPE`.
+Store as `TOOL_CATEGORY`.
 
-## Step 2: Ask About Network Security
+- If "Backend language" → continue to Step 3
+- If "Database tools" → add "postgres" to SELECTED_PARTIALS, go to Step 6
+- If "C++ development" → continue to Step 4
+- If "None - use base only" → skip to Step 7 (Find Plugin Directory)
+
+## Step 3: Backend Language Selection
+
+Use AskUserQuestion:
+
+```
+Which backend language?
+
+Options:
+1. Go (Go 1.22 + linters)
+2. Rust (Rust toolchain + Cargo)
+3. Java (OpenJDK 21, Maven, Gradle)
+4. More languages...
+```
+
+Store as `BACKEND_CHOICE`.
+
+```bash
+case "$BACKEND_CHOICE" in
+  "Go")
+    SELECTED_PARTIALS+=("go")
+    echo "Selected: Go toolchain"
+    ;;
+  "Rust")
+    SELECTED_PARTIALS+=("rust")
+    echo "Selected: Rust toolchain"
+    ;;
+  "Java")
+    SELECTED_PARTIALS+=("java")
+    echo "Selected: Java toolchain"
+    ;;
+  "More languages...")
+    # Continue to Step 3b
+    ;;
+esac
+```
+
+If "More languages..." selected, continue to Step 3b. Otherwise, skip to Step 6.
+
+### Step 3b: Additional Backend Languages
+
+Use AskUserQuestion:
+
+```
+Which additional language?
+
+Options:
+1. Ruby (Ruby 3.3 + bundler)
+2. PHP (PHP 8.3 + Composer)
+3. Back to main menu
+```
+
+Store as `MORE_BACKEND_CHOICE`.
+
+```bash
+case "$MORE_BACKEND_CHOICE" in
+  "Ruby")
+    SELECTED_PARTIALS+=("ruby")
+    echo "Selected: Ruby toolchain"
+    ;;
+  "PHP")
+    SELECTED_PARTIALS+=("php")
+    echo "Selected: PHP toolchain"
+    ;;
+  "Back to main menu")
+    # Return to Step 2
+    ;;
+esac
+```
+
+Continue to Step 6.
+
+## Step 4: C++ Compiler Selection
+
+Use AskUserQuestion:
+
+```
+Which C++ compiler?
+
+Options:
+1. Clang 17 (recommended for modern C++)
+2. GCC (traditional, wider compatibility)
+```
+
+Store as `CPP_COMPILER`.
+
+```bash
+case "$CPP_COMPILER" in
+  "Clang 17")
+    SELECTED_PARTIALS+=("cpp-clang")
+    echo "Selected: C++ with Clang 17"
+    ;;
+  "GCC")
+    SELECTED_PARTIALS+=("cpp-gcc")
+    echo "Selected: C++ with GCC"
+    ;;
+esac
+```
+
+Continue to Step 6.
+
+## Step 6: Add More Tools?
+
+Use AskUserQuestion:
+
+```
+Add more tools to your stack?
+
+Options:
+1. Yes - add another tool category
+2. No - continue to firewall setup
+```
+
+Store as `ADD_MORE`.
+
+- If "Yes - add another tool category" → return to Step 2 (loop back)
+- If "No - continue to firewall setup" → continue to Step 7
+
+**Note:** Before looping back to Step 2, skip categories already selected to avoid duplicates.
+
+## Step 7: Ask About Network Security
 
 Use AskUserQuestion:
 
@@ -48,7 +177,7 @@ Options:
 
 Store the answer as `NEEDS_FIREWALL`.
 
-## Step 3: Domain Categories (If Firewall Enabled)
+## Step 8: Domain Categories (If Firewall Enabled)
 
 If `NEEDS_FIREWALL` is "Yes", read `/skills/_shared/data/allowable-domains.json` and present domain categories:
 
@@ -74,7 +203,7 @@ Any custom domains to allow? (comma-separated)
 
 Store as `CUSTOM_DOMAINS`.
 
-## Step 4: Find Plugin Directory
+## Step 9: Find Plugin Directory
 
 ```bash
 # Method 1: Use CLAUDE_PLUGIN_ROOT if available
@@ -95,7 +224,7 @@ else
 fi
 ```
 
-## Step 5: Build Dockerfile
+## Step 10: Build Dockerfile
 
 ```bash
 PROJECT_NAME="$(basename $(pwd))"
@@ -105,50 +234,69 @@ PARTIALS="$TEMPLATES/partials"
 # Create directories
 mkdir -p .devcontainer data
 
-# Copy base dockerfile
+# Copy base dockerfile (includes Python 3.12 + Node 20)
 cp "$TEMPLATES/base.dockerfile" .devcontainer/Dockerfile
+echo "Base image: Python 3.12 + Node 20"
 
-# Append language partial if needed
-case "$PROJECT_TYPE" in
-  "Go")
-    cat "$PARTIALS/go.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added Go toolchain"
-    ;;
-  "Ruby")
-    cat "$PARTIALS/ruby.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added Ruby toolchain"
-    ;;
-  "Rust")
-    cat "$PARTIALS/rust.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added Rust toolchain"
-    ;;
-  "Java")
-    cat "$PARTIALS/java.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added Java toolchain"
-    ;;
-  "C++ (Clang)")
-    cat "$PARTIALS/cpp-clang.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added C++ (Clang 17) toolchain"
-    ;;
-  "C++ (GCC)")
-    cat "$PARTIALS/cpp-gcc.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added C++ (GCC) toolchain"
-    ;;
-  "PHP")
-    cat "$PARTIALS/php.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added PHP 8.3 and Composer"
-    ;;
-  "PostgreSQL Dev")
-    cat "$PARTIALS/postgres.dockerfile" >> .devcontainer/Dockerfile
-    echo "Added PostgreSQL development tools"
-    ;;
-  "Python/Node")
-    echo "Using base image (Python 3.12 + Node 20)"
-    ;;
-esac
+# Append all selected language partials
+if [ ${#SELECTED_PARTIALS[@]} -gt 0 ]; then
+  echo "Adding selected tools..."
+  for partial in "${SELECTED_PARTIALS[@]}"; do
+    cat "$PARTIALS/${partial}.dockerfile" >> .devcontainer/Dockerfile
+
+    # Echo friendly message based on partial
+    case "$partial" in
+      "go")
+        echo "  ✓ Go toolchain"
+        ;;
+      "ruby")
+        echo "  ✓ Ruby toolchain"
+        ;;
+      "rust")
+        echo "  ✓ Rust toolchain"
+        ;;
+      "java")
+        echo "  ✓ Java toolchain"
+        ;;
+      "cpp-clang")
+        echo "  ✓ C++ (Clang 17)"
+        ;;
+      "cpp-gcc")
+        echo "  ✓ C++ (GCC)"
+        ;;
+      "php")
+        echo "  ✓ PHP 8.3"
+        ;;
+      "postgres")
+        echo "  ✓ PostgreSQL development tools"
+        ;;
+    esac
+  done
+else
+  echo "Using base image only (no additional tools)"
+fi
+
+# Show final stack summary
+echo ""
+echo "Your DevContainer stack:"
+echo "  - Python 3.12"
+echo "  - Node 20"
+for partial in "${SELECTED_PARTIALS[@]}"; do
+  case "$partial" in
+    "go") echo "  - Go 1.22" ;;
+    "ruby") echo "  - Ruby 3.3" ;;
+    "rust") echo "  - Rust" ;;
+    "java") echo "  - Java (OpenJDK 21)" ;;
+    "cpp-clang") echo "  - C++ (Clang 17)" ;;
+    "cpp-gcc") echo "  - C++ (GCC)" ;;
+    "php") echo "  - PHP 8.3" ;;
+    "postgres") echo "  - PostgreSQL tools" ;;
+  esac
+done
+echo ""
 ```
 
-## Step 6: Generate Firewall Script
+## Step 11: Generate Firewall Script
 
 ```bash
 if [ "$NEEDS_FIREWALL" = "Yes" ]; then
@@ -168,7 +316,7 @@ else
 fi
 ```
 
-## Step 7: Copy Other Templates
+## Step 12: Copy Other Templates
 
 ```bash
 # Copy devcontainer config
@@ -190,20 +338,39 @@ sed -i "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" .devcontainer/devcontainer.json dock
 chmod +x .devcontainer/*.sh
 ```
 
-## Step 8: Report Results
+## Step 13: Report Results
 
 ```bash
 echo "=========================================="
 echo "DevContainer Created Successfully"
 echo "=========================================="
 echo "Project: $PROJECT_NAME"
-echo "Language: $PROJECT_TYPE"
-echo "Firewall: $([ "$NEEDS_FIREWALL" = "Yes" ] && echo "Enabled" || echo "Disabled")"
+echo ""
+echo "Your Stack:"
+echo "  Base: Python 3.12 + Node 20"
+if [ ${#SELECTED_PARTIALS[@]} -gt 0 ]; then
+  for partial in "${SELECTED_PARTIALS[@]}"; do
+    case "$partial" in
+      "go") echo "  + Go 1.22" ;;
+      "ruby") echo "  + Ruby 3.3" ;;
+      "rust") echo "  + Rust" ;;
+      "java") echo "  + Java (OpenJDK 21)" ;;
+      "cpp-clang") echo "  + C++ (Clang 17)" ;;
+      "cpp-gcc") echo "  + C++ (GCC)" ;;
+      "php") echo "  + PHP 8.3" ;;
+      "postgres") echo "  + PostgreSQL tools" ;;
+    esac
+  done
+fi
+echo ""
+echo "Firewall: $([ "$NEEDS_FIREWALL" = "Yes" ] && echo "Enabled (strict allowlist)" || echo "Disabled (Docker isolation only)")"
 echo ""
 echo "Files created:"
 echo "  .devcontainer/Dockerfile"
 echo "  .devcontainer/devcontainer.json"
-echo "  .devcontainer/init-firewall.sh"
+if [ "$NEEDS_FIREWALL" = "Yes" ]; then
+  echo "  .devcontainer/init-firewall.sh"
+fi
 echo "  .devcontainer/setup-claude-credentials.sh"
 echo "  docker-compose.yml"
 echo "  data/allowable-domains.json"
@@ -217,5 +384,5 @@ echo "=========================================="
 
 ---
 
-**Last Updated:** 2025-12-23
-**Version:** 4.3.2 (Interactive Project-Type Flow)
+**Last Updated:** 2025-12-24
+**Version:** 4.4.0 (Multi-Stack Selection with Loop Back)

@@ -2,6 +2,47 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.4.0] - 2025-12-24
+
+### Added
+- **Multi-Stack Selection**: Users can now select multiple tools to build full stacks
+  - Example: Python + Node (base) + Go (backend) + PostgreSQL tools
+  - Solves AskUserQuestion 4-option limit with category-based flow
+  - "Add more tools?" loop enables building complete development stacks
+
+### Changed
+- **commands/setup.md**: Complete rewrite of question flow
+  - Step 1: Initialize `SELECTED_PARTIALS` array
+  - Step 2-6: Category selection with loop-back logic
+    - Backend languages: Go, Rust, Java, Ruby (via "More languages..."), PHP
+    - Database tools: PostgreSQL client + extensions
+    - C++ development: Clang 17 or GCC (mutually exclusive)
+  - Step 10: Build Dockerfile now loops over all selected partials
+  - Step 13: Report shows complete stack summary
+- **skills/_shared/templates/partials/postgres.dockerfile**:
+  - Removed duplicate `PGHOST`, `PGUSER`, `PGDATABASE` ENV definitions
+  - Base dockerfile already defines these values
+  - Added comment explaining why ENVs are not redefined
+
+### Technical Details
+- New question flow supports:
+  - Multi-select: Choose Go + PostgreSQL + C++ in one session
+  - Overflow handling: "More languages..." for Ruby/PHP (4-option limit)
+  - Mutual exclusion: C++ Clang vs GCC handled by single-select question
+- Partial composition:
+  - All partials use `USER root` → `USER node` pattern
+  - Safely composable (no USER command conflicts)
+  - PATH extensions use `$PATH:...` pattern (no conflicts)
+- ENV conflict resolution:
+  - Postgres partial no longer redefines PGHOST/PGUSER/PGDATABASE
+  - Uses base values: `sandboxxer_user` / `sandboxxer_dev`
+
+### Benefits
+- Users can build realistic multi-stack projects (frontend + backend + database)
+- All 9 language options discoverable through categories
+- Stays within AskUserQuestion 4-option limit
+- No ENV conflicts when composing multiple partials
+
 ## [4.2.1] - 2025-12-23
 
 ### Fixed

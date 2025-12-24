@@ -21,9 +21,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && apt-get clean && rm -rf /var/lib/apt/lists/* || \
     echo "pgvector package not available - install manually if needed"
 
-# PostgreSQL environment variables (for connecting to external database)
-ENV PGHOST=postgres
-ENV PGUSER=devuser
-ENV PGDATABASE=devdb
+# Note: PGHOST, PGUSER, PGDATABASE are already defined in base.dockerfile
+# No need to redefine here to avoid conflicts
 
 USER node
