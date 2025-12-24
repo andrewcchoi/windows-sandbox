@@ -30,10 +30,9 @@ The Claude Code DevContainer Setup plugin uses a command-based architecture with
 - `/devcontainer:troubleshoot` - Invokes troubleshoot skill
 - `/devcontainer:audit` - Invokes security skill
 
-**Mode-Specific Commands:**
-- `/devcontainer:basic` - Invokes Basic mode setup directly
-- `/devcontainer:advanced` - Invokes Advanced mode setup directly
-- `/devcontainer:yolo-vibe-maxxing  - Invokes YOLO mode setup directly
+**Setup Commands:**
+- `/devcontainer:quickstart` - Interactive DevContainer setup with mode selection
+- `/devcontainer:yolo-vibe-maxxing` - Quick setup with no questions (Python+Node base, no firewall)
 
 ### 3. Shared Resources Architecture (v4.0.0)
 

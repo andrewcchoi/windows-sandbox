@@ -217,7 +217,7 @@ The `.devcontainer/` in this repository was created using the plugin itself:
 
 ```bash
 # What was run (hypothetically, during setup)
-/devcontainer:basic
+/devcontainer:quickstart
 
 # Plugin detection output:
 # ✓ Scanning repository...
@@ -251,7 +251,7 @@ When plugin templates change, regenerate the devcontainer to stay current:
 mv .devcontainer .devcontainer.backup
 
 # 2. Regenerate using latest plugin
-/devcontainer:basic
+/devcontainer:quickstart
 
 # 3. Review changes
 diff -r .devcontainer.backup .devcontainer
@@ -345,7 +345,7 @@ The devcontainer sets minimal environment variables:
 
 1. **Keep the devcontainer minimal** - Don't add services unless the plugin itself needs them
 2. **Use docs/examples/docker-compose.yml** - Keep example services separate
-3. **Test with the plugin** - Use `/devcontainer:basic` to validate changes
+3. **Test with the plugin** - Use `/devcontainer:quickstart` to validate changes
 4. **Document changes** - Update this file when modifying the development workflow
 5. **Regenerate periodically** - Keep the devcontainer in sync with plugin templates
 

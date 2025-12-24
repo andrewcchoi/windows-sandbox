@@ -16,7 +16,7 @@ echo "print('test')" > main.py
 
 # 3. Run setup
 claude
-/devcontainer:basic
+/devcontainer:quickstart
 
 # 4. Verify
 ls .devcontainer/

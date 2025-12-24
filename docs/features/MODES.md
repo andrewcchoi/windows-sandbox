@@ -179,37 +179,6 @@ When you select a language in interactive mode, a partial is **appended** to the
 - Cloud platforms (AWS, GCP, Azure): 25 domains
 - Development tools: 12 domains
 
-## Migration from v4.2 → v4.3
-
-### Removed Commands
-
-- `/devcontainer:basic` → Use `/devcontainer:yolo-vibe-maxxing  (closest equivalent)
-- `/devcontainer:advanced` → Use `/devcontainer:quickstart` with firewall enabled
-
-### Key Changes
-
-**v4.2 and earlier:**
-- 3 separate commands (basic, advanced, yolo)
-- Each command copied templates without customization
-- Modes differed only by firewall script
-
-**v4.3:**
-- 2 commands: `setup` (interactive) and `yolo` (instant)
-- Project type selection adds language-specific tools
-- Firewall customization via domain category selection
-- More flexible, less confusing
-
-### Upgrade Path
-
-If you're used to the old modes:
-
-| Old Command | New Equivalent |
-|-------------|----------------|
-| `/devcontainer:basic` | `/devcontainer:yolo-vibe-maxxing  |
-| `/devcontainer:advanced` with Python | `/devcontainer:quickstart` → Python/Node → Yes → Select categories |
-| `/devcontainer:advanced` with Go | `/devcontainer:quickstart` → Go → Yes → Select categories |
-| `/devcontainer:yolo-vibe-maxxing  | Still exists, now means "instant defaults" |
-
 ## Technical Details
 
 ### Dockerfile Build Process

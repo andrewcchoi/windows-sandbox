@@ -111,61 +111,6 @@ See also: [Security Model](../docs/features/security-model.md)
 
 ---
 
-### Mode-Specific Setup Commands
-
-These commands directly invoke mode-specific setup skills. Most users should use `/devcontainer:quickstart` instead, which provides interactive mode selection.
-
-#### `/devcontainer:basic`
-**File:** `commands/basic.md`
-**Skill:** devcontainer-setup-basic
-**Description:** Quick sandbox setup using sandbox templates, no firewall
-
-**Usage:**
-```bash
-/devcontainer:basic
-```
-
-**Equivalent to:**
-```bash
-/devcontainer:quickstart --basic
-```
-
----
-
-#### `/devcontainer:advanced`
-**File:** `commands/advanced.md`
-**Skill:** devcontainer-setup-advanced
-**Description:** Secure sandbox setup with strict firewall and customizable allowlist
-
-**Usage:**
-```bash
-/devcontainer:advanced
-```
-
-**Equivalent to:**
-```bash
-/devcontainer:quickstart --advanced
-```
-
----
-
-#### `/devcontainer:yolo-vibe-maxxing 
-**File:** `commands/yolo-vibe-maxxing.md`
-**Skill:** devcontainer-setup-yolo
-**Description:** Full control sandbox setup with no restrictions
-
-**Usage:**
-```bash
-/devcontainer:yolo
-```
-
-**Equivalent to:**
-```bash
-/devcontainer:quickstart --yolo
-```
-
----
-
 ## Command Structure
 
 ### File Format
@@ -225,8 +170,6 @@ Result: DevContainer configuration created
 | Command | Mode | Questions | Time | Security | Best For |
 |---------|------|-----------|------|----------|----------|
 | `/devcontainer:quickstart` | Interactive | Varies | Varies | Varies | Most users (choose mode) |
-| `/devcontainer:basic` | Basic | 1-3 | 1-2 min | Low | Quick start, learning |
-| `/devcontainer:advanced` | Advanced | 7-10 | 8-12 min | High | Security-conscious |
 | `/devcontainer:yolo-vibe-maxxing  | YOLO | 15-20+ | 15-30 min | User-controlled | Expert customization |
 | `/devcontainer:troubleshoot` | N/A | Diagnostic | Varies | N/A | Problem solving |
 | `/devcontainer:audit` | N/A | Audit | 5-10 min | N/A | Security review |

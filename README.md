@@ -84,7 +84,7 @@ See [MODES.md](docs/features/MODES.md) for comprehensive comparison guide.
 
 **Example**:
 ```
-You: /devcontainer:basic
+You: /devcontainer:quickstart
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
@@ -107,7 +107,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
 
 **Example**:
 ```
-You: /devcontainer:advanced
+You: /devcontainer:quickstart
 Claude: This mode creates security-hardened configurations.
 
         **Step 1: Base Configuration**
@@ -395,28 +395,34 @@ sandbox-maxxing/
 │   ├── official-images.json     # Docker Hub official images registry
 │   └── allowable-domains.json   # Firewall domain whitelists
 ├── skills/
-│   ├── devcontainer-setup-basic/     # Basic mode setup
-│   ├── devcontainer-setup-advanced/  # Advanced mode setup
-│   ├── devcontainer-setup-yolo/      # YOLO mode setup
+│   ├── _shared/                 # Shared templates and data
+│   │   ├── templates/           # DevContainer templates
+│   │   │   ├── base.dockerfile
+│   │   │   ├── devcontainer.json
+│   │   │   ├── docker-compose.yml
+│   │   │   ├── init-firewall.sh
+│   │   │   ├── setup-claude-credentials.sh
+│   │   │   └── partials/        # Language-specific Dockerfile sections
+│   │   │       ├── go.dockerfile
+│   │   │       ├── rust.dockerfile
+│   │   │       ├── java.dockerfile
+│   │   │       ├── ruby.dockerfile
+│   │   │       ├── php.dockerfile
+│   │   │       ├── cpp-clang.dockerfile
+│   │   │       ├── cpp-gcc.dockerfile
+│   │   │       └── postgres.dockerfile
+│   │   └── templates/data/      # Configuration data
+│   │       ├── allowable-domains.json
+│   │       ├── mcp-servers.json
+│   │       ├── secrets.json
+│   │       └── variables.json
 │   ├── sandbox-troubleshoot/    # Troubleshooting assistant
 │   └── sandbox-security/        # Security auditor
 ├── commands/
-│   ├── basic.md                 # /devcontainer:basic
-│   ├── advanced.md              # /devcontainer:advanced
-│   ├── yolo-vibe-maxxing.md     # /devcontainer:yolo-vibe-maxxing
-│   ├── quickstart.md            # /devcontainer:quickstart (router)
+│   ├── quickstart.md            # /devcontainer:quickstart (interactive mode selection)
+│   ├── yolo-vibe-maxxing.md     # /devcontainer:yolo-vibe-maxxing (quick no-questions setup)
 │   ├── troubleshoot.md          # /devcontainer:troubleshoot
 │   └── audit.md                 # /devcontainer:audit
-├── templates/
-│   ├── master/                  # Master templates with section markers
-│   │   ├── devcontainer.json.master
-│   │   ├── Dockerfile.master
-│   │   ├── docker-compose.master.yml
-│   │   └── init-firewall.master.sh
-│   ├── compose/                 # Service-specific docker-compose sections
-│   ├── dockerfiles/            # Language-specific Dockerfile sections
-│   ├── firewall/               # Mode-specific firewall configs
-│   └── legacy/                 # Deprecated monolithic templates
 └── docs/examples/                    # Working example applications
     ├── streamlit-sandbox-basic/
     ├── demo-app-sandbox-basic/
@@ -429,7 +435,7 @@ sandbox-maxxing/
 ### Example 1: Quick Python Setup (Basic Mode)
 
 ```
-You: /devcontainer:basic
+You: /devcontainer:quickstart
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
@@ -696,7 +702,7 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
   - `allowable-domains.json`: Mode-specific firewall whitelists
 - Modular template system with section markers
 - Enhanced firewall with mode-specific domain sets (30-100+ domains)
-- Updated slash commands: `/devcontainer:basic`, `/devcontainer:advanced`, `/devcontainer:yolo-vibe-maxxing`, `/devcontainer:quickstart`
+- Updated slash commands: `/devcontainer:quickstart`, `/devcontainer:quickstart`, `/devcontainer:yolo-vibe-maxxing`, `/devcontainer:quickstart`
 - Comprehensive mode comparison guide (MODES.md)
 - Migration from Basic/Advanced/YOLO to new three-mode system
 

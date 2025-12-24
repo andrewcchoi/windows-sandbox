@@ -127,7 +127,7 @@ If you modify the templates and want to regenerate this repository's devcontaine
    ```
    Then ask Claude:
    ```
-   Please regenerate the devcontainer configuration for this plugin using /devcontainer:basic
+   Please regenerate the devcontainer configuration for this plugin using /devcontainer:quickstart
    ```
 
 3. **Review changes**:
