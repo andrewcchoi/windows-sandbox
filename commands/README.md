@@ -7,7 +7,7 @@ This directory contains slash commands for the Claude Code Sandbox Plugin. Comma
 Commands are invoked with the `/devcontainer:` prefix in Claude Code:
 
 ```
-/devcontainer:setup         # Set up a new sandbox (interactive mode selection)
+/devcontainer:quickstart         # Set up a new sandbox (interactive mode selection)
 /devcontainer:troubleshoot  # Diagnose and fix issues
 /devcontainer:audit         # Security audit
 ```
@@ -18,20 +18,20 @@ Each command loads and executes the corresponding skill with user-friendly promp
 
 ### Primary Commands
 
-#### `/devcontainer:setup`
-**File:** `commands/setup.md`
+#### `/devcontainer:quickstart`
+**File:** `commands/quickstart.md`
 **Skill:** Routes to mode-specific setup skill
 **Description:** Set up a new Claude Code Docker sandbox environment
 
 **Usage:**
 ```bash
 # Interactive mode selection
-/devcontainer:setup
+/devcontainer:quickstart
 
 # Quick setup with flags
-/devcontainer:setup --basic          # Fastest setup
-/devcontainer:setup --advanced       # Secure setup
-/devcontainer:setup --yolo           # Full control
+/devcontainer:quickstart --basic          # Fastest setup
+/devcontainer:quickstart --advanced       # Secure setup
+/devcontainer:quickstart --yolo           # Full control
 ```
 
 **What it does:**
@@ -111,70 +111,6 @@ See also: [Security Model](../docs/features/security-model.md)
 
 ---
 
-### Mode-Specific Setup Commands
-
-These commands directly invoke mode-specific setup skills. Most users should use `/devcontainer:setup` instead, which provides interactive mode selection.
-
-#### `/devcontainer:basic`
-**File:** `commands/basic.md`
-**Skill:** devcontainer-setup-basic
-**Description:** Quick sandbox setup using sandbox templates, no firewall
-
-**Usage:**
-```bash
-/devcontainer:basic
-```
-
-**Equivalent to:**
-```bash
-/devcontainer:setup --basic
-```
-
----
-
-#### `/devcontainer:intermediate` [DEPRECATED]
-**File:** `commands/intermediate.md`
-**Status:** Deprecated in v4.0.0
-**Description:** Intermediate mode has been removed. Use `/devcontainer:basic` or `/devcontainer:advanced` instead.
-
-See `commands/intermediate.md` for migration guide.
-
----
-
-#### `/devcontainer:advanced`
-**File:** `commands/advanced.md`
-**Skill:** devcontainer-setup-advanced
-**Description:** Secure sandbox setup with strict firewall and customizable allowlist
-
-**Usage:**
-```bash
-/devcontainer:advanced
-```
-
-**Equivalent to:**
-```bash
-/devcontainer:setup --advanced
-```
-
----
-
-#### `/devcontainer:yolo`
-**File:** `commands/yolo.md`
-**Skill:** devcontainer-setup-yolo
-**Description:** Full control sandbox setup with no restrictions
-
-**Usage:**
-```bash
-/devcontainer:yolo
-```
-
-**Equivalent to:**
-```bash
-/devcontainer:setup --yolo
-```
-
----
-
 ## Command Structure
 
 ### File Format
@@ -199,7 +135,7 @@ Use and follow the [skill-name] skill exactly as written.
 
 Commands follow the pattern:
 - **Primary commands**: `setup`, `troubleshoot`, `audit`
-- **Mode-specific**: `basic`, `advanced`, `yolo` (v4.0.0: intermediate deprecated)
+- **Mode-specific**: `basic`, `advanced`, `yolo`
 
 All commands use the `/devcontainer:` namespace prefix when invoked.
 
@@ -208,35 +144,23 @@ All commands use the `/devcontainer:` namespace prefix when invoked.
 Commands serve as user-friendly entry points that delegate to skills:
 
 ```
-User types: /devcontainer:setup --advanced
+User types: /devcontainer:quickstart
     ↓
-Command file: commands/advanced.md loaded
+Command file: commands/quickstart.md loaded
     ↓
-Command delegates to: devcontainer-setup-advanced skill
+Command executes bash script with template copying
     ↓
-Skill executes: skills/devcontainer-setup-advanced/SKILL.md
+Templates copied from: skills/_shared/templates/
     ↓
 Result: DevContainer configuration created
 ```
-
-### Command vs Skill
-
-| Aspect | Command | Skill |
-|--------|---------|-------|
-| **Purpose** | User interface | Implementation |
-| **Location** | `commands/*.md` | `skills/*/SKILL.md` |
-| **Invocation** | `/devcontainer:command` | Via command or directly |
-| **Content** | Brief, delegates to skill | Detailed workflow |
-| **User-facing** | Yes | Sometimes (expert users) |
 
 ## Command Quick Reference
 
 | Command | Mode | Questions | Time | Security | Best For |
 |---------|------|-----------|------|----------|----------|
-| `/devcontainer:setup` | Interactive | Varies | Varies | Varies | Most users (choose mode) |
-| `/devcontainer:basic` | Basic | 1-3 | 1-2 min | Low | Quick start, learning |
-| `/devcontainer:advanced` | Advanced | 7-10 | 8-12 min | High | Security-conscious |
-| `/devcontainer:yolo` | YOLO | 15-20+ | 15-30 min | User-controlled | Expert customization |
+| `/devcontainer:quickstart` | Interactive | Varies | Varies | Varies | Most users (choose mode) |
+| `/devcontainer:yolo-vibe-maxxing  | YOLO | 15-20+ | 15-30 min | User-controlled | Expert customization |
 | `/devcontainer:troubleshoot` | N/A | Diagnostic | Varies | N/A | Problem solving |
 | `/devcontainer:audit` | N/A | Audit | 5-10 min | N/A | Security review |
 
@@ -248,7 +172,7 @@ Result: DevContainer configuration created
 
 **Beginner (Interactive):**
 ```
-User: /devcontainer:setup
+User: /devcontainer:quickstart
 Claude: Which setup mode do you prefer?
         [Shows mode comparison with planning phase info]
 User: Basic
@@ -260,7 +184,7 @@ Claude: [Implements devcontainer configuration]
 
 **Experienced (Direct):**
 ```
-User: /devcontainer:setup --advanced
+User: /devcontainer:quickstart --advanced
 Claude: [Executes devcontainer-setup-advanced skill directly]
 ```
 
@@ -354,7 +278,7 @@ Commands are defined in `.claude-plugin/plugin.json`:
 {
   "commands": {
     "setup": {
-      "file": "commands/setup.md",
+      "file": "commands/quickstart.md",
       "description": "Set up a new Claude Code Docker sandbox"
     },
     "troubleshoot": {
@@ -385,7 +309,7 @@ Claude Code automatically discovers commands in the `commands/` directory when:
 ### Reporting Issues
 
 When reporting command-related issues, include:
-- Command used (e.g., `/devcontainer:setup --advanced`)
+- Command used (e.g., `/devcontainer:quickstart --advanced`)
 - Expected vs actual behavior
 - Error messages or logs
 - Project context (language, services, etc.)
@@ -400,5 +324,5 @@ See [Contributing Guide](../CONTRIBUTING.md) for:
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

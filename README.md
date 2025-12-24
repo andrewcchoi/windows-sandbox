@@ -1,13 +1,13 @@
 # DevContainer Setup Plugin
 
 > **Repository:** [andrewcchoi/sandbox-maxxing](https://github.com/andrewcchoi/sandbox-maxxing)
-> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer:basic, /devcontainer:advanced, etc.)
+> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer:quickstart, /devcontainer:yolo-vibe-maxxing)
 
-Interactive assistant for creating VS Code DevContainer configurations with Docker Compose support. Four-mode system (Basic, Intermediate, Advanced, YOLO) with security firewall options and comprehensive tooling.
+Interactive assistant for creating VS Code DevContainer configurations with Docker Compose support. Choose between interactive setup with project type selection and firewall customization, or quick one-command setup with defaults.
 
 ## Features
 
-- **🚀 Four-Mode Setup System** - Choose your experience level: Basic (quick auto), Intermediate (balanced), Advanced (secure minimal), or YOLO (full control)
+- **🚀 Two-Path Setup System** - Interactive setup with project type selection, or YOLO mode for instant defaults (Python+Node, no firewall)
 - **📊 Data-Driven Templates** - Configurations generated from curated registries of official Docker images and allowable domains
 - **🔧 Troubleshooting Assistant** - Diagnose and fix common sandbox issues automatically
 - **🔒 Security Auditor** - Review and harden sandbox configurations against best practices
@@ -29,14 +29,11 @@ claude plugins list
 ### Basic Usage
 
 ```bash
-# Quick setup with auto-detection (Basic mode - recommended)
-/devcontainer:basic
+# Interactive quickstart - choose project type and firewall options
+/devcontainer:quickstart
 
-# Security-focused setup with strict firewall (Advanced mode)
-/devcontainer:advanced
-
-# Full customization and control (YOLO mode - expert users)
-/devcontainer:yolo
+# YOLO vibe-maxxing - no questions, instant DevContainer (Python+Node, no firewall)
+/devcontainer:yolo-vibe-maxxing
 
 # Troubleshoot existing DevContainer
 /devcontainer:troubleshoot
@@ -45,7 +42,7 @@ claude plugins list
 /devcontainer:audit
 ```
 
-**Note:** v4.0.0 introduces planning mode for all setup commands - Claude scans your project, creates a plan, and gets your approval before implementing.
+**Note:** v4.3.0 introduces project-type selection and interactive firewall customization. Use `/devcontainer:yolo-vibe-maxxing` for the fastest path with sensible defaults.
 
 ### Claude Code Installation
 
@@ -63,16 +60,13 @@ claude --version
 
 **Offline/Air-gapped Environments:**
 
-If the installation script cannot be downloaded or the Anthropic servers are unreachable:
-1. Pre-download the installation script on a connected machine
-2. Include it in your project or mount it as a volume
-3. Run the local script instead: `sh ./.internal/scripts/install-claude.sh`
+If the installation script cannot be downloaded or the Anthropic servers are unreachable, pre-download the installation script on a connected machine and include it in your project or mount it as a volume.
 
 See [TROUBLESHOOTING.md](docs/features/TROUBLESHOOTING.md#claude-code-installation) for details.
 
-> **Windows Users:** For best performance, use WSL 2 with Docker Desktop and clone the repository to the WSL filesystem (`~/projects/`) rather than `/mnt/c/`. If you encounter line ending issues with shell scripts, the repository includes a `.gitattributes` file that enforces LF endings. For corporate environments with SSL/proxy, see [TROUBLESHOOTING.md](docs/features/TROUBLESHOOTING.md#corporate-proxy--ssl-certificate-issues).
+> **Windows Users:** For best performance, use WSL 2 with Docker Desktop and clone the repository to the WSL filesystem (`~/projects/`) rather than `/mnt/c/`. If you encounter line ending issues with shell scripts, the repository includes a `.gitattributes` file that enforces LF endings. For corporate environments with SSL/proxy, see [TROUBLESHOOTING.md](docs/features/TROUBLESHOOTING.md#corporate-proxy--ssl-certificate-issues). For detailed Windows setup, see [Windows Guide](docs/windows/README.md).
 
-## Four-Mode System
+## Three-Mode System
 
 See [MODES.md](docs/features/MODES.md) for comprehensive comparison guide.
 
@@ -90,36 +84,13 @@ See [MODES.md](docs/features/MODES.md) for comprehensive comparison guide.
 
 **Example**:
 ```
-You: /devcontainer:basic
+You: /devcontainer:quickstart
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
         - Cache: Redis 7
         - Firewall: Strict (essential domains only)
         Generating configs... Done!
-```
-
-### Intermediate Mode - Balanced Control
-
-**Best for**: Regular development, team projects, customization needs
-
-**Key Features**:
-- Some customization (5-8 questions)
-- Build args for version flexibility
-- Base images: Official images (`python:3.12-slim`, `node:20-bookworm-slim`)
-- Firewall: Permissive (no restrictions, for convenience)
-- VS Code: 10-15 curated extensions
-- Ready in 3-5 minutes
-
-**Example**:
-```
-You: Python
-Claude: Python version?
-        • 3.13 (latest) • 3.12 (stable, recommended) • 3.11 (LTS)
-You: 3.12
-Claude: What database?
-        • PostgreSQL • MySQL • MongoDB • None
-...
 ```
 
 ### Advanced Mode - Security-First Minimal
@@ -136,7 +107,7 @@ Claude: What database?
 
 **Example**:
 ```
-You: /devcontainer:advanced
+You: /devcontainer:quickstart
 Claude: This mode creates security-hardened configurations.
 
         **Step 1: Base Configuration**
@@ -165,8 +136,8 @@ Claude: This mode creates security-hardened configurations.
 
 **Example**:
 ```
-You: /devcontainer:yolo
-Claude: YOLO mode - You're in control!
+You: /devcontainer:yolo-vibe-maxxing
+Claude: YOLO vibe-maxxing mode - You're in control!
 
         ⚠️  Warning: Maximum flexibility, minimal safety rails.
 
@@ -183,16 +154,14 @@ Claude: sandbox-templates tag?
 
 ## Slash Commands
 
-| Command                            | Description                                                           | Mode         |
-| ---------------------------------- | --------------------------------------------------------------------- | ------------ |
-| `/devcontainer:basic`        | Quick setup with planning mode (auto-detection)                       | Basic        |
-| `/devcontainer:advanced`     | Security-focused setup with planning mode (strict firewall)           | Advanced     |
-| `/devcontainer:yolo`         | Full customization with planning mode (expert users)                  | YOLO         |
-| `/devcontainer:setup`        | Interactive mode selection (or use `--basic`, `--advanced`, etc.)     | All          |
-| `/devcontainer:troubleshoot` | Diagnose and fix sandbox issues                                       | All          |
-| `/devcontainer:audit`        | Security audit and recommendations                                    | All          |
+| Command                            | Description                                                           |
+| ---------------------------------- | --------------------------------------------------------------------- |
+| `/devcontainer:quickstart`        | Interactive quickstart - choose project type and firewall options          |
+| `/devcontainer:yolo-vibe-maxxing`         | YOLO vibe-maxxing - no questions, sensible defaults (Python+Node)           |
+| `/devcontainer:troubleshoot` | Diagnose and fix sandbox issues                                       |
+| `/devcontainer:audit`        | Security audit and recommendations                                    |
 
-**v4.0.0:** All setup commands now include a mandatory planning phase.
+**v4.3.0:** Setup now offers interactive project-type selection or instant YOLO defaults.
 
 ## Auto-Detection
 
@@ -205,10 +174,9 @@ The plugin automatically activates when you:
 **Example**:
 ```
 You: I need to set up a Docker development environment for my Python project
-Claude: [Automatically uses /devcontainer:setup command]
+Claude: [Automatically uses /devcontainer:quickstart command]
       What mode would you like?
       • Basic (Zero config, 1-2 min)
-      • Intermediate (Balanced, 3-5 min)
       • Advanced (Secure minimal, 8-12 min)
       • YOLO (Full control, 15-30 min)
 ```
@@ -323,7 +291,7 @@ Templates use these placeholders:
 
 ## Skills Reference
 
-### /devcontainer:setup (Interactive Router)
+### /devcontainer:quickstart (Interactive Router)
 Interactive setup wizard with four experience modes.
 
 **Note:** This is a router command that delegates to mode-specific skills:
@@ -337,7 +305,7 @@ Interactive setup wizard with four experience modes.
 - User wants to configure firewalls for development
 
 **Workflow**:
-1. Mode selection (Basic/Intermediate/Advanced/YOLO)
+1. Mode selection (Basic/Advanced/YOLO)
 2. Project detection
 3. Configuration wizard
 4. Template generation
@@ -392,7 +360,7 @@ This plugin uses consistent naming across different contexts:
 | ----------------- | ------------------------- | --------------------------------------------------- |
 | Plugin name       | devcontainer-setup        | Plugin installation and management                  |
 | GitHub repository | sandbox-maxxing           | github.com/andrewcchoi/sandbox-maxxing              |
-| Slash commands    | /devcontainer:*           | /devcontainer:basic, /devcontainer:yolo |
+| Slash commands    | /devcontainer:*           | /devcontainer:quickstart, /devcontainer:yolo-vibe-maxxing |
 | Skills            | sandbox-*                 | devcontainer-setup-basic                            |
 | User-facing title | DevContainer Setup Plugin | In documentation headers                            |
 
@@ -427,29 +395,34 @@ sandbox-maxxing/
 │   ├── official-images.json     # Docker Hub official images registry
 │   └── allowable-domains.json   # Firewall domain whitelists
 ├── skills/
-│   ├── devcontainer-setup-basic/     # Basic mode setup
-│   ├── devcontainer-setup-advanced/  # Advanced mode setup
-│   ├── devcontainer-setup-yolo/      # YOLO mode setup
+│   ├── _shared/                 # Shared templates and data
+│   │   ├── templates/           # DevContainer templates
+│   │   │   ├── base.dockerfile
+│   │   │   ├── devcontainer.json
+│   │   │   ├── docker-compose.yml
+│   │   │   ├── init-firewall.sh
+│   │   │   ├── setup-claude-credentials.sh
+│   │   │   └── partials/        # Language-specific Dockerfile sections
+│   │   │       ├── go.dockerfile
+│   │   │       ├── rust.dockerfile
+│   │   │       ├── java.dockerfile
+│   │   │       ├── ruby.dockerfile
+│   │   │       ├── php.dockerfile
+│   │   │       ├── cpp-clang.dockerfile
+│   │   │       ├── cpp-gcc.dockerfile
+│   │   │       └── postgres.dockerfile
+│   │   └── templates/data/      # Configuration data
+│   │       ├── allowable-domains.json
+│   │       ├── mcp-servers.json
+│   │       ├── secrets.json
+│   │       └── variables.json
 │   ├── sandbox-troubleshoot/    # Troubleshooting assistant
 │   └── sandbox-security/        # Security auditor
 ├── commands/
-│   ├── basic.md                 # /devcontainer:basic
-│   ├── intermediate.md          # /devcontainer:intermediate [DEPRECATED v4.0.0]
-│   ├── advanced.md              # /devcontainer:advanced
-│   ├── yolo.md                  # /devcontainer:yolo
-│   ├── setup.md                 # /devcontainer:setup (router)
+│   ├── quickstart.md            # /devcontainer:quickstart (interactive mode selection)
+│   ├── yolo-vibe-maxxing.md     # /devcontainer:yolo-vibe-maxxing (quick no-questions setup)
 │   ├── troubleshoot.md          # /devcontainer:troubleshoot
 │   └── audit.md                 # /devcontainer:audit
-├── templates/
-│   ├── master/                  # Master templates with section markers
-│   │   ├── devcontainer.json.master
-│   │   ├── Dockerfile.master
-│   │   ├── docker-compose.master.yml
-│   │   └── init-firewall.master.sh
-│   ├── compose/                 # Service-specific docker-compose sections
-│   ├── dockerfiles/            # Language-specific Dockerfile sections
-│   ├── firewall/               # Mode-specific firewall configs
-│   └── legacy/                 # Deprecated monolithic templates
 └── docs/examples/                    # Working example applications
     ├── streamlit-sandbox-basic/
     ├── demo-app-sandbox-basic/
@@ -462,7 +435,7 @@ sandbox-maxxing/
 ### Example 1: Quick Python Setup (Basic Mode)
 
 ```
-You: /devcontainer:basic
+You: /devcontainer:quickstart
 Claude: I detected a Python FastAPI project. Setting up with:
         - Base: docker/sandbox-templates:claude-code
         - Database: PostgreSQL 16
@@ -481,7 +454,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
         3. Reopen in Container
 ```
 
-### Example 2: Node.js with Customization (Intermediate Mode)
+### Example 2: Node.js with Customization
 
 ```
 Claude: Node.js version?
@@ -531,7 +504,7 @@ Claude: Running security audit...
 
 ## Example Applications
 
-The plugin includes comprehensive working examples in the `docs/examples/` directory, demonstrating all four experience modes (Basic, Intermediate, Advanced, YOLO) with real applications.
+The plugin includes comprehensive working examples in the `docs/examples/` directory, demonstrating all three experience modes (Basic, Advanced, YOLO) with real applications.
 
 ### Example Structure
 
@@ -715,23 +688,23 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
 
 - **Organization Checklist**: [`ORGANIZATION_CHECKLIST.md`](.internal/repo-keeper/ORGANIZATION_CHECKLIST.md) - 18-category maintenance checklist
 - **Inventory**: [`INVENTORY.json`](.internal/repo-keeper/INVENTORY.json) - Entity inventory for auditing
-- **Automation Scripts**: [`scripts/`](.internal/repo-keeper/.internal/scripts/) - Version sync, link checking, inventory validation
+- **Automation Scripts**: [`scripts/`](.internal/repo-keeper/scripts/) - Version sync, link checking, inventory validation
 - **GitHub Workflows**: [`workflows/`](.internal/repo-keeper/workflows/) - CI/CD templates for automated validation
 - **Issue/PR Templates**: [`templates/`](.internal/repo-keeper/templates/) - Standardized templates for contributors
 
 ## Changelog
 
 ### v2.0.0 (2025-12-16)
-- **Major Release**: Four-mode system (Basic, Intermediate, Advanced, YOLO)
+- **Major Release**: Three-mode system (Basic, Advanced, YOLO)
 - Data-driven configuration with JSON registries
   - `sandbox-templates.json`: Official Docker sandbox images
   - `official-images.json`: Docker Hub official images
   - `allowable-domains.json`: Mode-specific firewall whitelists
 - Modular template system with section markers
 - Enhanced firewall with mode-specific domain sets (30-100+ domains)
-- Updated slash commands: `/devcontainer:basic`, `/devcontainer:advanced`, `/devcontainer:yolo`
+- Updated slash commands: `/devcontainer:quickstart`, `/devcontainer:quickstart`, `/devcontainer:yolo-vibe-maxxing`, `/devcontainer:quickstart`
 - Comprehensive mode comparison guide (MODES.md)
-- Migration from Basic/Advanced/YOLO to new four-mode system
+- Migration from Basic/Advanced/YOLO to new three-mode system
 
 ### v1.0.0 (2025-01-XX)
 - Initial release
@@ -742,5 +715,5 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

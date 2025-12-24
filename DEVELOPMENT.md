@@ -75,19 +75,23 @@ sandbox/
 │   └── init-firewall.sh        # Disabled (not needed)
 │
 ├── skills/                     # Plugin skills (main work here)
-│   ├── devcontainer-setup-advanced/
+│   ├── _shared/                # Shared templates and data
 │   ├── sandbox-troubleshoot/
 │   └── sandbox-security/
 │
 ├── commands/                   # Slash commands
-│   ├── setup.md
+│   ├── quickstart.md
+│   ├── yolo-vibe-maxxing.md
 │   ├── troubleshoot.md
 │   └── audit.md
 │
-├── templates/                  # Configuration templates
-│   ├── python/
-│   ├── node/
-│   └── fullstack/
+├── skills/_shared/             # Shared resources
+│   ├── templates/              # DevContainer templates
+│   │   ├── base.dockerfile
+│   │   ├── devcontainer.json
+│   │   ├── docker-compose.yml
+│   │   └── partials/           # Language-specific sections
+│   └── templates/data/         # Configuration data
 │
 ├── docs/examples/                   # Demo applications
 │   ├── docker-compose.yml      # Services for examples ONLY
@@ -108,11 +112,12 @@ sandbox/
 Most development work doesn't require services:
 
 ```bash
-# Edit plugin skills
-code skills/devcontainer-setup-advanced/SKILL.md
+# Edit plugin commands
+code commands/quickstart.md
+code commands/yolo-vibe-maxxing.md
 
 # Edit templates
-code skills/devcontainer-setup-intermediate/templates/devcontainer.json
+code skills/_shared/templates/base.dockerfile
 
 # Edit documentation
 code README.md
@@ -132,7 +137,7 @@ claude plugins list
 
 # Test slash commands
 claude
-> /devcontainer:setup --basic
+> /devcontainer:quickstart --basic
 > /devcontainer:troubleshoot
 > /devcontainer:audit
 ```
@@ -180,7 +185,7 @@ cd /tmp/test-project
 
 # Use the plugin to generate configs
 claude
-> /devcontainer:setup --basic
+> /devcontainer:quickstart --basic
 
 # Verify generated files
 ls -la .devcontainer/
@@ -218,7 +223,7 @@ The `.devcontainer/` in this repository was created using the plugin itself:
 
 ```bash
 # What was run (hypothetically, during setup)
-/devcontainer:basic
+/devcontainer:quickstart
 
 # Plugin detection output:
 # ✓ Scanning repository...
@@ -252,7 +257,7 @@ When plugin templates change, regenerate the devcontainer to stay current:
 mv .devcontainer .devcontainer.backup
 
 # 2. Regenerate using latest plugin
-/devcontainer:basic
+/devcontainer:quickstart
 
 # 3. Review changes
 diff -r .devcontainer.backup .devcontainer
@@ -346,7 +351,7 @@ The devcontainer sets minimal environment variables:
 
 1. **Keep the devcontainer minimal** - Don't add services unless the plugin itself needs them
 2. **Use docs/examples/docker-compose.yml** - Keep example services separate
-3. **Test with the plugin** - Use `/devcontainer:basic` to validate changes
+3. **Test with the plugin** - Use `/devcontainer:quickstart` to validate changes
 4. **Document changes** - Update this file when modifying the development workflow
 5. **Regenerate periodically** - Keep the devcontainer in sync with plugin templates
 
@@ -366,5 +371,5 @@ The devcontainer sets minimal environment variables:
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

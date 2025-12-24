@@ -21,60 +21,54 @@ services:
     command: sleep infinity
     networks:
       - dev-network
-    # Uncomment if using services:
-    # depends_on:
-    #   - postgres
-    #   - redis
+    depends_on:
+      - postgres
+      - redis
 
-  # ==========================================================================
-  # OPTIONAL SERVICES
-  # Uncomment the services you need for your project
-  # ==========================================================================
+  postgres:
+    image: postgres:16-bookworm
+    container_name: {{PROJECT_NAME}}-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-devdb}
+      POSTGRES_USER: ${POSTGRES_USER:-devuser}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devuser}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev-network
 
-  # postgres:
-  #   image: postgres:16-bookworm
-  #   container_name: {{PROJECT_NAME}}-postgres
-  #   restart: unless-stopped
-  #   environment:
-  #     POSTGRES_DB: ${POSTGRES_DB:-devdb}
-  #     POSTGRES_USER: ${POSTGRES_USER:-devuser}
-  #     POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-devpassword}
-  #   ports:
-  #     - "${POSTGRES_PORT:-5432}:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
-  #   healthcheck:
-  #     test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-devuser}"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - dev-network
-
-  # redis:
-  #   image: redis:7-alpine
-  #   container_name: {{PROJECT_NAME}}-redis
-  #   restart: unless-stopped
-  #   command: redis-server --appendonly yes
-  #   ports:
-  #     - "${REDIS_PORT:-6379}:6379"
-  #   volumes:
-  #     - redis_data:/data
-  #   healthcheck:
-  #     test: ["CMD", "redis-cli", "ping"]
-  #     interval: 10s
-  #     timeout: 5s
-  #     retries: 5
-  #   networks:
-  #     - dev-network
+  redis:
+    image: redis:7-alpine
+    container_name: {{PROJECT_NAME}}-redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes
+    ports:
+      - "${REDIS_PORT:-6379}:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - dev-network
 
 networks:
   dev-network:
     name: {{PROJECT_NAME}}-network
     driver: bridge
 
-# volumes:
-#   postgres_data:
-#     driver: local
-#   redis_data:
-#     driver: local
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
