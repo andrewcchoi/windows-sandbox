@@ -71,12 +71,13 @@ When modifying skills:
 
 ### Working on Templates
 
-Templates are in the `templates/` directory:
-- `master/` - Master templates with all features
-- `dockerfiles/` - Language-specific Dockerfiles (Python, Node.js, Go, Rust, etc.)
-- `compose/` - Mode-specific docker-compose templates
-- `firewall/` - Mode-specific firewall scripts
-- `legacy/` - Deprecated monolithic templates (python/, nodejs/, fullstack/)
+Templates are in the `skills/_shared/templates/` directory:
+- `base.dockerfile` - Base Dockerfile with Python 3.12 + Node 20
+- `devcontainer.json` - DevContainer configuration template
+- `docker-compose.yml` - Docker Compose services template
+- `init-firewall.sh` - Firewall configuration script
+- `setup-claude-credentials.sh` - Claude Code credential setup
+- `partials/` - Language-specific Dockerfile sections (Go, Rust, Java, Ruby, PHP, C++, PostgreSQL)
 
 Template placeholders:
 - `{{PROJECT_NAME}}` - Project name
@@ -127,7 +128,7 @@ If you modify the templates and want to regenerate this repository's devcontaine
    ```
    Then ask Claude:
    ```
-   Please regenerate the devcontainer configuration for this plugin using /devcontainer:basic
+   Please regenerate the devcontainer configuration for this plugin using /devcontainer:quickstart
    ```
 
 3. **Review changes**:
@@ -232,5 +233,5 @@ See the full [Organization Checklist](.internal/repo-keeper/ORGANIZATION_CHECKLI
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

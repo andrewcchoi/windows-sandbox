@@ -38,7 +38,7 @@ Use this skill when:
 - Claude Code CLI not working
 
 Do NOT use this skill when:
-- Setting up a new sandbox (use `/devcontainer:setup` instead)
+- Setting up a new sandbox (use `/devcontainer:quickstart` instead)
 - Performing security audit (use `/devcontainer:audit` instead)
 
 ## Usage
@@ -279,5 +279,5 @@ The skill checks firewall mode, reviews allowed domains list, tests connectivity
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

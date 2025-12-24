@@ -3,26 +3,33 @@
   "dockerComposeFile": "docker-compose.yml",
   "service": "app",
   "workspaceFolder": "/workspace",
+  "remoteUser": "node",
+
   "customizations": {
     "vscode": {
-      "extensions": [
-        "ms-python.python",
-        "ms-python.vscode-pylance",
-        "dbaeumer.vscode-eslint",
-        "esbenp.prettier-vscode",
-        "yzhang.markdown-all-in-one"
-      ],
       "settings": {
         "editor.formatOnSave": true,
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "python.defaultInterpreterPath": "/usr/bin/python3",
         "[markdown]": {
           "editor.defaultFormatter": "yzhang.markdown-all-in-one"
+        },
+        "terminal.integrated.defaultProfile.linux": "zsh",
+        "terminal.integrated.profiles.linux": {
+          "zsh": {
+            "path": "/bin/zsh"
+          }
         }
-      }
+      },
+      "extensions": [
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "dbaeumer.vscode-eslint",
+        "esbenp.prettier-vscode",
+        "yzhang.markdown-all-in-one"
+      ]
     }
   },
-  "remoteUser": "node",
   "postCreateCommand": ".devcontainer/setup-claude-credentials.sh",
   "postStartCommand": "sudo /usr/local/bin/init-firewall.sh",
 
@@ -32,6 +39,5 @@
     "PATH": "/usr/local/bin:${containerEnv:PATH}",
     "FIREWALL_MODE": "permissive"
   },
-
   "features": {}
 }

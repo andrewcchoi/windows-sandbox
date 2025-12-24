@@ -1,6 +1,6 @@
 # Examples
 
-Example applications demonstrating the Claude Code Sandbox plugin's capabilities across four experience modes: **Basic**, **Intermediate**, **Advanced**, and **YOLO** modes.
+Example applications demonstrating the Claude Code Sandbox plugin's capabilities across three experience modes: **Basic**, **Advanced**, and **YOLO** modes.
 
 ## Overview
 
@@ -15,12 +15,10 @@ This directory contains:
 
 1. **Start with Streamlit Basic** - Fastest way to validate your setup (< 1 minute)
 2. **Try Demo App Basic** - Full-stack application with minimal configuration
-3. **Explore Intermediate** - Add message queue and permissive firewall
 4. **Try Advanced/YOLO** - More features and production-ready patterns
 
 ### For Production Projects
 
-1. **Demo App Intermediate** - Learning and experimentation with additional services
 2. **Demo App Advanced** - Balanced configuration with strict security for team development
 3. **Demo App YOLO** - Comprehensive setup with all tooling and maximum customization
 
@@ -94,23 +92,6 @@ examples/
 
 **Examples**: `streamlit-sandbox-basic/`, `demo-app-sandbox-basic/`
 
-### Intermediate Mode - Learning & Experimentation
-
-**Best for**: Learning, experimentation, small projects
-
-**Characteristics**:
-- 3-5 configuration questions
-- Platform-specific templates (Python, Node.js, etc.)
-- Permissive firewall (no restrictions, audit logging)
-- Additional services (message queues like RabbitMQ)
-- More VS Code extensions (5)
-- Build arguments for version customization
-- Enhanced configuration options
-
-**Setup time**: 2 minutes
-**Build time**: 2-3 minutes
-
-
 ### Advanced Mode - Production Development
 
 **Best for**: Small teams, active development, production-ready projects
@@ -152,37 +133,37 @@ examples/
 
 ## Comparison Matrix
 
-| Feature            | Basic             | Intermediate      | Advanced          | YOLO               |
-| ------------------ | ----------------- | ----------------- | ----------------- | ------------------ |
+| Feature            | Basic             | Advanced          | YOLO               |
+- | ----------------- | ----------------- | ----------------- | ------------------ |
 | **Setup**          |
-| Questions          | 1-2               | 3-5               | 5-7               | 10-15+             |
-| Config files       | 4                 | 4                 | 4                 | 7                  |
-| Setup time         | <1 min            | 2 min             | 3-4 min           | 5-10 min           |
+| Questions          | 1-2               | 5-7               | 10-15+             |
+| Config files       | 4                 | 4                 | 7                  |
+| Setup time         | <1 min            | 3-4 min           | 5-10 min           |
 | **Dockerfile**     |
-| Build stages       | 1                 | 1                 | 1                 | 7 (multi-stage)    |
-| Build args         | 0                 | 2                 | 2                 | 5+                 |
-| Dev tools          | Minimal           | Basic             | Moderate          | Comprehensive      |
+| Build stages       | 1                 | 1                 | 7 (multi-stage)    |
+| Build args         | 0                 | 2                 | 5+                 |
+| Dev tools          | Minimal           | Moderate          | Comprehensive      |
 | **VS Code**        |
-| Extensions         | 2                 | 5                 | 10+               | 20+                |
-| Pre-config         | Minimal           | Basic             | Curated           | Complete           |
-| Format on save     | No                | No                | Yes               | Yes + linting      |
+| Extensions         | 2                 | 10+               | 20+                |
+| Pre-config         | Minimal           | Curated           | Complete           |
+| Format on save     | No                | Yes               | Yes + linting      |
 | **Development**    |
-| Firewall           | None              | Permissive        | Strict            | Configurable       |
-| Dev dependencies   | No                | No                | Some              | Complete           |
-| Debugging tools    | No                | No                | Some              | Full suite         |
-| Testing tools      | pytest, jest      | pytest, jest      | + coverage        | + profiling        |
+| Firewall           | None              | Strict            | Configurable       |
+| Dev dependencies   | No                | Some              | Complete           |
+| Debugging tools    | No                | Some              | Full suite         |
+| Testing tools      | pytest, jest      | + coverage        | + profiling        |
 | **Services**       |
-| Essential          | PostgreSQL, Redis | PostgreSQL, Redis | PostgreSQL, Redis | PostgreSQL, Redis  |
-| Additional         | None              | RabbitMQ          | None              | All (optional)     |
+| Essential          | PostgreSQL, Redis | PostgreSQL, Redis | PostgreSQL, Redis  |
+| Additional         | None              | None              | All (optional)     |
 | **Production**     |
-| Resource limits    | No                | No                | Yes               | Yes (configurable) |
-| Health checks      | Basic             | Standard          | Standard          | Comprehensive      |
-| Security hardening | Minimal           | Partial           | Good              | Full               |
-| Monitoring hooks   | No                | No                | No                | Yes                |
+| Resource limits    | No                | Yes               | Yes (configurable) |
+| Health checks      | Basic             | Standard          | Comprehensive      |
+| Security hardening | Minimal           | Good              | Full               |
+| Monitoring hooks   | No                | No                | Yes                |
 | **Best For**       |
-| Use case           | Prototypes        | Learning          | Production dev    | Full control       |
-| Team size          | Solo              | Solo/Small        | Small             | Large              |
-| Project phase      | Early             | Learning          | Active dev        | Production         |
+| Use case           | Prototypes        | Production dev    | Full control       |
+| Team size          | Solo              | Small             | Large              |
+| Project phase      | Early             | Active dev        | Production         |
 
 ## Getting Started
 
@@ -282,12 +263,6 @@ npm test
 - Add VS Code extensions
 - Change ports in `devcontainer.json`
 - Upgrade to higher mode for more features
-
-### Intermediate Mode
-- Set Python/Node.js versions via build args
-- Add more services to `docker-compose.yml`
-- Customize VS Code extensions
-- Firewall is permissive by default (no restrictions)
 
 ### Advanced Mode
 - Set Python/Node.js versions via build args
@@ -393,7 +368,6 @@ sudo /usr/local/bin/init-firewall.sh
 ## Next Steps
 
 - ✅ Try Basic mode for quick start
-- ✅ Explore Intermediate mode for learning with additional services
 - ✅ Use Advanced mode for production development with strict security
 - ✅ Try YOLO mode for maximum customization
 - 📖 Read mode-specific READMEs for detailed guides
@@ -408,5 +382,5 @@ This project was created with [Claude](https://claude.ai) using the [Superpowers
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

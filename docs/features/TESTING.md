@@ -16,7 +16,7 @@ echo "print('test')" > main.py
 
 # 3. Run setup
 claude
-/devcontainer:basic
+/devcontainer:quickstart
 
 # 4. Verify
 ls .devcontainer/
@@ -26,7 +26,6 @@ docker compose up -d
 ## Test Coverage
 
 - ✅ Basic mode setup
-- ✅ Intermediate mode setup
 - ✅ Advanced mode setup
 - ✅ YOLO mode setup
 - ✅ Troubleshooting diagnostics
@@ -48,5 +47,5 @@ None currently.
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

@@ -502,7 +502,7 @@ The plugin would ask about:
 
 ## Comparing Modes
 
-| Feature                  | Basic       | Intermediate | Advanced     | YOLO              |
+| Feature                  | Basic       | Advanced     | YOLO              |
 | ------------------------ | ----------- | ------------ | ------------ | ----------------- |
 | **Setup**                |
 | Questions asked          | 1-2         | 3-5          | 5-7          | 10-15+            |
@@ -783,5 +783,5 @@ MIT
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

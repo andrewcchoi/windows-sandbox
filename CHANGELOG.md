@@ -2,6 +2,257 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.5.0] - 2025-12-24
+
+### Breaking Changes
+- **Command Renames**: Updated command names for better clarity and style
+  - `/devcontainer:setup` → `/devcontainer:quickstart`
+  - `/devcontainer:yolo` → `/devcontainer:yolo-vibe-maxxing`
+  - File renames: `commands/setup.md` → `commands/quickstart.md`
+  - File renames: `commands/yolo.md` → `commands/yolo-vibe-maxxing.md`
+
+### Changed
+- **All Documentation**: Updated 12+ files with new command names
+  - README.md: Updated all command references and examples
+  - commands/README.md: Updated command documentation
+  - CHANGELOG.md: Updated historical references
+  - skills/: Updated skill cross-references
+  - docs/: Updated all documentation files
+
+### Migration Guide
+Update your usage:
+```bash
+# Old commands (no longer work)
+/devcontainer:setup
+/devcontainer:yolo
+
+# New commands
+/devcontainer:quickstart
+/devcontainer:yolo-vibe-maxxing
+```
+
+### Technical Details
+- Commands renamed for clarity:
+  - "setup" → "quickstart" (more descriptive of the quick interactive flow)
+  - "yolo" → "yolo-vibe-maxxing" (more stylistic, matches project vibe)
+- All file references updated across codebase
+- Version bumped to 4.5.0 (breaking change in command names)
+
+## [4.4.3] - 2025-12-24
+
+### Fixed
+- **Banner Display**: Made base stack banner more compact to prevent cutoff on narrow terminals
+  - Changed from 44-character wide Unicode box to 30-character single line
+  - Previous: `╔══════...╗` with multiple lines (44 chars)
+  - New: `[Base: Python 3.12 + Node 20]` (30 chars)
+
+### Changed
+- **commands/quickstart.md**:
+  - Step 1.5: Replaced wide Unicode banner with single-line bracket format
+  - Banner now fits in narrow terminals without truncation
+  - Updated version footer to 4.4.3
+
+### Technical Details
+- Old banner width: ~44 characters (Unicode box drawing, 5 lines)
+- New banner width: ~30 characters (single line)
+- Format: `[Base: Python 3.12 + Node 20]`
+
+## [4.4.2] - 2025-12-24
+
+### Changed
+- **UX Improvement: Clearer Base Stack Communication**
+  - Added visual banner showing "BASE STACK (always included): Python 3.12 + Node 20"
+  - Updated question text to emphasize "ADDITIONAL" tools (not just "additional")
+  - Added descriptions to all tool category options explaining what they include
+  - "None - use base only" option now clearly states "Just Python 3.12 + Node 20 - ready to code!"
+
+### Technical Details
+- **commands/quickstart.md**:
+  - New Step 1.5: Shows base stack banner before first question
+  - Step 2 question: "What ADDITIONAL tools do you want to add to your stack?"
+  - Added arrow-prefixed descriptions (→) for each option
+  - Updated version footer to 4.4.2
+
+### Benefits
+- Users see what's included BEFORE answering any questions
+- "ADDITIONAL" emphasis makes it clear Python + Node are always present
+- Option descriptions provide context about what each choice adds
+- Reduces confusion about base tooling
+
+## [4.4.1] - 2025-12-24
+
+### Fixed
+- **Windows Compatibility**: All bash scripts now work on Windows (Git Bash/WSL), Linux, and macOS
+  - Fixed Windows path handling with `!` character (history expansion)
+  - Fixed backslash escape character issues in paths
+  - Portable `sed` usage (removed `-i` flag, use temp files)
+  - Portable shebangs: `#!/usr/bin/env bash` instead of `#!/bin/bash`
+
+### Changed
+- **commands/quickstart.md**:
+  - Added `set +H` to disable history expansion (fixes Windows paths with `!`)
+  - Windows path conversion: `${CLAUDE_PLUGIN_ROOT//\\//}` converts backslashes to forward slashes
+  - Reordered plugin discovery: check current directory before searching ~/.claude/plugins
+  - Portable sed: use temp file approach instead of `sed -i`
+- **commands/yolo-vibe-maxxing.md**:
+  - Applied same plugin discovery and sed fixes as setup.md
+- **hooks/verify-template-match.sh**:
+  - Changed shebang to `#!/usr/bin/env bash`
+  - Updated shebang validation to accept both `#!/bin/bash` and `#!/usr/bin/env bash`
+- **hooks/verify-devcontainer-complete.sh**:
+  - Changed shebang to `#!/usr/bin/env bash`
+- **skills/_shared/templates/setup-claude-credentials.sh**:
+  - Changed shebang to `#!/usr/bin/env bash`
+  - Fixed 3 occurrences of `sed -i` to use portable temp file approach
+
+### Technical Details
+- Plugin discovery now checks in this order:
+  1. `CLAUDE_PLUGIN_ROOT` environment variable (with backslash conversion)
+  2. Current directory (if templates exist)
+  3. `~/.claude/plugins` directory (fallback)
+- All `sed -i "s/old/new/" file` replaced with: `sed "s/old/new/" file > file.tmp && mv file.tmp file`
+- History expansion disabled with `set +H 2>/dev/null || true` at start of scripts
+
+### Benefits
+- Works with Windows paths like `D:\!wip\sandbox-maxxing`
+- No more "syntax error near unexpected token" on Windows
+- Consistent behavior across all platforms
+- More robust error handling with fallbacks
+
+## [4.4.0] - 2025-12-24
+
+### Added
+- **Multi-Stack Selection**: Users can now select multiple tools to build full stacks
+  - Example: Python + Node (base) + Go (backend) + PostgreSQL tools
+  - Solves AskUserQuestion 4-option limit with category-based flow
+  - "Add more tools?" loop enables building complete development stacks
+
+### Changed
+- **commands/quickstart.md**: Complete rewrite of question flow
+  - Step 1: Initialize `SELECTED_PARTIALS` array
+  - Step 2-6: Category selection with loop-back logic
+    - Backend languages: Go, Rust, Java, Ruby (via "More languages..."), PHP
+    - Database tools: PostgreSQL client + extensions
+    - C++ development: Clang 17 or GCC (mutually exclusive)
+  - Step 10: Build Dockerfile now loops over all selected partials
+  - Step 13: Report shows complete stack summary
+- **skills/_shared/templates/partials/postgres.dockerfile**:
+  - Removed duplicate `PGHOST`, `PGUSER`, `PGDATABASE` ENV definitions
+  - Base dockerfile already defines these values
+  - Added comment explaining why ENVs are not redefined
+
+### Technical Details
+- New question flow supports:
+  - Multi-select: Choose Go + PostgreSQL + C++ in one session
+  - Overflow handling: "More languages..." for Ruby/PHP (4-option limit)
+  - Mutual exclusion: C++ Clang vs GCC handled by single-select question
+- Partial composition:
+  - All partials use `USER root` → `USER node` pattern
+  - Safely composable (no USER command conflicts)
+  - PATH extensions use `$PATH:...` pattern (no conflicts)
+- ENV conflict resolution:
+  - Postgres partial no longer redefines PGHOST/PGUSER/PGDATABASE
+  - Uses base values: `sandboxxer_user` / `sandboxxer_dev`
+
+### Benefits
+- Users can build realistic multi-stack projects (frontend + backend + database)
+- All 9 language options discoverable through categories
+- Stays within AskUserQuestion 4-option limit
+- No ENV conflicts when composing multiple partials
+
+## [4.2.1] - 2025-12-23
+
+### Fixed
+- **Basic Mode: Template Source Correction**
+  - Fixed command to use canonical templates from `skills/_shared/templates/` instead of `docs/examples/demo-app-sandbox-basic/`
+  - Command now copies and processes actual templates with placeholder replacement
+  - Includes required `data/allowable-domains.json` for Docker build
+
+### Changed
+- **commands/basic.md**:
+  - Added plugin directory discovery (works in both installed and development environments)
+  - Copies from `skills/_shared/templates/` (canonical source)
+  - File mapping: `base.dockerfile` → `Dockerfile`, `init-firewall/disabled.sh` → `init-firewall.sh`
+  - Uses `sed` to replace `{{PROJECT_NAME}}` placeholders
+  - Copies `allowable-domains.json` to `data/` directory for Docker build
+
+### Technical Details
+- Plugin discovery (3 methods, in order):
+  1. `${CLAUDE_PLUGIN_ROOT}` environment variable (inline/development plugins)
+  2. Search in `~/.claude/plugins` (installed plugins)
+  3. Current directory if templates exist (fallback)
+- Template processing: 5 DevContainer files + 1 data file = 6 total files
+- Placeholder replacement: `{{PROJECT_NAME}}` replaced in devcontainer.json and docker-compose.yml
+
+## [4.2.0] - 2025-12-23
+
+### Breaking Changes
+- **Basic Mode: Converted from Skill to Command**
+  - Replaced `skills/devcontainer-setup-basic/` with `commands/basic.md`
+  - Added `allowed-tools: [Bash]` restriction to enforce file copying at system level
+  - Command now uses direct `cp -r` from reference implementation at `docs/examples/demo-app-sandbox-basic/`
+  - Write tool is now **prohibited** at the system level, preventing agent from generating files
+
+### Fixed
+- **Root cause of incomplete file generation**: Both planning and default modes were using Write tool instead of copying from reference
+  - Planning mode placed files correctly due to more deliberate reasoning time
+  - Default mode grouped all files in `.devcontainer/` including docker-compose.yml (wrong location)
+  - Solution: System-level tool restriction forces exact file copying behavior
+
+### Changed
+- **Basic mode workflow**:
+  - Old: Agent reads skill, attempts to generate files via Write tool
+  - New: Agent executes single bash command to copy all 5 files from reference
+  - Result: Guaranteed correct files, correct locations, no interpretation needed
+
+### Technical Details
+- Command uses: `cp -r docs/examples/demo-app-sandbox-basic/.devcontainer . && cp docs/examples/demo-app-sandbox-basic/docker-compose.yml .`
+- All 5 files copied: Dockerfile, devcontainer.json, init-firewall.sh, setup-claude-credentials.sh, docker-compose.yml
+- docker-compose.yml placed at project root (correct Docker Compose convention)
+- Scripts automatically marked executable via `chmod +x`
+
+## [4.1.1] - 2025-12-23
+
+### Fixed
+- **Basic Mode: Enforced Bash Tool Usage**
+  - Fixed issue where agent ignored skill's bash cp instructions and used Write tool instead
+  - Added explicit tool restrictions prohibiting Write tool for devcontainer files
+  - Made Bash command mandatory with clear directive language
+  - Updated Stop hook to enforce all 5 files present (exit 2 if missing)
+  - Cleaned up non-working PreToolUse/PostToolUse hooks from hooks.json
+  - Root cause: Agent interpreted bash code blocks as documentation rather than executable instructions
+
+### Changed
+- **devcontainer-setup-basic skill**
+  - Added "TOOL RESTRICTIONS" section at top with explicit prohibitions
+  - Converted multi-line bash example into single-line mandatory command
+  - Added "DO NOT" list to prevent common mistakes
+- **verify-devcontainer-complete.sh hook**
+  - Moved script files from optional warnings to required errors
+  - Changed exit behavior: exit 2 (block) on errors instead of exit 0 (informational)
+  - All 5 files now mandatory: Dockerfile, devcontainer.json, docker-compose.yml, init-firewall.sh, setup-claude-credentials.sh
+- **hooks.json**
+  - Removed PreToolUse and PostToolUse hooks (matched but never executed)
+  - Kept only Stop hook which reliably executes
+
+## [4.1.0] - 2025-12-22
+
+### Fixed
+- **Basic Mode: Direct Copy from Reference Implementation**
+  - Fixed missing files issue (`init-firewall.sh`, `setup-claude-credentials.sh` were not generated)
+  - Fixed wrong file locations (`docker-compose.yml` was in `.devcontainer/` instead of root)
+  - Fixed incorrect configurations (wrong user, missing postStartCommand, etc.)
+  - **Solution**: Basic mode now copies all 5 files directly from `docs/examples/demo-app-sandbox-basic/`
+  - Benefits: Guaranteed consistency, all files present, correct configurations
+  - Evaluated against requirements in Dec 2025 gap analysis
+
+### Changed
+- **devcontainer-setup-basic skill v4.1.0**
+  - Replaced agent-based generation with direct file copy
+  - Removed template composition complexity
+  - Updated validation checks to verify reference file integrity
+  - Added clear documentation about the change
+
 ## [4.0.0] - 2025-12-22
 
 ### Major Breaking Changes
@@ -171,7 +422,7 @@ All notable changes to this project will be documented in this file.
 ## [2.1.0] - 2025-12-16
 
 ### Changed
-- Simplified command names: `/devcontainer:basic` (was `/devcontainer:setup-basic`)
+- Simplified command names: `/devcontainer:basic` (was `/devcontainer:quickstart-basic`)
 - Updated repo devcontainer to Intermediate mode with PostgreSQL, Redis, RabbitMQ
 - Fixed all "Pro" → "YOLO" terminology (~50 occurrences)
 - Fixed all "sandbox-maxxing" → "sandbox" naming (~35 occurrences)
@@ -238,5 +489,5 @@ All notable changes to this project will be documented in this file.
 
 ---
 
-**Last Updated:** 2025-12-22
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

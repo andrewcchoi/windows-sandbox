@@ -37,7 +37,7 @@ Use this skill when:
 - User wants to verify secure configuration
 
 Do NOT use this skill when:
-- Setting up new sandbox (security review is part of `/devcontainer:setup`)
+- Setting up new sandbox (security review is part of `/devcontainer:quickstart`)
 - Troubleshooting connectivity issues (use `/devcontainer:troubleshoot`)
 
 ## Usage
@@ -352,5 +352,5 @@ The skill reviews firewall mode, allowed domains, and provides guidance on addin
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

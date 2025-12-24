@@ -29,7 +29,7 @@ CMDBLOCK
 # ============================================================================
 # Polyglot technique from superpowers plugin: https://github.com/obra/superpowers
 # ============================================================================
-SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" && pwd)"
+SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 SCRIPT_NAME="$1"
 if [ -z "$SCRIPT_NAME" ]; then
     echo "run-hook.cmd: missing script name" >&2

@@ -7,7 +7,6 @@ MCP enables AI assistants to interact with external services through a standardi
 | Mode | MCP Servers | Use Case |
 |------|-------------|----------|
 | Basic | filesystem, memory | Simple file access |
-| Intermediate | + sqlite, fetch, github | Standard development |
 | Advanced | + postgres, docker, brave-search | Full-stack projects |
 | YOLO | + puppeteer, slack, google-drive | Maximum capabilities |
 
@@ -32,7 +31,7 @@ MCP servers are configured in `.devcontainer/mcp.json`:
 - **filesystem** - Local file access
 - **memory** - Conversation memory
 
-### Development (Intermediate+)
+### Development (Advanced+)
 - **sqlite** - SQLite database access
 - **fetch** - Web content fetching
 - **github** - GitHub API integration (requires token)
@@ -70,5 +69,5 @@ Sensitive credentials use VS Code input variables:
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

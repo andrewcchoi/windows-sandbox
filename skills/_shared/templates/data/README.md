@@ -77,7 +77,7 @@ Use `mode_defaults.<mode_name>` array
 ```
 
 **Update procedure:**
-1. Run `/workspace/scripts/update-uv-images.sh` (Python script)
+1. Run `.internal/scripts/update-uv-images.sh` (Python script)
 2. Script automatically:
    - Fetches all tags from Docker Hub API
    - Filters to floating tags (excludes version-pinned like 0.9.18-)
@@ -88,12 +88,11 @@ Use `mode_defaults.<mode_name>` array
 
 **Mode-Specific Tag Selection:**
 
-| Mode | Tag Strategy | Tags Included |
-|------|-------------|---------------|
-| **Basic** | Alpine only, Python 3.12+ | python3.12-alpine, python3.13-alpine |
-| **Intermediate** | Alpine + slim, Python 3.11+ | Alpine tags + slim variants |
-| **Advanced** | All stable Python versions | Python 3.10-3.13 across all base images |
-| **YOLO** | All tags including experimental | All filtered tags including Python 3.8, 3.14, trixie |
+| Mode             | Tag Strategy                    | Tags Included                                        |
+| ---------------- | ------------------------------- | ---------------------------------------------------- |
+| **Basic**        | Alpine only, Python 3.12+       | python3.12-alpine, python3.13-alpine                 |
+| **Advanced**     | All stable Python versions      | Python 3.10-3.13 across all base images              |
+| **YOLO**         | All tags including experimental | All filtered tags including Python 3.8, 3.14, trixie |
 
 **About UV:**
 - Fast Python package manager written in Rust
@@ -158,12 +157,11 @@ Use `mode_defaults.<mode_name>.servers` array
 
 **Mode-Specific Server Usage:**
 
-| Mode | Server Strategy | Servers Included |
-|------|----------------|------------------|
-| **Basic** | Essential only | filesystem, memory |
-| **Intermediate** | Common development | filesystem, memory, sqlite, fetch, github |
-| **Advanced** | Comprehensive | All Intermediate + postgres, docker, brave-search |
-| **YOLO** | All available | All servers |
+| Mode             | Server Strategy    | Servers Included                                  |
+| ---------------- | ------------------ | ------------------------------------------------- |
+| **Basic**        | Essential only     | filesystem, memory                                |
+| **Advanced**     | Comprehensive      | All Advanced + postgres, docker, brave-search |
+| **YOLO**         | All available      | All servers                                       |
 
 ### `secrets.json`
 Secret handling patterns catalog for DevContainer configurations.
@@ -268,12 +266,11 @@ Use categories.<language>.extensions array
 
 ## Mode-Specific Domain Usage
 
-| Mode | Domain Strategy | Reference |
-|------|----------------|-----------|
-| **Basic** | No firewall - relies on sandbox isolation | N/A |
-| **Intermediate** | Permissive - all traffic allowed | N/A |
-| **Advanced** | Strict allowlist from `mode_defaults.advanced` | `allowable-domains.json` |
-| **YOLO** | User-configurable | `allowable-domains.json` (optional) |
+| Mode             | Domain Strategy                                | Reference                           |
+| ---------------- | ---------------------------------------------- | ----------------------------------- |
+| **Basic**        | No firewall - relies on sandbox isolation      | N/A                                 |
+| **Advanced**     | Strict allowlist from `mode_defaults.advanced` | `allowable-domains.json`            |
+| **YOLO**         | User-configurable                              | `allowable-domains.json` (optional) |
 
 ## File Format
 
@@ -299,6 +296,15 @@ Reference: `skills/_shared/data/sandbox-templates.json`
 - `docker/sandbox-templates:claude-code` - Optimized for Claude Code
 ```
 
+## Maintenance
+
+When updating these files:
+
+1. Ensure JSON schema validation passes
+2. Update version numbers in file metadata
+3. Test with both `/devcontainer:quickstart` and `/devcontainer:yolo-vibe-maxxing  commands
+4. Update INVENTORY.json if files are added/removed
+
 ## Maintenance Schedule
 
 - **Monthly**: Review and update all image tags
@@ -321,5 +327,5 @@ For questions about data file structure or usage, see:
 
 ---
 
-**Last Updated:** 2025-12-22
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0

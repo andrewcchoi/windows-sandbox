@@ -6,6 +6,7 @@ We currently support the following versions with security updates:
 
 | Version | Supported          |
 | ------- | ------------------ |
+| 4.x     | :white_check_mark: |
 | 3.0.x   | :white_check_mark: |
 | 2.2.x   | :white_check_mark: |
 | 2.1.x   | :white_check_mark: |
@@ -82,7 +83,6 @@ When using the Claude Code Sandbox Plugin, follow these security best practices:
 Choose the appropriate security mode for your use case:
 
 - **Basic Mode**: Use only for trusted code and quick prototyping
-- **Intermediate Mode**: Use for general development with no sensitive data
 - **Advanced Mode**: Use for production-like environments and sensitive work
 - **YOLO Mode**: Use only if you understand the security implications
 
@@ -143,7 +143,7 @@ See [docs/features/SECRETS.md](docs/features/SECRETS.md) for comprehensive secre
 
 ### Network Firewall
 
-**Basic/Intermediate modes:**
+**Basic mode:**
 - No firewall restrictions
 - Relies solely on container isolation
 - Suitable for trusted code only
@@ -226,5 +226,5 @@ For security-related questions that are not vulnerabilities:
 
 ---
 
-**Last Updated:** 2025-12-16
-**Version:** 4.0.0
+**Last Updated:** 2025-12-24
+**Version:** 4.5.0
