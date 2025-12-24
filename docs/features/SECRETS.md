@@ -20,10 +20,10 @@ This guide covers secure credential handling in DevContainers, including Docker 
 
 | Secret Type        | Best Method                         | Mode          | Example                    |
 | ------------------ | ----------------------------------- | ------------- | -------------------------- |
-| API Keys (dev)     | VS Code Input                       | Intermediate+ | GitHub token, OpenAI key   |
+| API Keys (dev)     | VS Code Input                       | Advanced+ | GitHub token, OpenAI key   |
 | API Keys (prod)    | Docker Secret                       | Advanced+     | Production API credentials |
 | Database Passwords | VS Code Input (dev) / Secret (prod) | Basic+        | PostgreSQL password        |
-| Git Auth           | VS Code Input or SSH                | Intermediate+ | GitHub/GitLab tokens       |
+| Git Auth           | VS Code Input or SSH                | Advanced+ | GitHub/GitLab tokens       |
 | Cloud Credentials  | Host Mount                          | Advanced+     | ~/.aws, ~/.gcloud          |
 | Private Registry   | Docker Build Secret                 | Advanced+     | NPM, PyPI tokens           |
 | SSL Certificates   | Docker Secret                       | Advanced+     | TLS cert and key           |
@@ -333,39 +333,6 @@ environment:
 - Only for local development
 - Change all defaults for production
 - No network firewall
-
-### Intermediate Mode
-
-**Philosophy:** Basic secret management for Git and databases
-
-**Secret Count:** 1-2 (Git auth, optional DB password)
-
-**Approach:**
-- VS Code inputs for Git tokens
-- Optional DB password override
-- No Docker secrets yet
-- Permissive firewall
-
-**Example:**
-```json
-{
-  "inputs": {
-    "githubToken": {
-      "type": "promptString",
-      "description": "GitHub personal access token (optional)",
-      "password": true
-    }
-  },
-  "containerEnv": {
-    "GITHUB_TOKEN": "${input:githubToken}"
-  }
-}
-```
-
-**Security Notes:**
-- Git authentication secured
-- Database uses defaults or inputs
-- Suitable for team development
 
 ### Advanced Mode
 

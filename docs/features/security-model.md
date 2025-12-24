@@ -22,7 +22,7 @@ The Claude Code Sandbox Plugin implements a defense-in-depth security model with
 - **Secret Management**: Multiple methods for handling sensitive credentials
 - **Mode-Based Security**: Four security profiles from minimal to maximum protection
 
-The security model adapts to your needs through four sandbox modes: Basic, Intermediate, Advanced, and YOLO, each offering different trade-offs between security, flexibility, and ease of use.
+The security model adapts to your needs through three sandbox modes: Basic, Advanced, and YOLO, each offering different trade-offs between security, flexibility, and ease of use.
 
 ## Multi-Layer Security
 
@@ -54,7 +54,6 @@ Network restrictions vary by sandbox mode using iptables-based firewalls:
 | Mode | Network Policy | Protection Level |
 |------|---------------|-----------------|
 | **Basic** | No firewall | Container isolation only |
-| **Intermediate** | No firewall (permissive) | Container isolation only |
 | **Advanced** | Strict whitelist firewall | High (30-40 essential domains) |
 | **YOLO** | User-configurable | None/Low/High depending on configuration |
 
@@ -111,7 +110,7 @@ Docker containers use Linux kernel features to provide isolation:
 
 ### When to Trust Container Isolation Alone
 
-**Safe scenarios (Basic/Intermediate modes):**
+**Safe scenarios (Basic modes):**
 - Working with your own code
 - Using well-known open-source dependencies
 - Development on single-user machines
@@ -131,13 +130,13 @@ Docker containers use Linux kernel features to provide isolation:
 
 | Mode | Firewall | Default Policy | Use Case |
 |------|----------|---------------|----------|
-| **None** | Disabled | ACCEPT all | Basic/Intermediate modes, trusted environments |
+| **None** | Disabled | ACCEPT all | Basic modes, trusted environments |
 | **Permissive** | Cleared rules | ACCEPT all | Legacy compatibility, debugging |
 | **Strict** | Whitelist-based | DROP by default | Advanced/YOLO modes, security-conscious development |
 
 ### None (No Firewall)
 
-**Used by:** Basic, Intermediate modes
+**Used by:** Basic mode
 
 **Configuration:**
 - No iptables rules configured
@@ -150,7 +149,7 @@ Docker containers use Linux kernel features to provide isolation:
 - No protection against data exfiltration over network
 - Suitable for trusted code and dependencies only
 
-**Example: Intermediate mode init-firewall.sh**
+Example: Firewall configuration
 ```bash
 # Clear any existing rules
 iptables -F
@@ -284,7 +283,7 @@ The sandbox plugin supports multiple methods for handling sensitive credentials,
 
 | Method | When to Use | Security Level | Mode Availability |
 |--------|-------------|----------------|-------------------|
-| **VS Code Input** | Development credentials, user-specific tokens | Medium | Intermediate+ |
+| **VS Code Input** | Development credentials, user-specific tokens | Medium | Advanced+ |
 | **Docker Build Secret** | Private registry auth during build | High | Advanced+ |
 | **Docker Runtime Secret** | Production deployments | High | Advanced+ |
 | **Host Mount** | Cloud CLI credentials (~/.aws, ~/.gcloud) | Medium-High | Advanced+ |
@@ -387,11 +386,6 @@ secrets:
 - No user-prompted secrets
 - Acceptable for local development only
 
-**Intermediate Mode:**
-- Optional VS Code input variables for Git/GitHub auth
-- Database credentials can be overridden via inputs
-- Still primarily development-focused
-
 **Advanced Mode:**
 - Required VS Code inputs for all service credentials
 - Docker secrets for production deployment
@@ -457,7 +451,7 @@ See [Secrets Management Guide](SECRETS.md) for detailed examples and best practi
 
 ### Security Posture by Mode
 
-| Threat | Basic | Intermediate | Advanced | YOLO (Strict) |
+| Threat | Basic | Advanced | YOLO (Strict) |
 |--------|-------|--------------|----------|---------------|
 | Accidental host damage | ✓ Protected | ✓ Protected | ✓ Protected | ✓ Protected |
 | Dependency phone-home | ✗ Vulnerable | ✗ Vulnerable | ✓ Protected | ✓ Protected |
@@ -485,32 +479,10 @@ Legend: ✓ Protected, ~ Mitigated, ✗ Vulnerable
 - Keep container updated with `docker pull sandbox-templates:latest`
 - Review container contents if sharing images
 
-**When to upgrade to Intermediate:**
+**When to use Advanced mode:**
 - Working in team environments
 - Need Git authentication
 - Handling project-specific credentials
-
-### Intermediate Mode
-
-**Security Philosophy:** Flexibility + Productivity
-
-**Appropriate for:**
-- Team development environments
-- Projects requiring authentication
-- Moderate customization needs
-- Learning DevContainer features
-
-**Security practices:**
-- Use VS Code inputs for Git tokens (don't hardcode)
-- Still trust that dependencies are non-malicious
-- Review environment variables in devcontainer.json
-- Don't commit .env files with real credentials
-
-**When to upgrade to Advanced:**
-- Evaluating new/unknown packages
-- Production preparation
-- Security compliance requirements
-- Handling sensitive data
 
 ### Advanced Mode
 

@@ -66,7 +66,7 @@ See [TROUBLESHOOTING.md](docs/features/TROUBLESHOOTING.md#claude-code-installati
 
 > **Windows Users:** For best performance, use WSL 2 with Docker Desktop and clone the repository to the WSL filesystem (`~/projects/`) rather than `/mnt/c/`. If you encounter line ending issues with shell scripts, the repository includes a `.gitattributes` file that enforces LF endings. For corporate environments with SSL/proxy, see [TROUBLESHOOTING.md](docs/features/TROUBLESHOOTING.md#corporate-proxy--ssl-certificate-issues).
 
-## Four-Mode System
+## Three-Mode System
 
 See [MODES.md](docs/features/MODES.md) for comprehensive comparison guide.
 
@@ -91,29 +91,6 @@ Claude: I detected a Python FastAPI project. Setting up with:
         - Cache: Redis 7
         - Firewall: Strict (essential domains only)
         Generating configs... Done!
-```
-
-### Intermediate Mode - Balanced Control
-
-**Best for**: Regular development, team projects, customization needs
-
-**Key Features**:
-- Some customization (5-8 questions)
-- Build args for version flexibility
-- Base images: Official images (`python:3.12-slim`, `node:20-bookworm-slim`)
-- Firewall: Permissive (no restrictions, for convenience)
-- VS Code: 10-15 curated extensions
-- Ready in 3-5 minutes
-
-**Example**:
-```
-You: Python
-Claude: Python version?
-        • 3.13 (latest) • 3.12 (stable, recommended) • 3.11 (LTS)
-You: 3.12
-Claude: What database?
-        • PostgreSQL • MySQL • MongoDB • None
-...
 ```
 
 ### Advanced Mode - Security-First Minimal
@@ -200,7 +177,6 @@ You: I need to set up a Docker development environment for my Python project
 Claude: [Automatically uses /devcontainer:quickstart command]
       What mode would you like?
       • Basic (Zero config, 1-2 min)
-      • Intermediate (Balanced, 3-5 min)
       • Advanced (Secure minimal, 8-12 min)
       • YOLO (Full control, 15-30 min)
 ```
@@ -329,7 +305,7 @@ Interactive setup wizard with four experience modes.
 - User wants to configure firewalls for development
 
 **Workflow**:
-1. Mode selection (Basic/Intermediate/Advanced/YOLO)
+1. Mode selection (Basic/Advanced/YOLO)
 2. Project detection
 3. Configuration wizard
 4. Template generation
@@ -472,7 +448,7 @@ Claude: I detected a Python FastAPI project. Setting up with:
         3. Reopen in Container
 ```
 
-### Example 2: Node.js with Customization (Intermediate Mode)
+### Example 2: Node.js with Customization
 
 ```
 Claude: Node.js version?
@@ -522,7 +498,7 @@ Claude: Running security audit...
 
 ## Example Applications
 
-The plugin includes comprehensive working examples in the `docs/examples/` directory, demonstrating all four experience modes (Basic, Intermediate, Advanced, YOLO) with real applications.
+The plugin includes comprehensive working examples in the `docs/examples/` directory, demonstrating all three experience modes (Basic, Advanced, YOLO) with real applications.
 
 ### Example Structure
 
@@ -713,7 +689,7 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
 ## Changelog
 
 ### v2.0.0 (2025-12-16)
-- **Major Release**: Four-mode system (Basic, Intermediate, Advanced, YOLO)
+- **Major Release**: Three-mode system (Basic, Advanced, YOLO)
 - Data-driven configuration with JSON registries
   - `sandbox-templates.json`: Official Docker sandbox images
   - `official-images.json`: Docker Hub official images
@@ -722,7 +698,7 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
 - Enhanced firewall with mode-specific domain sets (30-100+ domains)
 - Updated slash commands: `/devcontainer:basic`, `/devcontainer:advanced`, `/devcontainer:yolo-vibe-maxxing`, `/devcontainer:quickstart`
 - Comprehensive mode comparison guide (MODES.md)
-- Migration from Basic/Advanced/YOLO to new four-mode system
+- Migration from Basic/Advanced/YOLO to new three-mode system
 
 ### v1.0.0 (2025-01-XX)
 - Initial release

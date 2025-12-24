@@ -339,7 +339,6 @@ Each skill is demonstrated in example projects:
 - `docs/examples/demo-app-sandbox-yolo/` - YOLO mode result
 - `docs/examples/streamlit-sandbox-basic/` - Basic mode (Python-only)
 
-**Note:** Intermediate mode has been deprecated in v4.0.0. Users should choose Basic (simple) or Advanced (security-focused) modes instead.
 
 See [Examples README](../docs/examples/README.md) for detailed walkthroughs.
 

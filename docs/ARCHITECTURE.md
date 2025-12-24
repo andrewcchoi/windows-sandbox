@@ -219,7 +219,7 @@ Skills can invoke each other for related tasks:
 ### Version 4.0.0 (2025-12-22)
 
 **Major Breaking Changes:**
-- **Intermediate mode deprecated** - Three-mode system only
+- **Three-mode system** - Intermediate mode removed
 - **Shared resources** - Templates consolidated to `skills/_shared/`
 - **Skills to commands** - Setup modes converted from skills to bash commands
 
@@ -230,7 +230,6 @@ Skills can invoke each other for related tasks:
 - Created explicit firewall variants (disabled/permissive/strict)
 
 **Migration:**
-- Intermediate mode users → Use Basic or Advanced mode
 - Old template paths → Now `skills/_shared/templates/`
 - Old data paths → Now `skills/_shared/data/`
 

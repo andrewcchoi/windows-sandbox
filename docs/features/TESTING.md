@@ -26,7 +26,6 @@ docker compose up -d
 ## Test Coverage
 
 - ✅ Basic mode setup
-- ✅ Intermediate mode setup
 - ✅ Advanced mode setup
 - ✅ YOLO mode setup
 - ✅ Troubleshooting diagnostics

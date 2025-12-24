@@ -91,7 +91,6 @@ Use `mode_defaults.<mode_name>` array
 | Mode             | Tag Strategy                    | Tags Included                                        |
 | ---------------- | ------------------------------- | ---------------------------------------------------- |
 | **Basic**        | Alpine only, Python 3.12+       | python3.12-alpine, python3.13-alpine                 |
-| **Intermediate** | Alpine + slim, Python 3.11+     | Alpine tags + slim variants                          |
 | **Advanced**     | All stable Python versions      | Python 3.10-3.13 across all base images              |
 | **YOLO**         | All tags including experimental | All filtered tags including Python 3.8, 3.14, trixie |
 
@@ -161,8 +160,7 @@ Use `mode_defaults.<mode_name>.servers` array
 | Mode             | Server Strategy    | Servers Included                                  |
 | ---------------- | ------------------ | ------------------------------------------------- |
 | **Basic**        | Essential only     | filesystem, memory                                |
-| **Intermediate** | Common development | filesystem, memory, sqlite, fetch, github         |
-| **Advanced**     | Comprehensive      | All Intermediate + postgres, docker, brave-search |
+| **Advanced**     | Comprehensive      | All Advanced + postgres, docker, brave-search |
 | **YOLO**         | All available      | All servers                                       |
 
 ### `secrets.json`
@@ -271,7 +269,6 @@ Use categories.<language>.extensions array
 | Mode             | Domain Strategy                                | Reference                           |
 | ---------------- | ---------------------------------------------- | ----------------------------------- |
 | **Basic**        | No firewall - relies on sandbox isolation      | N/A                                 |
-| **Intermediate** | Permissive - all traffic allowed               | N/A                                 |
 | **Advanced**     | Strict allowlist from `mode_defaults.advanced` | `allowable-domains.json`            |
 | **YOLO**         | User-configurable                              | `allowable-domains.json` (optional) |
 

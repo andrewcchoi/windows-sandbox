@@ -209,7 +209,7 @@ The new credentials will be saved in the container's `~/.claude` directory.
 
 If you need network-level security controls:
 
-**Intermediate Mode**: Add permissive firewall (no restrictions, but audit logging)
+Advanced Mode: Add permissive firewall (no restrictions, but audit logging)
 
 **Advanced Mode**: Add strict firewall with customizable allowlist
 - Copy configuration from `demo-app-sandbox-advanced/`
@@ -267,7 +267,7 @@ docker-compose down
 
 ## Comparing to Other Modes
 
-| Feature | Basic | Intermediate | Advanced | YOLO |
+| Feature | Basic | Advanced | YOLO |
 |---------|-------|--------------|----------|------|
 | Questions asked | 1-2 | 3-5 | 5-7 | 10-15+ |
 | Configuration style | Auto-detected | Platform-specific | Customizable | Fully explicit |

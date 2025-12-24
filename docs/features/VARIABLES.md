@@ -252,33 +252,6 @@ docker build --ssh default .
 
 **Security:** Development defaults only, no secrets management
 
-### Intermediate Mode
-
-**Variable Count:** 8 build ARGs, 12 runtime ENVs, 2-3 VS Code inputs
-
-**Philosophy:** Customizable versions, basic secret management
-
-**Added features:**
-- Customizable Python/Node.js versions via build args
-- VS Code inputs for Git authentication
-- Message queue configuration (RabbitMQ)
-- Permissive firewall mode
-
-```json
-{
-  "build_args": {
-    "PYTHON_VERSION": "3.12",
-    "NODE_VERSION": "20"
-  },
-  "vs_code_inputs": {
-    "githubToken": {
-      "type": "promptString",
-      "password": true
-    }
-  }
-}
-```
-
 ### Advanced Mode
 
 **Variable Count:** 12+ build ARGs, 20+ runtime ENVs, 5+ VS Code inputs, 5+ secrets
