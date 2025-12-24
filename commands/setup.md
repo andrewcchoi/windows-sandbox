@@ -154,17 +154,16 @@ esac
 if [ "$NEEDS_FIREWALL" = "Yes" ]; then
   # Generate firewall script from selected categories
   # Read allowable-domains.json and extract domains for selected categories
-  # Write to .devcontainer/init-firewall.sh based on strict.sh template
+  # Copy firewall script with domain allowlist
 
-  cp "$TEMPLATES/init-firewall/strict.sh" .devcontainer/init-firewall.sh
+  cp "$TEMPLATES/init-firewall.sh" .devcontainer/init-firewall.sh
 
   # TODO: Customize ALLOWED_DOMAINS array based on DOMAIN_CATEGORIES
-  # For now, use strict.sh as-is
+  # For now, use default allowlist
 
   echo "Firewall: Strict mode with domain allowlist"
 else
-  # Use disabled firewall
-  # cp "$TEMPLATES/init-firewall/disabled.sh" .devcontainer/init-firewall.sh
+  # No firewall script needed - Docker container isolation only
   echo "Firewall: Disabled (Docker isolation only)"
 fi
 ```
@@ -219,4 +218,4 @@ echo "=========================================="
 ---
 
 **Last Updated:** 2025-12-23
-**Version:** 4.3.1 (Interactive Project-Type Flow)
+**Version:** 4.3.2 (Interactive Project-Type Flow)

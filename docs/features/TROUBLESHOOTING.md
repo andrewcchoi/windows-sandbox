@@ -1311,4 +1311,4 @@ If you're still stuck:
 ---
 
 **Last Updated:** 2025-12-16
-**Version:** 4.3.1
+**Version:** 4.3.2

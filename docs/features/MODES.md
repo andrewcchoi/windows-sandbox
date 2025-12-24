@@ -258,4 +258,4 @@ data/
 ---
 
 **Last Updated:** 2025-12-23
-**Version:** 4.3.1
+**Version:** 4.3.2

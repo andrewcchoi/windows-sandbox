@@ -85,4 +85,4 @@ echo "=========================================="
 ---
 
 **Last Updated:** 2025-12-23
-**Version:** 4.3.1 (Quick Setup Path)
+**Version:** 4.3.2 (Quick Setup Path)
