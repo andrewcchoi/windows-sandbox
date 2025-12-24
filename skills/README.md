@@ -150,58 +150,53 @@ The skills directory uses a shared resources architecture for maintainability:
 ```
 skills/
 ├── README.md                          # This file
-├── _shared/                           # Shared resources (v4.0.0)
-│   ├── planning-phase.md              # Common planning workflow
-│   ├── templates/                     # Consolidated templates
-│   │   ├── base.dockerfile
-│   │   ├── partial-*.dockerfile       # Language partials
-│   │   ├── devcontainer.json
-│   │   ├── docker-compose.yml
-│   │   ├── setup-claude-credentials.sh
-│   │   ├── extensions.json
-│   │   ├── mcp.json
-│   │   ├── variables.json
-│   │   ├── .env.template
-│   │   └── init-firewall/
-│   │       ├── disabled.sh            # Basic mode
-│   │       ├── permissive.sh          # YOLO option
-│   │       └── strict.sh              # Advanced mode
-│   └── data/                          # Shared data files
-│       ├── allowable-domains.json
-│       ├── sandbox-templates.json
-│       ├── official-images.json
-│       ├── mcp-servers.json
-│       └── vscode-extensions.json
-├── devcontainer-setup-basic/
-│   └── SKILL.md                       # Simplified skill (references _shared)
-├── devcontainer-setup-advanced/
-│   └── SKILL.md                       # Simplified skill (references _shared)
-├── devcontainer-setup-yolo/
-│   └── SKILL.md                       # Simplified skill (references _shared)
+├── _shared/                           # Shared resources
+│   ├── templates/                     # Template files
+│   │   ├── base.dockerfile            # Base multi-stage dockerfile
+│   │   ├── devcontainer.json          # DevContainer config
+│   │   ├── docker-compose.yml         # Compose template
+│   │   ├── setup-claude-credentials.sh # Credential persistence
+│   │   ├── init-firewall.sh           # Strict iptables firewall (v4.3.2)
+│   │   ├── extensions.json            # VS Code extensions (minimal)
+│   │   ├── mcp.json                   # MCP config
+│   │   ├── variables.json             # Build/runtime vars
+│   │   ├── .env.template              # Environment template
+│   │   ├── README.md                  # Template docs (v4.3.1)
+│   │   ├── partials/                  # Language partials (v4.3.1)
+│   │   │   ├── go.dockerfile          # Go toolchain
+│   │   │   ├── ruby.dockerfile        # Ruby toolchain
+│   │   │   ├── rust.dockerfile        # Rust toolchain
+│   │   │   ├── java.dockerfile        # Java toolchain
+│   │   │   ├── cpp-clang.dockerfile   # C++ Clang
+│   │   │   ├── cpp-gcc.dockerfile     # C++ GCC
+│   │   │   ├── php.dockerfile         # PHP 8.3
+│   │   │   └── postgres.dockerfile    # PostgreSQL tools
+│   │   └── data/                      # Reference catalogs
+│   │       ├── allowable-domains.json
+│   │       ├── sandbox-templates.json
+│   │       ├── official-images.json
+│   │       ├── uv-images.json
+│   │       ├── mcp-servers.json
+│   │       ├── secrets.json
+│   │       ├── variables.json
+│   │       ├── vscode-extensions.json
+│   │       └── README.md
 ├── sandbox-troubleshoot/
-│   └── SKILL.md
+│   └── SKILL.md                       # Troubleshooting workflow
 └── sandbox-security/
-    └── SKILL.md
+    └── SKILL.md                       # Security audit workflow
 ```
 
 ### File Descriptions
 
 **SKILL.md**
 - Skill metadata (name, description)
-- Mandatory planning phase reference
-- Mode-specific configuration
-- Implementation workflow
+- Workflow instructions
 - Validation and completion checklist
 
-**_shared/planning-phase.md**
-- Common project discovery workflow
-- Plan document creation template
-- User approval workflow
-- Error handling patterns
-
 **_shared/templates/**
-- Single source of truth for all templates
-- Base Dockerfile with language partial composition
+- Template files copied to user's devcontainer
+- Base Dockerfile with language partial composition (v4.3.1)
 - Firewall variants for different security modes
 - All configuration files (devcontainer.json, docker-compose.yml, etc.)
 
@@ -242,60 +237,52 @@ Claude: [Automatically uses devcontainer-setup-advanced skill]
 
 ### Skill Workflow
 
-**New in v4.0.0: Mandatory Planning Phase**
+**Current System (v4.3.0+): Command-Based Setup**
 
-All devcontainer setup skills now follow this workflow:
+DevContainer setup is now command-based (not skill-based):
 
-1. **Planning Phase** (NEW):
-   - Project discovery (scan directory, detect languages, check existing config)
-   - Plan creation (write to `docs/plans/YYYY-MM-DD-devcontainer-setup.md`)
-   - User approval (present plan, ask questions, get explicit approval)
-2. **Skill Loaded**: Claude reads SKILL.md and _shared resources
-3. **Implementation**: Claude follows structured steps in SKILL.md
-4. **Validation**: Claude verifies successful completion
-5. **Documentation**: Claude provides next steps and references
+1. **User runs command**: `/devcontainer:setup` (interactive) or `/devcontainer:yolo` (quick)
+2. **Questions asked**: Command asks 2-3 questions (setup) or 0 questions (yolo)
+3. **Templates copied**: Files copied from `skills/_shared/templates/`
+4. **Placeholders replaced**: Customize with project-specific values
+5. **Completion**: Report files created and next steps
 
-**Benefits of Planning Mode:**
-- User visibility before execution
-- Opportunity to review and adjust configuration
-- Clear documentation of decisions
-- Single source of truth in _shared resources
+**Remaining Skills:**
 
-## Skill Comparison
+The two remaining skills are utilities invoked by commands:
 
-| Skill | Complexity | Questions | Time | Security | Customization |
-|-------|-----------|-----------|------|----------|---------------|
-| devcontainer-setup-basic | Low | 1-3 | 1-2 min | Low | Minimal |
-| devcontainer-setup-advanced | High | 7-10 | 8-12 min | High | High |
-| devcontainer-setup-yolo | Expert | 15-20+ | 15-30 min | User-controlled | Complete |
-| sandbox-troubleshoot | Varies | Diagnostic | Varies | N/A | N/A |
-| sandbox-security | Medium | Audit-based | 5-10 min | N/A | N/A |
+| Skill | Command | Purpose |
+|-------|---------|---------|
+| sandbox-troubleshoot | `/devcontainer:troubleshoot` | Diagnose and fix issues |
+| sandbox-security | `/devcontainer:audit` | Security audit and hardening |
 
-**Note:** All times include the mandatory planning phase (added in v4.0.0).
+## When to Use Each Command
 
-## When to Use Each Setup Skill
+### Use `/devcontainer:setup` (Interactive) When:
+- You need specific language toolchains (Go, Ruby, Rust, Java, C++, PHP, PostgreSQL)
+- You want firewall protection with domain allowlists
+- You prefer guided setup with questions
+- You want some customization
 
-### Choose Basic Mode When:
-- First time using DevContainers
-- Quick prototyping or proof-of-concept
-- Learning projects
-- Solo development
-- Working with trusted code only
+### Use `/devcontainer:yolo` (Quick) When:
+- You want instant setup with no questions
+- Your project uses Python and/or Node.js only
+- You don't need network restrictions
+- You want the fastest possible setup
+- You trust your development environment
 
-### Choose Advanced Mode When:
-- Security is a priority
-- Production-like environment needed
-- Evaluating unknown/untrusted packages
-- Compliance requirements
-- Handling sensitive data
-- Need explicit network control
+### Use `/devcontainer:troubleshoot` When:
+- Container fails to start
+- Services won't connect (database, Redis, etc.)
+- Firewall blocking legitimate traffic
+- Permission errors
+- Any sandbox-related problem
 
-### Choose YOLO Mode When:
-- Expert with Docker/security knowledge
-- Need unofficial/experimental images
-- Custom firewall configuration required
-- Building specialized environments
-- Want complete control over all settings
+### Use `/devcontainer:audit` When:
+- You want to review security configuration
+- Before deploying to production
+- Compliance audit needed
+- Learning security best practices
 
 ## Skill Development
 
@@ -387,5 +374,5 @@ When reporting skill-related issues, include:
 
 ---
 
-**Last Updated:** 2025-12-22
-**Version:** 4.3.2 (Planning Mode Integration + Shared Resources)
+**Last Updated:** 2025-12-24
+**Version:** 4.3.3 (Remove obsolete planning-phase.md)
