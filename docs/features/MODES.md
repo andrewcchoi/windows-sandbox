@@ -4,7 +4,7 @@ This guide explains the two ways to create a DevContainer with this plugin: **In
 
 ## Quick Comparison
 
-| Feature                   | Interactive Setup (`/devcontainer:setup`) | YOLO Mode (`/devcontainer:yolo`)     |
+| Feature                   | Interactive Setup (`/devcontainer:quickstart`) | YOLO Mode (`/devcontainer:yolo-vibe-maxxing )     |
 | ------------------------- | ----------------------------------------- | ------------------------------------- |
 | **Questions Asked**       | 2-3                                       | 0 (instant)                          |
 | **Project Type Selection**| Yes (Python/Node, Go, Ruby, Rust, Java)   | Python 3.12 + Node 20 (base)         |
@@ -16,7 +16,7 @@ This guide explains the two ways to create a DevContainer with this plugin: **In
 
 ## Interactive Setup
 
-**Command:** `/devcontainer:setup`
+**Command:** `/devcontainer:quickstart`
 
 **Philosophy:** Choose exactly what you need through an interactive flow.
 
@@ -73,7 +73,7 @@ Which domain categories should be allowed?
 ### Example: Go Project with Firewall
 
 ```
-You: /devcontainer:setup
+You: /devcontainer:quickstart
 
 Claude: What type of project are you setting up?
 You: Go
@@ -93,7 +93,7 @@ Claude: Creating DevContainer...
 
 ## YOLO Mode
 
-**Command:** `/devcontainer:yolo`
+**Command:** `/devcontainer:yolo-vibe-maxxing 
 
 **Philosophy:** Zero questions, instant setup with sensible defaults.
 
@@ -183,8 +183,8 @@ When you select a language in interactive mode, a partial is **appended** to the
 
 ### Removed Commands
 
-- `/devcontainer:basic` → Use `/devcontainer:yolo` (closest equivalent)
-- `/devcontainer:advanced` → Use `/devcontainer:setup` with firewall enabled
+- `/devcontainer:basic` → Use `/devcontainer:yolo-vibe-maxxing  (closest equivalent)
+- `/devcontainer:advanced` → Use `/devcontainer:quickstart` with firewall enabled
 
 ### Key Changes
 
@@ -205,10 +205,10 @@ If you're used to the old modes:
 
 | Old Command | New Equivalent |
 |-------------|----------------|
-| `/devcontainer:basic` | `/devcontainer:yolo` |
-| `/devcontainer:advanced` with Python | `/devcontainer:setup` → Python/Node → Yes → Select categories |
-| `/devcontainer:advanced` with Go | `/devcontainer:setup` → Go → Yes → Select categories |
-| `/devcontainer:yolo` | Still exists, now means "instant defaults" |
+| `/devcontainer:basic` | `/devcontainer:yolo-vibe-maxxing  |
+| `/devcontainer:advanced` with Python | `/devcontainer:quickstart` → Python/Node → Yes → Select categories |
+| `/devcontainer:advanced` with Go | `/devcontainer:quickstart` → Go → Yes → Select categories |
+| `/devcontainer:yolo-vibe-maxxing  | Still exists, now means "instant defaults" |
 
 ## Technical Details
 

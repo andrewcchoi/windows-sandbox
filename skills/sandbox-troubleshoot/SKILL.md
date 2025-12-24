@@ -38,7 +38,7 @@ Use this skill when:
 - Claude Code CLI not working
 
 Do NOT use this skill when:
-- Setting up a new sandbox (use `/devcontainer:setup` instead)
+- Setting up a new sandbox (use `/devcontainer:quickstart` instead)
 - Performing security audit (use `/devcontainer:audit` instead)
 
 ## Usage

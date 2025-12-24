@@ -131,7 +131,7 @@ claude plugins list
 
 # Test slash commands
 claude
-> /devcontainer:setup --basic
+> /devcontainer:quickstart --basic
 > /devcontainer:troubleshoot
 > /devcontainer:audit
 ```
@@ -179,7 +179,7 @@ cd /tmp/test-project
 
 # Use the plugin to generate configs
 claude
-> /devcontainer:setup --basic
+> /devcontainer:quickstart --basic
 
 # Verify generated files
 ls -la .devcontainer/

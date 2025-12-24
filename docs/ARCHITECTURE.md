@@ -26,14 +26,14 @@ The Claude Code DevContainer Setup plugin uses a command-based architecture with
 ### 2. Commands
 
 **Primary Commands:**
-- `/devcontainer:setup` - Interactive mode selection (or use `--basic`, `--advanced`, `--yolo`)
+- `/devcontainer:quickstart` - Interactive mode selection (or use `--basic`, `--advanced`, `--yolo`)
 - `/devcontainer:troubleshoot` - Invokes troubleshoot skill
 - `/devcontainer:audit` - Invokes security skill
 
 **Mode-Specific Commands:**
 - `/devcontainer:basic` - Invokes Basic mode setup directly
 - `/devcontainer:advanced` - Invokes Advanced mode setup directly
-- `/devcontainer:yolo` - Invokes YOLO mode setup directly
+- `/devcontainer:yolo-vibe-maxxing  - Invokes YOLO mode setup directly
 
 ### 3. Shared Resources Architecture (v4.0.0)
 
@@ -104,7 +104,7 @@ Skills reference these using: `skills/_shared/data/<filename>`
 
 ## Command-Based Setup (v4.3.0+)
 
-### Interactive Setup (`/devcontainer:setup`)
+### Interactive Setup (`/devcontainer:quickstart`)
 
 **Philosophy:** Flexible configuration through guided questions
 
@@ -127,7 +127,7 @@ Skills reference these using: `skills/_shared/data/<filename>`
 - Users wanting firewall protection
 - Customizable setups
 
-### Quick Setup (`/devcontainer:yolo`)
+### Quick Setup (`/devcontainer:yolo-vibe-maxxing )
 
 **Philosophy:** Zero questions, instant setup
 
@@ -152,7 +152,7 @@ Skills reference these using: `skills/_shared/data/<filename>`
 
 ### Command Comparison
 
-| Aspect | /devcontainer:setup | /devcontainer:yolo |
+| Aspect | /devcontainer:quickstart | /devcontainer:yolo-vibe-maxxing |
 |--------|---------------------|-------------------|
 | **Questions** | 2-3+ | 0 |
 | **Languages** | 9 options | Python + Node only |
@@ -165,7 +165,7 @@ Skills reference these using: `skills/_shared/data/<filename>`
 ### Setup Flow (v4.3.0+)
 
 1. **User Invocation**
-   - User runs `/devcontainer:setup` (interactive) or `/devcontainer:yolo` (quick)
+   - User runs `/devcontainer:quickstart` (interactive) or `/devcontainer:yolo-vibe-maxxing  (quick)
    - Command executes directly (bash-based, not skill-based)
 
 2. **Interactive Questions** (setup command only)

@@ -37,7 +37,7 @@ Use this skill when:
 - User wants to verify secure configuration
 
 Do NOT use this skill when:
-- Setting up new sandbox (security review is part of `/devcontainer:setup`)
+- Setting up new sandbox (security review is part of `/devcontainer:quickstart`)
 - Troubleshooting connectivity issues (use `/devcontainer:troubleshoot`)
 
 ## Usage

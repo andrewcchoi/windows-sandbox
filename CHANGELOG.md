@@ -2,6 +2,42 @@
 
 All notable changes to this project will be documented in this file.
 
+## [4.5.0] - 2025-12-24
+
+### Breaking Changes
+- **Command Renames**: Updated command names for better clarity and style
+  - `/devcontainer:setup` → `/devcontainer:quickstart`
+  - `/devcontainer:yolo` → `/devcontainer:yolo-vibe-maxxing`
+  - File renames: `commands/setup.md` → `commands/quickstart.md`
+  - File renames: `commands/yolo.md` → `commands/yolo-vibe-maxxing.md`
+
+### Changed
+- **All Documentation**: Updated 12+ files with new command names
+  - README.md: Updated all command references and examples
+  - commands/README.md: Updated command documentation
+  - CHANGELOG.md: Updated historical references
+  - skills/: Updated skill cross-references
+  - docs/: Updated all documentation files
+
+### Migration Guide
+Update your usage:
+```bash
+# Old commands (no longer work)
+/devcontainer:setup
+/devcontainer:yolo
+
+# New commands
+/devcontainer:quickstart
+/devcontainer:yolo-vibe-maxxing
+```
+
+### Technical Details
+- Commands renamed for clarity:
+  - "setup" → "quickstart" (more descriptive of the quick interactive flow)
+  - "yolo" → "yolo-vibe-maxxing" (more stylistic, matches project vibe)
+- All file references updated across codebase
+- Version bumped to 4.5.0 (breaking change in command names)
+
 ## [4.4.3] - 2025-12-24
 
 ### Fixed
@@ -11,7 +47,7 @@ All notable changes to this project will be documented in this file.
   - New: `[Base: Python 3.12 + Node 20]` (30 chars)
 
 ### Changed
-- **commands/setup.md**:
+- **commands/quickstart.md**:
   - Step 1.5: Replaced wide Unicode banner with single-line bracket format
   - Banner now fits in narrow terminals without truncation
   - Updated version footer to 4.4.3
@@ -31,7 +67,7 @@ All notable changes to this project will be documented in this file.
   - "None - use base only" option now clearly states "Just Python 3.12 + Node 20 - ready to code!"
 
 ### Technical Details
-- **commands/setup.md**:
+- **commands/quickstart.md**:
   - New Step 1.5: Shows base stack banner before first question
   - Step 2 question: "What ADDITIONAL tools do you want to add to your stack?"
   - Added arrow-prefixed descriptions (→) for each option
@@ -53,12 +89,12 @@ All notable changes to this project will be documented in this file.
   - Portable shebangs: `#!/usr/bin/env bash` instead of `#!/bin/bash`
 
 ### Changed
-- **commands/setup.md**:
+- **commands/quickstart.md**:
   - Added `set +H` to disable history expansion (fixes Windows paths with `!`)
   - Windows path conversion: `${CLAUDE_PLUGIN_ROOT//\\//}` converts backslashes to forward slashes
   - Reordered plugin discovery: check current directory before searching ~/.claude/plugins
   - Portable sed: use temp file approach instead of `sed -i`
-- **commands/yolo.md**:
+- **commands/yolo-vibe-maxxing.md**:
   - Applied same plugin discovery and sed fixes as setup.md
 - **hooks/verify-template-match.sh**:
   - Changed shebang to `#!/usr/bin/env bash`
@@ -92,7 +128,7 @@ All notable changes to this project will be documented in this file.
   - "Add more tools?" loop enables building complete development stacks
 
 ### Changed
-- **commands/setup.md**: Complete rewrite of question flow
+- **commands/quickstart.md**: Complete rewrite of question flow
   - Step 1: Initialize `SELECTED_PARTIALS` array
   - Step 2-6: Category selection with loop-back logic
     - Backend languages: Go, Rust, Java, Ruby (via "More languages..."), PHP
@@ -386,7 +422,7 @@ All notable changes to this project will be documented in this file.
 ## [2.1.0] - 2025-12-16
 
 ### Changed
-- Simplified command names: `/devcontainer:basic` (was `/devcontainer:setup-basic`)
+- Simplified command names: `/devcontainer:basic` (was `/devcontainer:quickstart-basic`)
 - Updated repo devcontainer to Intermediate mode with PostgreSQL, Redis, RabbitMQ
 - Fixed all "Pro" → "YOLO" terminology (~50 occurrences)
 - Fixed all "sandbox-maxxing" → "sandbox" naming (~35 occurrences)
@@ -454,4 +490,4 @@ All notable changes to this project will be documented in this file.
 ---
 
 **Last Updated:** 2025-12-24
-**Version:** 4.4.3
+**Version:** 4.5.0

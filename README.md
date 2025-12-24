@@ -1,7 +1,7 @@
 # DevContainer Setup Plugin
 
 > **Repository:** [andrewcchoi/sandbox-maxxing](https://github.com/andrewcchoi/sandbox-maxxing)
-> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer:setup, /devcontainer:yolo)
+> **Plugin Name:** devcontainer-setup (used in commands: /devcontainer:quickstart, /devcontainer:yolo-vibe-maxxing)
 
 Interactive assistant for creating VS Code DevContainer configurations with Docker Compose support. Choose between interactive setup with project type selection and firewall customization, or quick one-command setup with defaults.
 
@@ -29,11 +29,11 @@ claude plugins list
 ### Basic Usage
 
 ```bash
-# Interactive setup - choose project type and firewall options
-/devcontainer:setup
+# Interactive quickstart - choose project type and firewall options
+/devcontainer:quickstart
 
-# Quick setup - no questions, instant DevContainer (Python+Node, no firewall)
-/devcontainer:yolo
+# YOLO vibe-maxxing - no questions, instant DevContainer (Python+Node, no firewall)
+/devcontainer:yolo-vibe-maxxing
 
 # Troubleshoot existing DevContainer
 /devcontainer:troubleshoot
@@ -42,7 +42,7 @@ claude plugins list
 /devcontainer:audit
 ```
 
-**Note:** v4.3.0 introduces project-type selection and interactive firewall customization. Use `/devcontainer:yolo` for the fastest path with sensible defaults.
+**Note:** v4.3.0 introduces project-type selection and interactive firewall customization. Use `/devcontainer:yolo-vibe-maxxing` for the fastest path with sensible defaults.
 
 ### Claude Code Installation
 
@@ -162,8 +162,8 @@ Claude: This mode creates security-hardened configurations.
 
 **Example**:
 ```
-You: /devcontainer:yolo
-Claude: YOLO mode - You're in control!
+You: /devcontainer:yolo-vibe-maxxing
+Claude: YOLO vibe-maxxing mode - You're in control!
 
         ⚠️  Warning: Maximum flexibility, minimal safety rails.
 
@@ -182,8 +182,8 @@ Claude: sandbox-templates tag?
 
 | Command                            | Description                                                           |
 | ---------------------------------- | --------------------------------------------------------------------- |
-| `/devcontainer:setup`        | Interactive setup - choose project type and firewall options          |
-| `/devcontainer:yolo`         | Quick setup - no questions, sensible defaults (Python+Node)           |
+| `/devcontainer:quickstart`        | Interactive quickstart - choose project type and firewall options          |
+| `/devcontainer:yolo-vibe-maxxing`         | YOLO vibe-maxxing - no questions, sensible defaults (Python+Node)           |
 | `/devcontainer:troubleshoot` | Diagnose and fix sandbox issues                                       |
 | `/devcontainer:audit`        | Security audit and recommendations                                    |
 
@@ -200,7 +200,7 @@ The plugin automatically activates when you:
 **Example**:
 ```
 You: I need to set up a Docker development environment for my Python project
-Claude: [Automatically uses /devcontainer:setup command]
+Claude: [Automatically uses /devcontainer:quickstart command]
       What mode would you like?
       • Basic (Zero config, 1-2 min)
       • Intermediate (Balanced, 3-5 min)
@@ -318,7 +318,7 @@ Templates use these placeholders:
 
 ## Skills Reference
 
-### /devcontainer:setup (Interactive Router)
+### /devcontainer:quickstart (Interactive Router)
 Interactive setup wizard with four experience modes.
 
 **Note:** This is a router command that delegates to mode-specific skills:
@@ -387,7 +387,7 @@ This plugin uses consistent naming across different contexts:
 | ----------------- | ------------------------- | --------------------------------------------------- |
 | Plugin name       | devcontainer-setup        | Plugin installation and management                  |
 | GitHub repository | sandbox-maxxing           | github.com/andrewcchoi/sandbox-maxxing              |
-| Slash commands    | /devcontainer:*           | /devcontainer:basic, /devcontainer:yolo |
+| Slash commands    | /devcontainer:*           | /devcontainer:quickstart, /devcontainer:yolo-vibe-maxxing |
 | Skills            | sandbox-*                 | devcontainer-setup-basic                            |
 | User-facing title | DevContainer Setup Plugin | In documentation headers                            |
 
@@ -430,8 +430,8 @@ sandbox-maxxing/
 ├── commands/
 │   ├── basic.md                 # /devcontainer:basic
 │   ├── advanced.md              # /devcontainer:advanced
-│   ├── yolo.md                  # /devcontainer:yolo
-│   ├── setup.md                 # /devcontainer:setup (router)
+│   ├── yolo-vibe-maxxing.md     # /devcontainer:yolo-vibe-maxxing
+│   ├── quickstart.md            # /devcontainer:quickstart (router)
 │   ├── troubleshoot.md          # /devcontainer:troubleshoot
 │   └── audit.md                 # /devcontainer:audit
 ├── templates/
@@ -723,7 +723,7 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
   - `allowable-domains.json`: Mode-specific firewall whitelists
 - Modular template system with section markers
 - Enhanced firewall with mode-specific domain sets (30-100+ domains)
-- Updated slash commands: `/devcontainer:basic`, `/devcontainer:advanced`, `/devcontainer:yolo`
+- Updated slash commands: `/devcontainer:basic`, `/devcontainer:advanced`, `/devcontainer:yolo-vibe-maxxing`, `/devcontainer:quickstart`
 - Comprehensive mode comparison guide (MODES.md)
 - Migration from Basic/Advanced/YOLO to new four-mode system
 

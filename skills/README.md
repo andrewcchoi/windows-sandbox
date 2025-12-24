@@ -4,14 +4,14 @@ This directory contains specialized skills for setting up, securing, and trouble
 
 ## Overview
 
-Skills are invoked through slash commands in Claude Code. When you use a command like `/devcontainer:setup`, Claude loads the corresponding skill and follows its structured workflow to ensure consistent, high-quality results.
+Skills are invoked through slash commands in Claude Code. When you use a command like `/devcontainer:quickstart`, Claude loads the corresponding skill and follows its structured workflow to ensure consistent, high-quality results.
 
 ## Available Skills
 
 ### Setup Skills
 
 #### devcontainer-setup-basic
-**Command:** `/devcontainer:setup` (Basic mode)
+**Command:** `/devcontainer:quickstart` (Basic mode)
 **When to use:** You want the simplest sandbox setup with minimal configuration.
 
 **Features:**
@@ -33,7 +33,7 @@ Skills are invoked through slash commands in Claude Code. When you use a command
 
 
 #### devcontainer-setup-advanced
-**Command:** `/devcontainer:setup` (Advanced mode)
+**Command:** `/devcontainer:quickstart` (Advanced mode)
 **When to use:** You need security-focused development with strict controls.
 
 **Features:**
@@ -59,7 +59,7 @@ Skills are invoked through slash commands in Claude Code. When you use a command
 ---
 
 #### devcontainer-setup-yolo
-**Command:** `/devcontainer:setup` (YOLO mode)
+**Command:** `/devcontainer:quickstart` (YOLO mode)
 **When to use:** You want complete control with no restrictions.
 
 **Features:**
@@ -212,7 +212,7 @@ Skills are typically invoked through slash commands defined in `/commands/`:
 
 ```bash
 # Setup commands (choose mode interactively)
-/devcontainer:setup
+/devcontainer:quickstart
 
 # Troubleshooting
 /devcontainer:troubleshoot
@@ -241,7 +241,7 @@ Claude: [Automatically uses devcontainer-setup-advanced skill]
 
 DevContainer setup is now command-based (not skill-based):
 
-1. **User runs command**: `/devcontainer:setup` (interactive) or `/devcontainer:yolo` (quick)
+1. **User runs command**: `/devcontainer:quickstart` (interactive) or `/devcontainer:yolo-vibe-maxxing  (quick)
 2. **Questions asked**: Command asks 2-3 questions (setup) or 0 questions (yolo)
 3. **Templates copied**: Files copied from `skills/_shared/templates/`
 4. **Placeholders replaced**: Customize with project-specific values
@@ -258,13 +258,13 @@ The two remaining skills are utilities invoked by commands:
 
 ## When to Use Each Command
 
-### Use `/devcontainer:setup` (Interactive) When:
+### Use `/devcontainer:quickstart` (Interactive) When:
 - You need specific language toolchains (Go, Ruby, Rust, Java, C++, PHP, PostgreSQL)
 - You want firewall protection with domain allowlists
 - You prefer guided setup with questions
 - You want some customization
 
-### Use `/devcontainer:yolo` (Quick) When:
+### Use `/devcontainer:yolo-vibe-maxxing  (Quick) When:
 - You want instant setup with no questions
 - Your project uses Python and/or Node.js only
 - You don't need network restrictions
@@ -347,7 +347,7 @@ See [Examples README](../docs/examples/README.md) for detailed walkthroughs.
 
 | Command | Skill Used | Purpose |
 |---------|-----------|---------|
-| `/devcontainer:setup` | devcontainer-setup-* | Create/update sandbox configuration |
+| `/devcontainer:quickstart` | devcontainer-setup-* | Create/update sandbox configuration |
 | `/devcontainer:troubleshoot` | sandbox-troubleshoot | Diagnose and fix issues |
 | `/devcontainer:audit` | sandbox-security | Security audit and hardening |
 

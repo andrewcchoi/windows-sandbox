@@ -7,7 +7,7 @@ This directory contains slash commands for the Claude Code Sandbox Plugin. Comma
 Commands are invoked with the `/devcontainer:` prefix in Claude Code:
 
 ```
-/devcontainer:setup         # Set up a new sandbox (interactive mode selection)
+/devcontainer:quickstart         # Set up a new sandbox (interactive mode selection)
 /devcontainer:troubleshoot  # Diagnose and fix issues
 /devcontainer:audit         # Security audit
 ```
@@ -18,20 +18,20 @@ Each command loads and executes the corresponding skill with user-friendly promp
 
 ### Primary Commands
 
-#### `/devcontainer:setup`
-**File:** `commands/setup.md`
+#### `/devcontainer:quickstart`
+**File:** `commands/quickstart.md`
 **Skill:** Routes to mode-specific setup skill
 **Description:** Set up a new Claude Code Docker sandbox environment
 
 **Usage:**
 ```bash
 # Interactive mode selection
-/devcontainer:setup
+/devcontainer:quickstart
 
 # Quick setup with flags
-/devcontainer:setup --basic          # Fastest setup
-/devcontainer:setup --advanced       # Secure setup
-/devcontainer:setup --yolo           # Full control
+/devcontainer:quickstart --basic          # Fastest setup
+/devcontainer:quickstart --advanced       # Secure setup
+/devcontainer:quickstart --yolo           # Full control
 ```
 
 **What it does:**
@@ -113,7 +113,7 @@ See also: [Security Model](../docs/features/security-model.md)
 
 ### Mode-Specific Setup Commands
 
-These commands directly invoke mode-specific setup skills. Most users should use `/devcontainer:setup` instead, which provides interactive mode selection.
+These commands directly invoke mode-specific setup skills. Most users should use `/devcontainer:quickstart` instead, which provides interactive mode selection.
 
 #### `/devcontainer:basic`
 **File:** `commands/basic.md`
@@ -127,7 +127,7 @@ These commands directly invoke mode-specific setup skills. Most users should use
 
 **Equivalent to:**
 ```bash
-/devcontainer:setup --basic
+/devcontainer:quickstart --basic
 ```
 
 ---
@@ -144,13 +144,13 @@ These commands directly invoke mode-specific setup skills. Most users should use
 
 **Equivalent to:**
 ```bash
-/devcontainer:setup --advanced
+/devcontainer:quickstart --advanced
 ```
 
 ---
 
-#### `/devcontainer:yolo`
-**File:** `commands/yolo.md`
+#### `/devcontainer:yolo-vibe-maxxing 
+**File:** `commands/yolo-vibe-maxxing.md`
 **Skill:** devcontainer-setup-yolo
 **Description:** Full control sandbox setup with no restrictions
 
@@ -161,7 +161,7 @@ These commands directly invoke mode-specific setup skills. Most users should use
 
 **Equivalent to:**
 ```bash
-/devcontainer:setup --yolo
+/devcontainer:quickstart --yolo
 ```
 
 ---
@@ -199,7 +199,7 @@ All commands use the `/devcontainer:` namespace prefix when invoked.
 Commands serve as user-friendly entry points that delegate to skills:
 
 ```
-User types: /devcontainer:setup --advanced
+User types: /devcontainer:quickstart --advanced
     ↓
 Command file: commands/advanced.md loaded
     ↓
@@ -224,10 +224,10 @@ Result: DevContainer configuration created
 
 | Command | Mode | Questions | Time | Security | Best For |
 |---------|------|-----------|------|----------|----------|
-| `/devcontainer:setup` | Interactive | Varies | Varies | Varies | Most users (choose mode) |
+| `/devcontainer:quickstart` | Interactive | Varies | Varies | Varies | Most users (choose mode) |
 | `/devcontainer:basic` | Basic | 1-3 | 1-2 min | Low | Quick start, learning |
 | `/devcontainer:advanced` | Advanced | 7-10 | 8-12 min | High | Security-conscious |
-| `/devcontainer:yolo` | YOLO | 15-20+ | 15-30 min | User-controlled | Expert customization |
+| `/devcontainer:yolo-vibe-maxxing  | YOLO | 15-20+ | 15-30 min | User-controlled | Expert customization |
 | `/devcontainer:troubleshoot` | N/A | Diagnostic | Varies | N/A | Problem solving |
 | `/devcontainer:audit` | N/A | Audit | 5-10 min | N/A | Security review |
 
@@ -239,7 +239,7 @@ Result: DevContainer configuration created
 
 **Beginner (Interactive):**
 ```
-User: /devcontainer:setup
+User: /devcontainer:quickstart
 Claude: Which setup mode do you prefer?
         [Shows mode comparison with planning phase info]
 User: Basic
@@ -251,7 +251,7 @@ Claude: [Implements devcontainer configuration]
 
 **Experienced (Direct):**
 ```
-User: /devcontainer:setup --advanced
+User: /devcontainer:quickstart --advanced
 Claude: [Executes devcontainer-setup-advanced skill directly]
 ```
 
@@ -345,7 +345,7 @@ Commands are defined in `.claude-plugin/plugin.json`:
 {
   "commands": {
     "setup": {
-      "file": "commands/setup.md",
+      "file": "commands/quickstart.md",
       "description": "Set up a new Claude Code Docker sandbox"
     },
     "troubleshoot": {
@@ -376,7 +376,7 @@ Claude Code automatically discovers commands in the `commands/` directory when:
 ### Reporting Issues
 
 When reporting command-related issues, include:
-- Command used (e.g., `/devcontainer:setup --advanced`)
+- Command used (e.g., `/devcontainer:quickstart --advanced`)
 - Expected vs actual behavior
 - Error messages or logs
 - Project context (language, services, etc.)

@@ -1,17 +1,17 @@
 ---
-description: Interactive DevContainer setup with project type selection and firewall customization
+description: Interactive DevContainer quickstart with project type selection and firewall customization
 argument-hint: ""
 allowed-tools: [Bash, AskUserQuestion, Read]
 ---
 
-# Interactive DevContainer Setup
+# Interactive DevContainer Quickstart
 
 Create a customized VS Code DevContainer configuration with:
 - Project-specific base image + language tools
 - Optional network firewall with domain allowlist
 - All standard Claude Code sandbox features
 
-**Quick path:** Use `/devcontainer:yolo` for instant setup with no questions (Python+Node, no firewall).
+**Quick path:** Use `/devcontainer:yolo-vibe-maxxing` for instant setup with no questions (Python+Node, no firewall).
 
 ## Step 1: Initialize Tool Selection Tracking
 
@@ -405,4 +405,4 @@ echo "=========================================="
 ---
 
 **Last Updated:** 2025-12-24
-**Version:** 4.4.3 (Compact Banner)
+**Version:** 4.5.0 (Command Rename)
