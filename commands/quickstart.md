@@ -21,6 +21,12 @@ Run these checks before proceeding. Use `--skip-validation` to bypass.
 echo "Running pre-flight checks..."
 VALIDATION_FAILED=false
 
+# Initialize port variables with defaults
+APP_PORT=8000
+FRONTEND_PORT=3000
+POSTGRES_PORT=5432
+REDIS_PORT=6379
+
 # Check 1: Docker daemon running
 if ! docker info > /dev/null 2>&1; then
   echo "ERROR: Docker is not running"
@@ -39,20 +45,32 @@ else
   echo "  ✓ Docker Compose available"
 fi
 
-# Check 3: Required ports available (warn only, don't fail)
-PORTS_TO_CHECK="8000 3000 5432 6379"
-for port in $PORTS_TO_CHECK; do
+# Check 3: Port availability check with conflict detection
+PORT_CONFLICTS_FOUND=false
+CONFLICTED=()
+
+for port in 8000 3000 5432 6379; do
+  port_in_use=false
+
   if command -v lsof > /dev/null 2>&1; then
     if lsof -i :$port > /dev/null 2>&1; then
-      echo "  WARNING: Port $port is in use (may conflict with DevContainer)"
+      port_in_use=true
     fi
   elif command -v netstat > /dev/null 2>&1; then
     if netstat -tuln 2>/dev/null | grep -q ":$port "; then
-      echo "  WARNING: Port $port is in use (may conflict with DevContainer)"
+      port_in_use=true
     fi
   fi
+
+  if [ "$port_in_use" = "true" ]; then
+    CONFLICTED+=("$port")
+    PORT_CONFLICTS_FOUND=true
+  fi
 done
-echo "  ✓ Port check complete"
+
+if [ "$PORT_CONFLICTS_FOUND" = "false" ]; then
+  echo "  ✓ All ports available"
+fi
 
 # Check 4: Disk space (minimum 5GB recommended)
 if command -v df > /dev/null 2>&1; then
@@ -72,9 +90,69 @@ if [ "$VALIDATION_FAILED" = "true" ]; then
 fi
 
 echo ""
-echo "Pre-flight checks passed!"
+if [ "$PORT_CONFLICTS_FOUND" = "true" ]; then
+  echo "Pre-flight checks passed (with port conflicts to resolve)!"
+else
+  echo "Pre-flight checks passed!"
+fi
 echo ""
 ```
+
+## Step 0.5: Port Configuration (If Conflicts Detected)
+
+If port conflicts were detected in Step 0, resolve them automatically or interactively.
+
+```bash
+# Function to find the next available port
+find_available_port() {
+  local port=$1
+  while lsof -i :$port > /dev/null 2>&1 || netstat -tuln 2>/dev/null | grep -q ":$port "; do
+    port=$((port + 1))
+  done
+  echo $port
+}
+
+# Only run if conflicts were detected
+if [ "$PORT_CONFLICTS_FOUND" = "true" ]; then
+  echo "Port conflicts detected:"
+  for port in "${CONFLICTED[@]}"; do
+    case $port in
+      8000) echo "  - Port 8000 (App) is in use" ;;
+      3000) echo "  - Port 3000 (Frontend) is in use" ;;
+      5432) echo "  - Port 5432 (PostgreSQL) is in use" ;;
+      6379) echo "  - Port 6379 (Redis) is in use" ;;
+    esac
+  done
+  echo ""
+
+  # Auto-assign alternative ports (default behavior)
+  echo "Auto-assigning alternative ports..."
+  for port in "${CONFLICTED[@]}"; do
+    new_port=$(find_available_port $port)
+    case $port in
+      8000)
+        APP_PORT=$new_port
+        echo "  App: 8000 → $new_port"
+        ;;
+      3000)
+        FRONTEND_PORT=$new_port
+        echo "  Frontend: 3000 → $new_port"
+        ;;
+      5432)
+        POSTGRES_PORT=$new_port
+        echo "  PostgreSQL: 5432 → $new_port"
+        ;;
+      6379)
+        REDIS_PORT=$new_port
+        echo "  Redis: 6379 → $new_port"
+        ;;
+    esac
+  done
+  echo ""
+fi
+```
+
+**Note:** For interactive port selection, users can add `--interactive` flag support in the future. Currently, the command auto-assigns the next available port for any conflicts.
 
 ## Step 1: Initialize Tool Selection Tracking
 
@@ -142,8 +220,8 @@ Options:
 
 2. Use pre-built image
    → Instant startup (~30 seconds)
-   → Requires internet connection
-   → Pulls from GitHub Container Registry
+   → Requires GHCR authentication (docker login ghcr.io)
+   → Will fail with 403 if not authenticated
 ```
 
 Store as `PREBUILT_IMAGE_CHOICE`.
@@ -155,6 +233,27 @@ if [ "$PREBUILT_IMAGE_CHOICE" = "Use pre-built image" ]; then
 else
   USE_PREBUILT_IMAGE="false"
   echo "Building from scratch"
+fi
+```
+
+## Step 1.7: Validate GHCR Access (If Pre-built Selected)
+
+```bash
+if [ "$USE_PREBUILT_IMAGE" = "true" ]; then
+  echo "Checking GHCR access..."
+  PREBUILT_IMAGE="${PREBUILT_IMAGE:-ghcr.io/andrewcchoi/sandbox-maxxing/sandboxxer-base:latest}"
+  if ! docker manifest inspect "$PREBUILT_IMAGE" > /dev/null 2>&1; then
+    echo ""
+    echo "ERROR: Cannot access pre-built image at GHCR"
+    echo "  Image: $PREBUILT_IMAGE"
+    echo ""
+    echo "Options:"
+    echo "  1. Authenticate: docker login ghcr.io"
+    echo "  2. Fall back to building from scratch"
+    echo ""
+    exit 1
+  fi
+  echo "  ✓ GHCR access verified"
 fi
 ```
 
@@ -533,7 +632,15 @@ if [ "$NEEDS_FIREWALL" = "Yes" ]; then
   echo "Firewall: Strict mode with domain allowlist";
   echo "  Categories: ${DOMAIN_CATEGORIES[*]}";
 else
-  # No firewall script needed - Docker container isolation only
+  # Create minimal no-op firewall script (Dockerfile always expects it)
+  cat > .devcontainer/init-firewall.sh << 'NOOP_EOF'
+#!/bin/bash
+# Firewall disabled - this is a no-op script
+# The Dockerfile requires this file to exist even when firewall is not enabled
+echo "Firewall is disabled. Using Docker container isolation only."
+exit 0
+NOOP_EOF
+  chmod +x .devcontainer/init-firewall.sh;
   echo "Firewall: Disabled (Docker isolation only)";
 fi
 ```
@@ -585,6 +692,10 @@ if [ "$USE_PREBUILT_IMAGE" = "true" ]; then
 elif [ "$WORKSPACE_MODE" = "volume" ]; then
   cp "$TEMPLATES/docker-compose.volume.yml" ./docker-compose.yml;
   echo "Using docker-compose.volume.yml (volume mode)";
+  # Copy volume initialization script for volume mode
+  cp "$TEMPLATES/init-volume.sh" .devcontainer/;
+  chmod +x .devcontainer/init-volume.sh;
+  echo "Copied volume initialization script";
 else
   cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml;
   echo "Using docker-compose.yml (bind mount mode)";
@@ -601,8 +712,69 @@ cp "$TEMPLATES/.env.example" ./.env.example
 
 # Replace placeholders (portable sed without -i)
 for f in .devcontainer/devcontainer.json docker-compose.yml; do
-  sed "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$f" > "$f.tmp" && mv "$f.tmp" "$f";
+  sed "s/{{PROJECT_NAME}}/$PROJECT_NAME/g; \
+       s/{{APP_PORT}}/$APP_PORT/g; \
+       s/{{FRONTEND_PORT}}/$FRONTEND_PORT/g; \
+       s/{{POSTGRES_PORT}}/$POSTGRES_PORT/g; \
+       s/{{REDIS_PORT}}/$REDIS_PORT/g" \
+    "$f" > "$f.tmp" && mv "$f.tmp" "$f";
 done
+
+# Generate .env file with configured ports
+cat > .env << EOF
+# ============================================================================
+# Environment Variables
+# ============================================================================
+# Generated by DevContainer quickstart
+# Edit these values as needed for your project
+# ============================================================================
+
+# ----------------------------------------------------------------------------
+# Port Configuration
+# ----------------------------------------------------------------------------
+APP_PORT=$APP_PORT
+FRONTEND_PORT=$FRONTEND_PORT
+POSTGRES_PORT=$POSTGRES_PORT
+REDIS_PORT=$REDIS_PORT
+
+# ----------------------------------------------------------------------------
+# Database Configuration
+# ----------------------------------------------------------------------------
+POSTGRES_DB=devdb
+POSTGRES_USER=devuser
+POSTGRES_PASSWORD=devpassword
+
+# Database URLs (for application use)
+DATABASE_URL=postgresql://\${POSTGRES_USER}:\${POSTGRES_PASSWORD}@postgres:5432/\${POSTGRES_DB}
+REDIS_URL=redis://redis:6379
+
+# ----------------------------------------------------------------------------
+# API Keys
+# ----------------------------------------------------------------------------
+# Add your API keys here (do not commit to git!)
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+GITHUB_TOKEN=
+
+# ----------------------------------------------------------------------------
+# Build Configuration
+# ----------------------------------------------------------------------------
+INSTALL_SHELL_EXTRAS=true
+INSTALL_DEV_TOOLS=true
+INSTALL_CA_CERT=false
+EOF
+echo "Generated .env file with port configuration"
+
+# Configure volume initialization for volume mode
+if [ "$WORKSPACE_MODE" = "volume" ]; then
+  # Use Docker array command (bypasses host shell, works on Windows/Mac/Linux)
+  VOLUME_NAME="${PROJECT_NAME}-workspace-volume";
+  INIT_CMD='["docker", "run", "--rm", "-v", ".:/source:ro", "-v", "'$VOLUME_NAME':/dest", "alpine", "sh", "-c", "cp -a /source/. /dest/ 2>/dev/null || true"]';
+  sed 's/"initializeCommand": ""/"initializeCommand": '"$(echo "$INIT_CMD" | sed 's/\//\\\//g')"'/g' \
+    .devcontainer/devcontainer.json > .devcontainer/devcontainer.json.tmp && \
+    mv .devcontainer/devcontainer.json.tmp .devcontainer/devcontainer.json;
+  echo "Configured initializeCommand for volume mode";
+fi
 
 # Add features to devcontainer.json if in features mode
 if [ "$INSTALL_MODE" = "features" ] && [ ${#SELECTED_FEATURES[@]} -gt 0 ]; then
@@ -690,6 +862,15 @@ fi
 echo ""
 echo "Firewall: $([ "$NEEDS_FIREWALL" = "Yes" ] && echo "Enabled (strict allowlist)" || echo "Disabled (Docker isolation only)")"
 echo ""
+echo "Port Configuration:"
+echo "  App:        localhost:$APP_PORT -> container:8000"
+echo "  Frontend:   localhost:$FRONTEND_PORT -> container:3000"
+echo "  PostgreSQL: localhost:$POSTGRES_PORT -> container:5432"
+echo "  Redis:      localhost:$REDIS_PORT -> container:6379"
+if [ "$PORT_CONFLICTS_FOUND" = "true" ]; then
+  echo "  Note: Alternative ports assigned due to conflicts"
+fi
+echo ""
 echo "Files created:"
 echo "  .devcontainer/Dockerfile"
 echo "  .devcontainer/devcontainer.json"
@@ -700,16 +881,82 @@ echo "  .devcontainer/setup-claude-credentials.sh"
 echo "  docker-compose.yml"
 echo "  data/allowable-domains.json"
 echo "  .env.example"
+echo "  .env (with configured ports)"
 echo ""
 echo "Next steps:"
-echo "1. Copy .env.example to .env and add your API keys"
+echo "1. Edit .env and add your API keys (ANTHROPIC_API_KEY, etc.)"
 echo "2. Open this folder in VS Code"
 echo "3. Click 'Reopen in Container' when prompted"
 echo "4. Wait for container to build (~2-5 minutes first time)"
+echo ""
+echo "After container starts, access your services at:"
+echo "  - App:        http://localhost:$APP_PORT"
+echo "  - Frontend:   http://localhost:$FRONTEND_PORT"
+echo "  - PostgreSQL: localhost:$POSTGRES_PORT"
+echo "  - Redis:      localhost:$REDIS_PORT"
 echo "=========================================="
 ```
 
+## Troubleshooting
+
+### "No space left on device" Error on Windows
+
+**Symptom:** VS Code fails to open Dev Container with error:
+```
+tar: write error: No space left on device
+Could not connect to WSL.
+```
+
+**Cause:** Docker Desktop's `docker-desktop` WSL distro has a small 129MB root partition that fills up when VS Code installs its server binaries (~60MB).
+
+**Solution:** Create a symlink to redirect VS Code Server to the larger data disk:
+
+```powershell
+# 1. Shutdown WSL
+wsl --shutdown
+
+# 2. Create symlink (run in PowerShell)
+wsl -d docker-desktop -u root -e sh -c "mkdir -p /mnt/docker-desktop-disk/vscode-remote-containers && ln -s /mnt/docker-desktop-disk/vscode-remote-containers /root/.vscode-remote-containers"
+
+# 3. Verify symlink was created
+wsl -d docker-desktop -e sh -c "ls -la /root/.vscode-remote-containers"
+# Should show: .vscode-remote-containers -> /mnt/docker-desktop-disk/vscode-remote-containers
+```
+
+**Note:** This symlink may need to be recreated after Docker Desktop updates or factory resets. If the disk becomes corrupted (read-only filesystem), you may need to fully unregister and recreate the distros:
+
+```powershell
+# Close Docker Desktop first (Quit from system tray)
+wsl --shutdown
+wsl --unregister docker-desktop
+wsl --unregister docker-desktop-data
+# Start Docker Desktop again to recreate distros, then apply the symlink fix above
+```
+
+### initializeCommand Fails on Windows
+
+**Symptom:** Error during Dev Container startup:
+```
+'.devcontainer' is not recognized as an internal or external command
+```
+
+**Cause:** `initializeCommand` is set to a shell script path like `".devcontainer/init-volume.sh"`, but Windows `cmd.exe` cannot execute shell scripts.
+
+**Solution:** Use Docker JSON array format for cross-platform compatibility:
+
+**Instead of:**
+```json
+"initializeCommand": ".devcontainer/init-volume.sh"
+```
+
+**Use:**
+```json
+"initializeCommand": ["docker", "run", "--rm", "-v", ".:/source:ro", "-v", "YOUR-PROJECT-workspace-volume:/dest", "alpine", "sh", "-c", "cp -a /source/. /dest/ 2>/dev/null || true"]
+```
+
+Replace `YOUR-PROJECT` with your project name. This approach bypasses the host shell entirely and works on Windows, macOS, and Linux.
+
 ---
 
-**Last Updated:** 2025-12-24
-**Version:** 4.5.0 (Command Rename)
+**Last Updated:** 2025-12-25
+**Version:** 4.5.1 (Troubleshooting)

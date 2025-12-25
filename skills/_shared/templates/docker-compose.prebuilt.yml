@@ -6,11 +6,12 @@
 # Issue #72: Pre-built image workflow for faster container startup
 # ============================================================================
 
-version: '3.8'
-
 services:
   app:
     image: ${PREBUILT_IMAGE:-ghcr.io/andrewcchoi/sandbox-maxxing/sandboxxer-base:latest}
+    ports:
+      - "${APP_PORT:-8000}:8000"
+      - "${FRONTEND_PORT:-3000}:3000"
     volumes:
       - .:/workspace:cached
       - ~/.claude:/tmp/host-claude:ro              # Issue #30: Claude config

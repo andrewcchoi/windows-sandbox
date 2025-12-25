@@ -64,7 +64,7 @@
   "postAttachCommand": "",
   "waitFor": "postCreateCommand",
 
-  "forwardPorts": [8000, 3000, 5432, 6379],
+  "forwardPorts": [{{APP_PORT}}, {{FRONTEND_PORT}}, {{POSTGRES_PORT}}, {{REDIS_PORT}}],
 
   // GitHub Codespaces configuration
   // See: https://docs.github.com/en/codespaces/setting-up-your-project-for-codespaces
@@ -74,10 +74,10 @@
     "storage": "32gb"
   },
   "portsAttributes": {
-    "8000": { "label": "App", "onAutoForward": "notify" },
-    "3000": { "label": "Frontend", "onAutoForward": "notify" },
-    "5432": { "label": "PostgreSQL", "onAutoForward": "silent" },
-    "6379": { "label": "Redis", "onAutoForward": "silent" }
+    "{{APP_PORT}}": { "label": "App", "onAutoForward": "notify" },
+    "{{FRONTEND_PORT}}": { "label": "Frontend", "onAutoForward": "notify" },
+    "{{POSTGRES_PORT}}": { "label": "PostgreSQL", "onAutoForward": "silent" },
+    "{{REDIS_PORT}}": { "label": "Redis", "onAutoForward": "silent" }
   },
   // Codespaces secrets: Configure in repo Settings > Secrets > Codespaces
   // ANTHROPIC_API_KEY, OPENAI_API_KEY, etc. will be available as env vars

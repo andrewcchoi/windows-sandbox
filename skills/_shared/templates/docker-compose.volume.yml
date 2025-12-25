@@ -6,8 +6,6 @@
 # Issue #79: Repository container option for Windows/macOS performance
 # ============================================================================
 
-version: '3.8'
-
 services:
   app:
     build:
@@ -17,8 +15,12 @@ services:
         - INSTALL_SHELL_EXTRAS=${INSTALL_SHELL_EXTRAS:-true}
         - INSTALL_DEV_TOOLS=${INSTALL_DEV_TOOLS:-true}
         - INSTALL_CA_CERT=${INSTALL_CA_CERT:-false}
+    ports:
+      - "${APP_PORT:-8000}:8000"
+      - "${FRONTEND_PORT:-3000}:3000"
     volumes:
-      - workspace-volume:/workspace              # Named volume for better I/O performance
+      - {{PROJECT_NAME}}-workspace-volume:/workspace  # Named volume for better I/O performance
+      - ./.devcontainer:/workspace/.devcontainer:ro  # Scripts for postCreateCommand
       - ~/.claude:/tmp/host-claude:ro            # Issue #30: Claude config
       - ~/.config/claude-env:/tmp/host-env:ro    # Environment secrets (optional)
       - ~/.config/gh:/tmp/host-gh:ro             # GitHub CLI config (optional)
@@ -73,8 +75,8 @@ networks:
     driver: bridge
 
 volumes:
-  workspace-volume:
-    driver: local
+  {{PROJECT_NAME}}-workspace-volume:
+    external: true
   postgres_data:
     driver: local
   redis_data:
