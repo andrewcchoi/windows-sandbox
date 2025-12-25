@@ -456,6 +456,9 @@ cp "$TEMPLATES/setup-claude-credentials.sh" .devcontainer/
 # Copy data files
 cp "$TEMPLATES/data/allowable-domains.json" data/
 
+# Copy .env.example (user should copy to .env and customize)
+cp "$TEMPLATES/.env.example" ./.env.example
+
 # Replace placeholders (portable sed without -i)
 for f in .devcontainer/devcontainer.json docker-compose.yml; do
   sed "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$f" > "$f.tmp" && mv "$f.tmp" "$f"
@@ -501,11 +504,13 @@ fi
 echo "  .devcontainer/setup-claude-credentials.sh"
 echo "  docker-compose.yml"
 echo "  data/allowable-domains.json"
+echo "  .env.example"
 echo ""
 echo "Next steps:"
-echo "1. Open this folder in VS Code"
-echo "2. Click 'Reopen in Container' when prompted"
-echo "3. Wait for container to build (~2-5 minutes first time)"
+echo "1. Copy .env.example to .env and add your API keys"
+echo "2. Open this folder in VS Code"
+echo "3. Click 'Reopen in Container' when prompted"
+echo "4. Wait for container to build (~2-5 minutes first time)"
 echo "=========================================="
 ```
 

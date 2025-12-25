@@ -51,9 +51,24 @@
 
   "forwardPorts": [8000, 3000, 5432, 6379],
 
+  // Environment Variables:
+  // - containerEnv: Set at container build time, available in Dockerfile
+  // - remoteEnv: Set at runtime, can reference host env vars with ${localEnv:VAR}
+  // - Use .env file for secrets (not committed to git)
+
+  "containerEnv": {
+    "DEVCONTAINER": "true",
+    "TZ": "America/Los_Angeles"
+  },
+
   "remoteEnv": {
     "PATH": "/usr/local/bin:${containerEnv:PATH}",
-    "FIREWALL_MODE": "permissive"
+    "FIREWALL_MODE": "permissive",
+    // Inherit from host (if set):
+    "ANTHROPIC_API_KEY": "${localEnv:ANTHROPIC_API_KEY}",
+    "OPENAI_API_KEY": "${localEnv:OPENAI_API_KEY}",
+    "GITHUB_TOKEN": "${localEnv:GITHUB_TOKEN}"
   },
+
   "features": {}
 }
