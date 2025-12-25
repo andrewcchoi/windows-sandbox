@@ -16,6 +16,11 @@
             "path": "/bin/zsh"
           }
         }
+        // Dotfiles: Personalize your container with your shell configs, aliases, and preferences
+        // Uncomment and configure to use your dotfiles repository:
+        // "dotfiles.repository": "https://github.com/YOUR_USERNAME/dotfiles",
+        // "dotfiles.targetPath": "~/dotfiles",
+        // "dotfiles.installCommand": "install.sh"
       },
       "extensions": [
         "anthropic.claude-code",
