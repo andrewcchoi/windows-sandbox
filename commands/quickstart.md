@@ -370,16 +370,18 @@ set +H 2>/dev/null || true
 # Handle Windows paths - convert backslashes to forward slashes
 PLUGIN_ROOT=""
 if [ -n "${CLAUDE_PLUGIN_ROOT:-}" ]; then
-  PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT//\\//}"
-  echo "Using CLAUDE_PLUGIN_ROOT: $PLUGIN_ROOT"
+  PLUGIN_ROOT="${CLAUDE_PLUGIN_ROOT//\\//}";
+  echo "Using CLAUDE_PLUGIN_ROOT: $PLUGIN_ROOT";
 elif [ -f "skills/_shared/templates/base.dockerfile" ]; then
-  PLUGIN_ROOT="."
-  echo "Using current directory as plugin root"
+  PLUGIN_ROOT=".";
+  echo "Using current directory as plugin root";
 elif [ -d "$HOME/.claude/plugins" ]; then
-  PLUGIN_ROOT=$(find "$HOME/.claude/plugins" -type f -name "plugin.json" \
-    -exec grep -l '"name": "devcontainer-setup"' {} \; 2>/dev/null | \
-    head -1 | xargs -r dirname 2>/dev/null) || true
-  [ -n "$PLUGIN_ROOT" ] && echo "Found installed plugin: $PLUGIN_ROOT"
+  PLUGIN_JSON=$(find "$HOME/.claude/plugins" -type f -name "plugin.json" \
+    -exec grep -l '"name": "devcontainer-setup"' {} \; 2>/dev/null | head -1);
+  if [ -n "$PLUGIN_JSON" ]; then
+    PLUGIN_ROOT=$(dirname "$(dirname "$PLUGIN_JSON")");
+    echo "Found installed plugin: $PLUGIN_ROOT";
+  fi;
 fi
 
 [ -z "$PLUGIN_ROOT" ] && { echo "ERROR: Cannot locate plugin templates"; exit 1; }
@@ -402,54 +404,54 @@ echo "Base image: Python 3.12 + Node 20"
 # Handle tool installation based on mode
 if [ "$INSTALL_MODE" = "features" ]; then
   # Features mode: tools installed via devcontainer.json features section
-  echo "Installation mode: Dev Container Features"
+  echo "Installation mode: Dev Container Features";
   if [ ${#SELECTED_FEATURES[@]} -gt 0 ]; then
-    echo "Selected features:"
+    echo "Selected features:";
     for feature in "${SELECTED_FEATURES[@]}"; do
-      echo "  ✓ $feature"
-    done
+      echo "  ✓ $feature";
+    done;
   else
-    echo "Using base image only (no additional features)"
-  fi
+    echo "Using base image only (no additional features)";
+  fi;
 else
   # Partials mode: append partial dockerfiles
-  echo "Installation mode: Partial Dockerfiles"
+  echo "Installation mode: Partial Dockerfiles";
   if [ ${#SELECTED_PARTIALS[@]} -gt 0 ]; then
-    echo "Adding selected tools..."
+    echo "Adding selected tools...";
     for partial in "${SELECTED_PARTIALS[@]}"; do
-      cat "$PARTIALS/${partial}.dockerfile" >> .devcontainer/Dockerfile
+      cat "$PARTIALS/${partial}.dockerfile" >> .devcontainer/Dockerfile;
 
       # Echo friendly message based on partial
       case "$partial" in
         "go")
-          echo "  ✓ Go toolchain"
+          echo "  ✓ Go toolchain";
           ;;
         "ruby")
-          echo "  ✓ Ruby toolchain"
+          echo "  ✓ Ruby toolchain";
           ;;
         "rust")
-          echo "  ✓ Rust toolchain"
+          echo "  ✓ Rust toolchain";
           ;;
         "java")
-          echo "  ✓ Java toolchain"
+          echo "  ✓ Java toolchain";
           ;;
         "cpp-clang")
-          echo "  ✓ C++ (Clang 17)"
+          echo "  ✓ C++ (Clang 17)";
           ;;
         "cpp-gcc")
-          echo "  ✓ C++ (GCC)"
+          echo "  ✓ C++ (GCC)";
           ;;
         "php")
-          echo "  ✓ PHP 8.3"
+          echo "  ✓ PHP 8.3";
           ;;
         "postgres")
-          echo "  ✓ PostgreSQL development tools"
+          echo "  ✓ PostgreSQL development tools";
           ;;
-      esac
-    done
+      esac;
+    done;
   else
-    echo "Using base image only (no additional tools)"
-  fi
+    echo "Using base image only (no additional tools)";
+  fi;
 fi
 
 # Show final stack summary
@@ -467,7 +469,7 @@ for partial in "${SELECTED_PARTIALS[@]}"; do
     "cpp-gcc") echo "  - C++ (GCC)" ;;
     "php") echo "  - PHP 8.3" ;;
     "postgres") echo "  - PostgreSQL tools" ;;
-  esac
+  esac;
 done
 echo ""
 ```
@@ -477,62 +479,62 @@ echo ""
 ```bash
 if [ "$NEEDS_FIREWALL" = "Yes" ]; then
   # Generate firewall script from selected categories
-  cp "$TEMPLATES/init-firewall.sh" .devcontainer/init-firewall.sh
+  cp "$TEMPLATES/init-firewall.sh" .devcontainer/init-firewall.sh;
 
   # Read allowable-domains.json and build domain list from selected categories
-  DOMAINS_JSON="$TEMPLATES/data/allowable-domains.json"
+  DOMAINS_JSON="$TEMPLATES/data/allowable-domains.json";
 
   # Build ALLOWED_DOMAINS array from selected categories
-  FIREWALL_DOMAINS=""
+  FIREWALL_DOMAINS="";
 
   for category in "${DOMAIN_CATEGORIES[@]}"; do
     case "$category" in
       "Package managers")
         # Add npm and python by default (basic subcategories)
-        FIREWALL_DOMAINS+=$(jq -r '.categories.package_managers.sub_categories.npm.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
-        FIREWALL_DOMAINS+="\n"
-        FIREWALL_DOMAINS+=$(jq -r '.categories.package_managers.sub_categories.python.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
+        FIREWALL_DOMAINS+=$(jq -r '.categories.package_managers.sub_categories.npm.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
+        FIREWALL_DOMAINS+="\n";
+        FIREWALL_DOMAINS+=$(jq -r '.categories.package_managers.sub_categories.python.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
         ;;
       "Version control")
-        FIREWALL_DOMAINS+=$(jq -r '.categories.version_control.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
+        FIREWALL_DOMAINS+=$(jq -r '.categories.version_control.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
         ;;
       "Container registries")
-        FIREWALL_DOMAINS+=$(jq -r '.categories.container_registries.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
+        FIREWALL_DOMAINS+=$(jq -r '.categories.container_registries.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
         ;;
       "Cloud platforms")
-        FIREWALL_DOMAINS+=$(jq -r '.categories.cloud_platforms.sub_categories | to_entries[].value.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
+        FIREWALL_DOMAINS+=$(jq -r '.categories.cloud_platforms.sub_categories | to_entries[].value.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
         ;;
       "Development tools")
-        FIREWALL_DOMAINS+=$(jq -r '.categories.development_tools.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
+        FIREWALL_DOMAINS+=$(jq -r '.categories.development_tools.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
         ;;
       "VS Code extensions")
-        FIREWALL_DOMAINS+=$(jq -r '.categories.vscode.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
+        FIREWALL_DOMAINS+=$(jq -r '.categories.vscode.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
         ;;
       "Analytics/telemetry")
-        FIREWALL_DOMAINS+=$(jq -r '.categories.analytics_telemetry.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n')
+        FIREWALL_DOMAINS+=$(jq -r '.categories.analytics_telemetry.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/' | tr '\n' '\n');
         ;;
-    esac
-  done
+    esac;
+  done;
 
   # Add Anthropic services (always required)
-  ANTHROPIC_DOMAINS=$(jq -r '.categories.anthropic_services.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/')
+  ANTHROPIC_DOMAINS=$(jq -r '.categories.anthropic_services.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/');
 
   # Add Linux distributions (always required)
-  LINUX_DOMAINS=$(jq -r '.categories.linux_distributions.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/')
+  LINUX_DOMAINS=$(jq -r '.categories.linux_distributions.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/');
 
   # Add custom domains if provided
-  CUSTOM_DOMAIN_LIST=""
+  CUSTOM_DOMAIN_LIST="";
   if [ -n "${CUSTOM_DOMAINS:-}" ]; then
     for domain in $(echo "$CUSTOM_DOMAINS" | tr ',' '\n'); do
-      CUSTOM_DOMAIN_LIST+="  \"$(echo $domain | xargs)\"\n"
-    done
-  fi
+      CUSTOM_DOMAIN_LIST+="  \"$(echo $domain | xargs)\"\n";
+    done;
+  fi;
 
-  echo "Firewall: Strict mode with domain allowlist"
-  echo "  Categories: ${DOMAIN_CATEGORIES[*]}"
+  echo "Firewall: Strict mode with domain allowlist";
+  echo "  Categories: ${DOMAIN_CATEGORIES[*]}";
 else
   # No firewall script needed - Docker container isolation only
-  echo "Firewall: Disabled (Docker isolation only)"
+  echo "Firewall: Disabled (Docker isolation only)";
 fi
 ```
 
@@ -560,12 +562,12 @@ Store as `WORKSPACE_MODE_CHOICE`.
 ```bash
 case "$WORKSPACE_MODE_CHOICE" in
   "Volume mode")
-    WORKSPACE_MODE="volume"
-    echo "Using volume mode for better Windows/macOS performance"
+    WORKSPACE_MODE="volume";
+    echo "Using volume mode for better Windows/macOS performance";
     ;;
   *)
-    WORKSPACE_MODE="bind"
-    echo "Using bind mount mode (default)"
+    WORKSPACE_MODE="bind";
+    echo "Using bind mount mode (default)";
     ;;
 esac
 ```
@@ -578,14 +580,14 @@ cp "$TEMPLATES/devcontainer.json" .devcontainer/
 
 # Copy docker-compose based on modes (pre-built takes precedence)
 if [ "$USE_PREBUILT_IMAGE" = "true" ]; then
-  cp "$TEMPLATES/docker-compose.prebuilt.yml" ./docker-compose.yml
-  echo "Using docker-compose.prebuilt.yml (pre-built image mode)"
+  cp "$TEMPLATES/docker-compose.prebuilt.yml" ./docker-compose.yml;
+  echo "Using docker-compose.prebuilt.yml (pre-built image mode)";
 elif [ "$WORKSPACE_MODE" = "volume" ]; then
-  cp "$TEMPLATES/docker-compose.volume.yml" ./docker-compose.yml
-  echo "Using docker-compose.volume.yml (volume mode)"
+  cp "$TEMPLATES/docker-compose.volume.yml" ./docker-compose.yml;
+  echo "Using docker-compose.volume.yml (volume mode)";
 else
-  cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml
-  echo "Using docker-compose.yml (bind mount mode)"
+  cp "$TEMPLATES/docker-compose.yml" ./docker-compose.yml;
+  echo "Using docker-compose.yml (bind mount mode)";
 fi
 
 # Copy credential setup script
@@ -599,26 +601,26 @@ cp "$TEMPLATES/.env.example" ./.env.example
 
 # Replace placeholders (portable sed without -i)
 for f in .devcontainer/devcontainer.json docker-compose.yml; do
-  sed "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$f" > "$f.tmp" && mv "$f.tmp" "$f"
+  sed "s/{{PROJECT_NAME}}/$PROJECT_NAME/g" "$f" > "$f.tmp" && mv "$f.tmp" "$f";
 done
 
 # Add features to devcontainer.json if in features mode
 if [ "$INSTALL_MODE" = "features" ] && [ ${#SELECTED_FEATURES[@]} -gt 0 ]; then
   # Build features JSON object
-  FEATURES_JSON="{"
+  FEATURES_JSON="{";
   for i in "${!SELECTED_FEATURES[@]}"; do
     if [ $i -gt 0 ]; then
-      FEATURES_JSON+=","
-    fi
-    FEATURES_JSON+="\n    \"${SELECTED_FEATURES[$i]}\": {}"
-  done
-  FEATURES_JSON+="\n  }"
+      FEATURES_JSON+=",";
+    fi;
+    FEATURES_JSON+="\n    \"${SELECTED_FEATURES[$i]}\": {}";
+  done;
+  FEATURES_JSON+="\n  }";
 
   # Replace empty features object with populated one
   sed "s/\"features\": {}/\"features\": $FEATURES_JSON/g" \
     .devcontainer/devcontainer.json > .devcontainer/devcontainer.json.tmp && \
-    mv .devcontainer/devcontainer.json.tmp .devcontainer/devcontainer.json
-  echo "Added Dev Container Features to devcontainer.json"
+    mv .devcontainer/devcontainer.json.tmp .devcontainer/devcontainer.json;
+  echo "Added Dev Container Features to devcontainer.json";
 fi
 
 # Add language-specific VS Code extensions based on selected partials
@@ -626,35 +628,35 @@ EXTENSIONS_TO_ADD=""
 for partial in "${SELECTED_PARTIALS[@]}"; do
   case "$partial" in
     "go")
-      EXTENSIONS_TO_ADD+=',\n        "golang.go"'
+      EXTENSIONS_TO_ADD+=',\n        "golang.go"';
       ;;
     "rust")
-      EXTENSIONS_TO_ADD+=',\n        "rust-lang.rust-analyzer"'
+      EXTENSIONS_TO_ADD+=',\n        "rust-lang.rust-analyzer"';
       ;;
     "java")
-      EXTENSIONS_TO_ADD+=',\n        "redhat.java",\n        "vscjava.vscode-java-pack"'
+      EXTENSIONS_TO_ADD+=',\n        "redhat.java",\n        "vscjava.vscode-java-pack"';
       ;;
     "ruby")
-      EXTENSIONS_TO_ADD+=',\n        "shopify.ruby-lsp"'
+      EXTENSIONS_TO_ADD+=',\n        "shopify.ruby-lsp"';
       ;;
     "php")
-      EXTENSIONS_TO_ADD+=',\n        "bmewburn.vscode-intelephense-client"'
+      EXTENSIONS_TO_ADD+=',\n        "bmewburn.vscode-intelephense-client"';
       ;;
     "cpp-clang"|"cpp-gcc")
-      EXTENSIONS_TO_ADD+=',\n        "ms-vscode.cpptools",\n        "ms-vscode.cmake-tools"'
+      EXTENSIONS_TO_ADD+=',\n        "ms-vscode.cpptools",\n        "ms-vscode.cmake-tools"';
       ;;
     "postgres")
-      EXTENSIONS_TO_ADD+=',\n        "ckolkman.vscode-postgres"'
+      EXTENSIONS_TO_ADD+=',\n        "ckolkman.vscode-postgres"';
       ;;
-  esac
+  esac;
 done
 
 # Insert extensions before the closing bracket of extensions array
 if [ -n "$EXTENSIONS_TO_ADD" ]; then
   sed "s/\"johnpapa.vscode-peacock\"/\"johnpapa.vscode-peacock\"$EXTENSIONS_TO_ADD/g" \
     .devcontainer/devcontainer.json > .devcontainer/devcontainer.json.tmp && \
-    mv .devcontainer/devcontainer.json.tmp .devcontainer/devcontainer.json
-  echo "Added language-specific VS Code extensions"
+    mv .devcontainer/devcontainer.json.tmp .devcontainer/devcontainer.json;
+  echo "Added language-specific VS Code extensions";
 fi
 
 # Set permissions
@@ -682,8 +684,8 @@ if [ ${#SELECTED_PARTIALS[@]} -gt 0 ]; then
       "cpp-gcc") echo "  + C++ (GCC)" ;;
       "php") echo "  + PHP 8.3" ;;
       "postgres") echo "  + PostgreSQL tools" ;;
-    esac
-  done
+    esac;
+  done;
 fi
 echo ""
 echo "Firewall: $([ "$NEEDS_FIREWALL" = "Yes" ] && echo "Enabled (strict allowlist)" || echo "Disabled (Docker isolation only)")"
@@ -692,7 +694,7 @@ echo "Files created:"
 echo "  .devcontainer/Dockerfile"
 echo "  .devcontainer/devcontainer.json"
 if [ "$NEEDS_FIREWALL" = "Yes" ]; then
-  echo "  .devcontainer/init-firewall.sh"
+  echo "  .devcontainer/init-firewall.sh";
 fi
 echo "  .devcontainer/setup-claude-credentials.sh"
 echo "  docker-compose.yml"
