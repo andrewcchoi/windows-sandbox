@@ -540,7 +540,7 @@ Legend: ✓ Protected, ~ Mitigated, ✗ Vulnerable
 
 - [Secrets Management Guide](SECRETS.md) - Detailed secret handling methods and examples
 - [Variables Guide](VARIABLES.md) - Environment variables and build arguments
-- [Mode Comparison Guide](MODES.md) - Choosing the right sandbox mode
+- [Mode Comparison Guide](SETUP-OPTIONS.md) - Choosing the right sandbox mode
 - [Docker Security Best Practices](https://docs.docker.com/engine/security/) - Official Docker security documentation
 - [CIS Docker Benchmark](https://www.cisecurity.org/benchmark/docker) - Security hardening guidelines
 

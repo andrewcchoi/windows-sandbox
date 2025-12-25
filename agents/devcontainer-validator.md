@@ -1,7 +1,7 @@
 ---
 name: devcontainer-validator
 description: Validates that devcontainer setup commands created files in correct locations
-whenToUse: Run after /sandboxxer:quickstart or /sandboxxer:yolo-vibe-maxxing complete to verify correct files exist and wrong files do NOT exist
+whenToUse: Run after /sandboxxer:quickstart or /sandboxxer:yolo-vibe-maxxing completes to verify correct files exist and wrong files do NOT exist
 model: haiku
 color: orange
 tools: ["Bash", "Glob", "Read"]
@@ -162,12 +162,12 @@ Action Required: Delete wrong files, verify DevContainer setup
 
 - This agent should run automatically after any DevContainer setup skill completes
 - It provides immediate feedback if the skill created wrong files
-- Users can manually invoke this agent with `/devcontainer-validator` to check their setup
+- Users can manually invoke this agent to check their setup
 - The agent uses haiku model for fast execution
 - Orange color indicates validation/checking task
 
 
 ---
 
-**Last Updated:** 2025-12-24
-**Version:** 4.5.0
+**Last Updated:** 2025-12-25
+**Version:** 4.6.0

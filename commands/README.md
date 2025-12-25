@@ -283,7 +283,7 @@ Test commands with:
 
 ### Core Documentation
 - [Skills README](../skills/README.md) - Skill details and workflows
-- [Modes Guide](../docs/features/MODES.md) - Mode comparison and selection
+- [Setup Options Guide](../docs/features/SETUP-OPTIONS.md) - Mode comparison and selection
 - [Troubleshooting](../docs/features/TROUBLESHOOTING.md) - Common issues
 
 ### Configuration

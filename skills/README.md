@@ -290,7 +290,7 @@ Test skills with various scenarios:
 ## Related Documentation
 
 ### Core Documentation
-- [Setup Options](../docs/features/MODES.md) - Command comparison and selection
+- [Setup Options](../docs/features/SETUP-OPTIONS.md) - Command comparison and selection
 - [Security Model](../docs/features/security-model.md) - Security architecture
 - [Troubleshooting Guide](../docs/features/TROUBLESHOOTING.md) - Common issues and fixes
 

@@ -92,7 +92,7 @@ Claude: Creating DevContainer...
 
 ## YOLO Vibe Maxxing Mode
 
-**Command:** `/sandboxxer:yolo-vibe-maxxing 
+**Command:** `/sandboxxer:yolo-vibe-maxxing`
 
 **Philosophy:** Zero questions, instant setup with sensible defaults.
 
@@ -117,7 +117,7 @@ No questions asked - creates a DevContainer with:
 ### Example: Instant Setup
 
 ```
-You: /sanboxxer:yolo-vibe-maxxing
+You: /sandboxxer:yolo-vibe-maxxing
 
 Claude: Creating DevContainer (YOLO Vibe Maxxing mode)...
         - Project: my-app
@@ -163,7 +163,7 @@ When you select a language in interactive mode, a partial is **appended** to the
 - Fastest setup, no configuration needed
 - Suitable for trusted code and local development
 
-### Strict Firewall (Interactive Qiuckstart Setup Option)
+### Strict Firewall (Interactive Quickstart Setup Option)
 
 - Whitelist-based: deny by default
 - Domain categories map to ~10-100 domains each
@@ -204,7 +204,7 @@ cp init-firewall/disabled.sh .devcontainer/init-firewall.sh
 
 ### Files Created
 
-Interactive Quickerstart setup creates the following file structure:
+Interactive Quickstart setup creates the following file structure:
 
 ```
 .devcontainer/

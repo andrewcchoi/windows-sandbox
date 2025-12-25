@@ -538,7 +538,7 @@ RUN --mount=type=secret,id=npm_token \
 ## Related Documentation
 
 - [Secrets Management](./SECRETS.md) - Comprehensive secret handling guide
-- [Modes Comparison](./MODES.md) - Variable counts per mode
+- [Modes Comparison](./SETUP-OPTIONS.md) - Variable counts per mode
 - [Security Model](./security-model.md) - Overall security approach
 - [Docker Build Variables](https://docs.docker.com/build/building/variables/)
 - [VS Code Variables Reference](https://code.visualstudio.com/docs/reference/variables-reference)

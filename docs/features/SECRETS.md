@@ -758,7 +758,7 @@ secrets:
 ## Related Documentation
 
 - [Variables Guide](./VARIABLES.md) - Variable types and usage
-- [Modes Comparison](./MODES.md) - Secret counts per mode
+- [Modes Comparison](./SETUP-OPTIONS.md) - Secret counts per mode
 - [Security Model](./security-model.md) - Overall security approach
 - [Docker Build Secrets](https://docs.docker.com/build/building/secrets/)
 - [VS Code Variables Reference](https://code.visualstudio.com/docs/reference/variables-reference)

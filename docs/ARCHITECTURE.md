@@ -252,7 +252,7 @@ Skills can invoke each other for related tasks:
 ### Core Docs
 - [Skills README](../skills/README.md) - Detailed skill documentation
 - [Commands README](../commands/README.md) - Command reference
-- [Modes Guide](features/MODES.md) - Mode comparison and selection
+- [Setup Options Guide](features/SETUP-OPTIONS.md) - Mode comparison and selection
 - [Shared Data](../skills/_shared/templates/data/README.md) - Data file reference
 
 ### Configuration

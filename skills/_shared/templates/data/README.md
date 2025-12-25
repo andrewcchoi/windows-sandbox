@@ -323,7 +323,7 @@ These data files are tracked in git. When updating:
 
 For questions about data file structure or usage, see:
 - Plugin documentation: `../docs/ARCHITECTURE.md`
-- Mode guide: `../docs/MODES.md`
+- Mode guide: `../docs/SETUP-OPTIONS.md`
 
 ---
 

@@ -73,7 +73,7 @@ The plugin offers two setup paths:
 1. **Interactive Quickstart** (`/sandboxxer:quickstart`) - Guided configuration with project type and firewall customization
 2. **Non-Interactive YOLO Vibe Maxxing** (`/sandboxxer:yolo-vibe-maxxing`) - Instant defaults with no questions (Python+Node, container isolation)
 
-See [MODES.md](docs/features/MODES.md) for comprehensive guide.
+See [SETUP-OPTIONS.md](docs/features/SETUP-OPTIONS.md) for comprehensive guide.
 
 ### Interactive Quickstart
 
@@ -677,7 +677,7 @@ For contributors and maintainers, see [`.internal/repo-keeper/`](.internal/repo-
 - Modular template system with section markers
 - Enhanced firewall with mode-specific domain sets (30-100+ domains)
 - Updated slash commands: `/sandboxxer:quickstart`, `/sandboxxer:quickstart`, `/sandboxxer:yolo-vibe-maxxing`, `/sandboxxer:quickstart`
-- Comprehensive mode comparison guide (MODES.md)
+- Comprehensive mode comparison guide (SETUP-OPTIONS.md)
 - Migration to simplified two-command system (interactive quickstart and non-interactive YOLO vibe maxxing)
 
 ### v1.0.0 (2025-01-XX)

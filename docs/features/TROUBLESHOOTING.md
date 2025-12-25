@@ -1299,7 +1299,7 @@ If you're still stuck:
 
 3. **Consult Documentation:**
    - [Security Model](security-model.md)
-   - [Modes Guide](MODES.md)
+   - [Setup Options Guide](SETUP-OPTIONS.md)
    - [Variables Guide](VARIABLES.md)
    - [Secrets Guide](SECRETS.md)
 
