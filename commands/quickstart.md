@@ -13,6 +13,69 @@ Create a customized VS Code DevContainer configuration with:
 
 **Quick path:** Use `/devcontainer:yolo-vibe-maxxing` for instant setup with no questions (Python+Node, no firewall).
 
+## Step 0: Pre-flight Validation
+
+Run these checks before proceeding. Use `--skip-validation` to bypass.
+
+```bash
+echo "Running pre-flight checks..."
+VALIDATION_FAILED=false
+
+# Check 1: Docker daemon running
+if ! docker info > /dev/null 2>&1; then
+  echo "ERROR: Docker is not running"
+  echo "  Fix: Start Docker Desktop or run 'sudo systemctl start docker'"
+  VALIDATION_FAILED=true
+else
+  echo "  ✓ Docker is running"
+fi
+
+# Check 2: Docker Compose available
+if ! docker compose version > /dev/null 2>&1; then
+  echo "ERROR: Docker Compose not found"
+  echo "  Fix: Install Docker Compose v2 or update Docker Desktop"
+  VALIDATION_FAILED=true
+else
+  echo "  ✓ Docker Compose available"
+fi
+
+# Check 3: Required ports available (warn only, don't fail)
+PORTS_TO_CHECK="8000 3000 5432 6379"
+for port in $PORTS_TO_CHECK; do
+  if command -v lsof > /dev/null 2>&1; then
+    if lsof -i :$port > /dev/null 2>&1; then
+      echo "  WARNING: Port $port is in use (may conflict with DevContainer)"
+    fi
+  elif command -v netstat > /dev/null 2>&1; then
+    if netstat -tuln 2>/dev/null | grep -q ":$port "; then
+      echo "  WARNING: Port $port is in use (may conflict with DevContainer)"
+    fi
+  fi
+done
+echo "  ✓ Port check complete"
+
+# Check 4: Disk space (minimum 5GB recommended)
+if command -v df > /dev/null 2>&1; then
+  AVAILABLE_GB=$(df -BG . 2>/dev/null | tail -1 | awk '{print $4}' | tr -d 'G')
+  if [ -n "$AVAILABLE_GB" ] && [ "$AVAILABLE_GB" -lt 5 ] 2>/dev/null; then
+    echo "  WARNING: Low disk space (${AVAILABLE_GB}GB available, 5GB+ recommended)"
+  else
+    echo "  ✓ Disk space OK"
+  fi
+fi
+
+# Exit if critical checks failed
+if [ "$VALIDATION_FAILED" = "true" ]; then
+  echo ""
+  echo "Pre-flight checks failed. Please fix the errors above and try again."
+  exit 1
+fi
+
+echo ""
+echo "Pre-flight checks passed!"
+echo ""
+```
+
 ## Step 1: Initialize Tool Selection Tracking
 
 ```bash
