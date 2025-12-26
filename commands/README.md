@@ -135,7 +135,7 @@ See also: [Troubleshooting Guide](../docs/features/TROUBLESHOOTING.md)
 - Learning security best practices
 - Hardening sandbox environment
 
-See also: [Security Model](../docs/features/security-model.md)
+See also: [Security Model](../docs/features/SECURITY-MODEL.md)
 
 ---
 

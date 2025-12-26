@@ -280,4 +280,4 @@ The skill checks firewall mode, reviews allowed domains list, tests connectivity
 ---
 
 **Last Updated:** 2025-12-24
-**Version:** 4.5.0
+**Version:** 4.6.0

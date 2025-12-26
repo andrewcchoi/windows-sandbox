@@ -271,7 +271,7 @@ Provide comprehensive report:
 
 ## Threat Model Reference
 
-From `docs/features/security-model.md`:
+From `docs/features/SECURITY-MODEL.md`:
 
 **What we protect against**:
 - Accidental data exfiltration
@@ -353,4 +353,4 @@ The skill reviews firewall mode, allowed domains, and provides guidance on addin
 ---
 
 **Last Updated:** 2025-12-24
-**Version:** 4.5.0
+**Version:** 4.6.0

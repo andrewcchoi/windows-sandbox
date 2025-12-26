@@ -92,4 +92,4 @@ echo "=========================================="
 ---
 
 **Last Updated:** 2025-12-24
-**Version:** 4.5.0 (Command Rename)
+**Version:** 4.6.0 (Command Rename)

@@ -465,7 +465,7 @@ Update your usage:
 
 ### Fixed
 - Consistent four-mode terminology throughout documentation
-- Skill cross-reference corrections (devcontainer-setup-troubleshoot → sandbox-troubleshoot)
+- Skill cross-reference corrections (devcontainer-setup-troubleshoot → sandboxxer-troubleshoot)
 - Command reference standardization
 - Archived completed plan documents
 

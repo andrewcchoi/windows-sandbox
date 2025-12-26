@@ -31,7 +31,7 @@ Skills are invoked through slash commands in Claude Code. When you use a command
 
 **Reference Documentation:**
 - `docs/features/CUSTOMIZATION.md` - Customization guide
-- `docs/features/security-model.md` - Security best practices
+- `docs/features/SECURITY-MODEL.md` - Security best practices
 - `docs/features/TROUBLESHOOTING.md` - Common issues
 
 ---
@@ -117,7 +117,7 @@ See also: [Troubleshooting Guide](../docs/features/TROUBLESHOOTING.md)
 
 **Location:** `skills/sandboxxer-security/SKILL.md`
 
-See also: [Security Model](../docs/features/security-model.md)
+See also: [Security Model](../docs/features/SECURITY-MODEL.md)
 
 ---
 
@@ -291,7 +291,7 @@ Test skills with various scenarios:
 
 ### Core Documentation
 - [Setup Options](../docs/features/SETUP-OPTIONS.md) - Command comparison and selection
-- [Security Model](../docs/features/security-model.md) - Security architecture
+- [Security Model](../docs/features/SECURITY-MODEL.md) - Security architecture
 - [Troubleshooting Guide](../docs/features/TROUBLESHOOTING.md) - Common issues and fixes
 
 ### Configuration Guides
