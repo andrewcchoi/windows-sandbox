@@ -335,13 +335,12 @@ This plugin uses consistent naming across different contexts:
 | Marketplace name  | sandbox-maxxing   | Marketplace listing name                              |
 | GitHub repository | sandbox-maxxing   | github.com/andrewcchoi/sandbox-maxxing                |
 | Slash commands    | /sandboxxer:*     | /sandboxxer:quickstart, /sandboxxer:yolo-vibe-maxxing |
-| Skills            | sandbox-*         | Internal skill naming                                 |
+| Skills            | sandboxxer-*      | Internal skill naming                                 |
 | User-facing title | Sandboxxer Plugin | In documentation headers                              |
 
 **Why different names?**
 - **sandboxxer**: Official plugin name used for installation and management
 - **sandbox-maxxing**: Repository and marketplace name (reflects Windows WSL 2 compatibility)
-- **sandbox**: Shorthand used in internal skills for brevity
 - **Sandboxxer Plugin**: Full descriptive name for user-facing documentation
 
 ## Development
