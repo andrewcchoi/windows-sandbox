@@ -149,14 +149,9 @@ RUN if [ "$ENABLE_FIREWALL" = "true" ]; then \
     echo "Empty domain allowlist created (YOLO mode)"; \
   fi
 
-USER node
-
-# NPM global config
-ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
-ENV PATH=$PATH:/usr/local/share/npm-global/bin
-
 # Download fzf shell integration files (not included in Debian package)
 # Issue #110: Debian fzf package doesn't include shell integration scripts
+# Must run as root to write to /usr/share/doc/fzf/examples/
 RUN if [ "$INSTALL_SHELL_EXTRAS" = "true" ]; then \
     mkdir -p /usr/share/doc/fzf/examples && \
     wget -q -O /usr/share/doc/fzf/examples/key-bindings.zsh \
@@ -164,6 +159,12 @@ RUN if [ "$INSTALL_SHELL_EXTRAS" = "true" ]; then \
     wget -q -O /usr/share/doc/fzf/examples/completion.zsh \
       https://raw.githubusercontent.com/junegunn/fzf/master/shell/completion.zsh; \
   fi
+
+USER node
+
+# NPM global config
+ENV NPM_CONFIG_PREFIX=/usr/local/share/npm-global
+ENV PATH=$PATH:/usr/local/share/npm-global/bin
 
 # ZSH with Powerlevel10k - conditional on INSTALL_SHELL_EXTRAS
 ARG ZSH_IN_DOCKER_VERSION=1.2.0
