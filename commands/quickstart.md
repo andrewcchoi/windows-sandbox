@@ -796,9 +796,6 @@ else
         "rust")
           echo "  ✓ Rust toolchain";
           ;;
-        "java")
-          echo "  ✓ Java toolchain";
-          ;;
         "cpp-clang")
           echo "  ✓ C++ (Clang 17)";
           ;;
@@ -828,7 +825,6 @@ for partial in "${SELECTED_PARTIALS[@]}"; do
     "go") echo "  - Go 1.22" ;;
     "ruby") echo "  - Ruby 3.3" ;;
     "rust") echo "  - Rust" ;;
-    "java") echo "  - Java (OpenJDK 21)" ;;
     "cpp-clang") echo "  - C++ (Clang 17)" ;;
     "cpp-gcc") echo "  - C++ (GCC)" ;;
     "php") echo "  - PHP 8.3" ;;
@@ -900,11 +896,6 @@ if [ "$NEEDS_FIREWALL" = "Yes" ]; then
       "ruby")
         echo "Adding Ruby domains for selected language...";
         FIREWALL_DOMAINS+=$(jq -r '.categories.package_managers.sub_categories.ruby.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/');
-        FIREWALL_DOMAINS+="\n";
-        ;;
-      "java")
-        echo "Adding Maven/Java domains for selected language...";
-        FIREWALL_DOMAINS+=$(jq -r '.categories.package_managers.sub_categories.maven.domains[]' "$DOMAINS_JSON" | sed 's/^/  "/;s/$/"/');
         FIREWALL_DOMAINS+="\n";
         ;;
       "php")
@@ -1110,9 +1101,6 @@ for partial in "${SELECTED_PARTIALS[@]}"; do
     "rust")
       EXTENSIONS_TO_ADD+=',\n        "rust-lang.rust-analyzer"';
       ;;
-    "java")
-      EXTENSIONS_TO_ADD+=',\n        "redhat.java",\n        "vscjava.vscode-java-pack"';
-      ;;
     "ruby")
       EXTENSIONS_TO_ADD+=',\n        "shopify.ruby-lsp"';
       ;;
@@ -1243,7 +1231,6 @@ if [ ${#SELECTED_PARTIALS[@]} -gt 0 ]; then
       "go") echo "  + Go 1.22" ;;
       "ruby") echo "  + Ruby 3.3" ;;
       "rust") echo "  + Rust" ;;
-      "java") echo "  + Java (OpenJDK 21)" ;;
       "cpp-clang") echo "  + C++ (Clang 17)" ;;
       "cpp-gcc") echo "  + C++ (GCC)" ;;
       "php") echo "  + PHP 8.3" ;;
