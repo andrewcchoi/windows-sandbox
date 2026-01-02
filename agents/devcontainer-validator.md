@@ -33,7 +33,7 @@ if [ -d ".devcontainer" ]; then
   echo "✓ .devcontainer/ directory exists"
 else
   echo "❌ ERROR: .devcontainer/ directory NOT found!"
-  echo "   The skill should have created this directory."
+  echo "   The command should have created this directory."
 fi
 
 # Check for required files
@@ -66,7 +66,7 @@ fi
 
 ### 2. Check for WRONG Files (Critical)
 
-These files should NEVER be created by DevContainer skills:
+These files should NEVER be created by DevContainer commands:
 
 ```bash
 echo ""
@@ -109,8 +109,8 @@ else
   echo ""
   echo "⚠️  $ERRORS CRITICAL ERROR(S) DETECTED!"
   echo ""
-  echo "The skill created Claude Code configuration files instead of DevContainer files."
-  echo "This indicates the skill is not working correctly."
+  echo "The command created Claude Code configuration files instead of DevContainer files."
+  echo "This indicates the command is not working correctly."
 fi
 ```
 
@@ -129,12 +129,12 @@ REMEDIATION STEPS:
    - ls -la .devcontainer/
    - Should contain: devcontainer.json, init-firewall.sh, setup-claude-credentials.sh
 
-3. If .devcontainer/ is missing, the skill FAILED to create the correct files.
-   - Re-run the skill with the updated instructions
-   - The skill should now have TASK IDENTITY and PRE-WRITE VALIDATION sections
+3. If .devcontainer/ is missing, the command FAILED to create the correct files.
+   - Re-run the command with the updated instructions
+   - The command should now have TASK IDENTITY and PRE-WRITE VALIDATION sections
 
 4. Report the issue:
-   - The skill may need further fixes if it continues creating wrong files
+   - The command may need further fixes if it continues creating wrong files
 ```
 
 ## Validation Output Format
@@ -160,8 +160,8 @@ Action Required: Delete wrong files, verify DevContainer setup
 
 ## Integration Notes
 
-- This agent should run automatically after any DevContainer setup skill completes
-- It provides immediate feedback if the skill created wrong files
+- This agent should run automatically after any DevContainer setup command completes
+- It provides immediate feedback if the command created wrong files
 - Users can manually invoke this agent to check their setup
 - The agent uses haiku model for fast execution
 - Orange color indicates validation/checking task
