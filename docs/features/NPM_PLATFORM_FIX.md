@@ -97,3 +97,9 @@ Future support planned for:
 - The script only reinstalls when Windows binaries are detected
 - Uses npm's cache for faster installs
 - Runs once during container creation, not on every start
+
+---
+
+**Last Updated:** 2026-01-01
+**Version:** 4.6.0
+

@@ -119,3 +119,9 @@ Display:
 - Validators may pause for human input on ambiguous findings
 - Use `--quick` for CI/CD pipelines
 - Use `--full` before releases
+
+---
+
+**Last Updated:** 2026-01-01
+**Version:** 4.6.0
+

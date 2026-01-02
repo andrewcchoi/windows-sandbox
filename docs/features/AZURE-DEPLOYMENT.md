@@ -651,3 +651,9 @@ After deploying to Azure:
 - **Stack Overflow:** https://stackoverflow.com/questions/tagged/azure-container-apps
 - **Microsoft Q&A:** https://learn.microsoft.com/answers/tags/azure-container-apps
 - **GitHub Issues:** Report issues with this plugin at the repository
+
+---
+
+**Last Updated:** 2026-01-01
+**Version:** 4.6.0
+
