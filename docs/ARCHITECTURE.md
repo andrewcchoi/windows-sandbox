@@ -20,7 +20,7 @@ The Claude Code DevContainer Setup plugin uses a command-based architecture with
 
 **Active Skills:**
 - `sandboxxer-troubleshoot` - Diagnostic assistant
-- `sandboxxer-security` - Security auditor
+- `sandboxxer-audit` - Security auditor
 
 **Deprecated Skills:**
 - `devcontainer-setup-basic`, `devcontainer-setup-advanced`, `devcontainer-setup-yolo` (v4.6.0)
@@ -88,7 +88,7 @@ skills/
 │   │       └── README.md              # Data file documentation
 ├── sandboxxer-troubleshoot/
 │   └── SKILL.md                       # Troubleshooting workflow
-└── sandboxxer-security/
+└── sandboxxer-audit/
     └── SKILL.md                       # Security audit workflow
 ```
 

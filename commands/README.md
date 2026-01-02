@@ -114,7 +114,7 @@ See also: [Troubleshooting Guide](../docs/features/TROUBLESHOOTING.md)
 
 #### `/sandboxxer:audit`
 **File:** `commands/audit.md`
-**Skill:** sandboxxer-security
+**Skill:** sandboxxer-audit
 **Description:** Audit sandbox configuration for security best practices
 
 **Usage:**
