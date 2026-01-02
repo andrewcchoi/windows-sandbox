@@ -77,7 +77,6 @@ skills/
 │   │   └── data/                      # Reference catalogs (v4.3.1)
 │   │       ├── allowable-domains.json # Domain categories
 │   │       ├── azure-regions.json     # Azure region catalog
-│   │       ├── sandbox-templates.json # Docker template images
 │   │       ├── official-images.json   # Official Docker images
 │   │       ├── uv-images.json         # Python UV images
 │   │       ├── mcp-servers.json       # MCP server catalog
@@ -101,17 +100,16 @@ skills/
 
 ### 4. Data Files
 
-All data files are in `skills/_shared/data/`. See `skills/_shared/data/README.md` for details.
+All data files are in `skills/_shared/templates/data/`. See `skills/_shared/templates/data/README.md` for details.
 
 **Key files:**
-- `sandbox-templates.json` - Docker template image registry
 - `official-images.json` - Official Docker images (Python, Node, databases)
 - `allowable-domains.json` - Firewall domain whitelist by category
 - `uv-images.json` - Python UV images (fast package manager)
 - `mcp-servers.json` - MCP server configurations
 - `vscode-extensions.json` - VS Code extension catalog
 
-Skills reference these using: `skills/_shared/data/<filename>`
+Skills reference these using: `skills/_shared/templates/data/<filename>`
 
 ## Command-Based Setup (v4.3.0+)
 
@@ -246,7 +244,7 @@ Skills can invoke each other for related tasks:
 
 **Migration:**
 - Old template paths → Now `skills/_shared/templates/`
-- Old data paths → Now `skills/_shared/data/`
+- Old data paths → Now `skills/_shared/templates/data/`
 
 ### Version 3.0.0 (2025-12-19)
 

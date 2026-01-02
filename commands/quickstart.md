@@ -701,7 +701,7 @@ Store the answer as `NEEDS_FIREWALL`.
 
 ## Step 8: Domain Categories (If Firewall Enabled)
 
-If `NEEDS_FIREWALL` is "Yes", read `/skills/_shared/data/allowable-domains.json` and present domain categories:
+If `NEEDS_FIREWALL` is "Yes", read `/skills/_shared/templates/data/allowable-domains.json` and present domain categories:
 
 ```
 Which domain categories should be allowed?

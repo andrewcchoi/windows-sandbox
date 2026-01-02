@@ -159,7 +159,6 @@ skills/
 │   │   └── data/                      # Reference catalogs
 │   │       ├── allowable-domains.json
 │   │       ├── azure-regions.json
-│   │       ├── sandbox-templates.json
 │   │       ├── official-images.json
 │   │       ├── uv-images.json
 │   │       ├── mcp-servers.json
