@@ -20,6 +20,22 @@ Interactive assistant for creating VS Code DevContainer configurations with Dock
 - **🛡️ Smart Firewall Management** - Optional domain allowlist with 30-100+ curated domains
 - **🎯 Intelligent Detection** - Auto-detects project type and suggests appropriate setup
 
+## Important: Experimental Status
+
+> **This plugin is experimental and provided as-is.** Most features have received minimal to no testing. Generated configurations may not work correctly on the first try and may require several iterations to get working.
+>
+> **Testing levels:**
+> - `/sandboxxer:yolo-vibe-maxxing` - **Moderate testing** (most reliable)
+> - `/sandboxxer:quickstart` - **Very minimal testing**
+> - Firewall features - **No testing** (highly experimental)
+> - Azure deployment - **No testing** (highly experimental)
+> - Agents and skills - **Not tested**
+>
+> If you encounter issues, expect to iterate on the generated configuration files.
+
+![Plugin Architecture](docs/diagrams/svg/plugin-architecture.svg)
+*Plugin component overview - see [docs/diagrams/](docs/diagrams/) for detailed diagrams*
+
 ## Table of Contents
 
 - [Features](#features)
@@ -28,7 +44,6 @@ Interactive assistant for creating VS Code DevContainer configurations with Dock
 - [Setup Options](#setup-options)
 - [Slash Commands](#slash-commands)
 - [Auto-Detection](#auto-detection)
-- [Project Templates](#project-templates)
 - [Security Features](#security-features)
 - [Troubleshooting Features](#troubleshooting-features)
 - [Cloud Deployment](#cloud-deployment)
@@ -36,7 +51,6 @@ Interactive assistant for creating VS Code DevContainer configurations with Dock
 - [Configuration Placeholders](#configuration-placeholders)
 - [Skills Reference](#skills-reference)
 - [Reference Documentation](#reference-documentation)
-- [LangSmith Tracing Integration](#langsmith-tracing-integration)
 - [Naming Convention](#naming-convention)
 - [Development](#development)
 - [Examples](#examples)
@@ -119,6 +133,8 @@ See [TROUBLESHOOTING.md](docs/features/TROUBLESHOOTING.md#claude-code-installati
 
 The plugin offers two setup paths:
 
+> **Testing Status:** `/yolo-vibe-maxxing` has moderate testing and is the most reliable option. `/quickstart` has very minimal testing - generated configurations may need manual adjustments.
+
 1. **Interactive Quickstart** (`/sandboxxer:quickstart`) - Guided configuration with project type and firewall customization
 2. **Non-Interactive YOLO Vibe Maxxing** (`/sandboxxer:yolo-vibe-maxxing`) - Instant defaults with no questions (Python+Node, container isolation)
 
@@ -127,6 +143,8 @@ See [SETUP-OPTIONS.md](docs/features/SETUP-OPTIONS.md) for comprehensive guide.
 ### Interactive Quickstart
 
 **Best for**: Projects needing specific languages or network restrictions
+
+> **Testing:** Very minimal. Configuration files may require iteration to work correctly.
 
 **Key Features**:
 - Choose from 8 project types (Python/Node, Go, Ruby, Rust, C++ Clang, C++ GCC, PHP, PostgreSQL)
@@ -218,31 +236,9 @@ Claude: [Automatically uses /sandboxxer:quickstart command]
       ...
 ```
 
-## Project Templates
-
-### Python (FastAPI + PostgreSQL + Redis)
-- Optimized Python 3.12 with uv
-- FastAPI web framework
-- PostgreSQL database
-- Redis cache
-- Async SQLAlchemy
-- Alembic migrations
-
-### Node.js (Express + MongoDB + Redis)
-- Node.js 20 with TypeScript
-- Express web framework
-- MongoDB database
-- Redis cache
-- ESLint + Prettier
-
-### Full-Stack (React + FastAPI + PostgreSQL + AI)
-- Python FastAPI backend
-- React + TypeScript frontend
-- PostgreSQL database
-- Redis cache
-- Ollama (optional local AI)
-
 ## Security Features
+
+> **Testing:** Firewall features have received **no testing**. The `init-firewall.sh` script and domain allowlist configuration are highly experimental. Generated configurations may not correctly block/allow traffic and will likely require manual adjustment and iteration.
 
 ### Firewall Options
 
@@ -270,6 +266,8 @@ The security auditor checks:
 - ✅ Dependency vulnerabilities
 
 ## Troubleshooting Features
+
+> **Testing:** Not tested. Diagnostic commands and suggestions may need verification.
 
 ### Automatic Issue Detection
 
@@ -306,6 +304,8 @@ Claude: Let me diagnose...
 ### Deploy to Azure
 
 Deploy your DevContainer to Azure Container Apps for cloud-based development:
+
+> **Testing:** Azure deployment has received **no testing**. Generated Bicep templates, azure.yaml, and deployment scripts are highly experimental. Configurations may fail to deploy or create incorrect resources. Expect multiple iterations and manual debugging.
 
 ```bash
 # Deploy to Azure
@@ -363,6 +363,8 @@ Templates use these placeholders:
 ### /sandboxxer:quickstart (Interactive Quickstart)
 Interactive quickstart wizard with project type and firewall customization.
 
+**Testing:** Very minimal
+
 **Triggers**:
 - User mentions "devcontainer", "docker sandbox"
 - User asks about isolated development environments
@@ -377,6 +379,8 @@ Interactive quickstart wizard with project type and firewall customization.
 
 ### /sandboxxer:troubleshoot
 Diagnoses and resolves common sandbox issues.
+
+**Testing:** Not tested
 
 **Triggers**:
 - Container won't start
@@ -393,6 +397,8 @@ Diagnoses and resolves common sandbox issues.
 
 ### /sandboxxer:audit
 Performs comprehensive security audits.
+
+**Testing:** Not tested
 
 **Triggers**:
 - User wants security audit
@@ -411,6 +417,8 @@ Performs comprehensive security audits.
 ### /sandboxxer:yolo-vibe-maxxing
 Non-interactive instant DevContainer setup with sensible defaults.
 
+**Testing:** Moderate (most reliable)
+
 **Triggers**:
 - User wants fastest path to sandbox
 - User mentions "yolo", "quick setup", "no questions"
@@ -425,6 +433,8 @@ Non-interactive instant DevContainer setup with sensible defaults.
 
 ### /sandboxxer:deploy-to-azure
 Deploy DevContainer configurations to Azure Container Apps.
+
+**Testing:** No testing
 
 **Triggers**:
 - User wants cloud-based development
@@ -461,47 +471,6 @@ The plugin includes comprehensive documentation in the `docs/` directory:
 - [docs/CODESPACES.md](docs/CODESPACES.md) - GitHub Codespaces integration
 - [docs/TESTING.md](docs/TESTING.md) - Testing guide for examples
 - [docs/windows/README.md](docs/windows/README.md) - Windows-specific setup guide
-
-## LangSmith Tracing Integration
-
-The plugin includes hooks for sending Claude Code conversation traces to LangSmith for monitoring, debugging, and analytics.
-
-### Configuration
-
-Set these environment variables to enable tracing:
-
-```bash
-# Required
-export TRACE_TO_LANGSMITH=true
-export CC_LANGSMITH_API_KEY="your-langsmith-api-key"
-export CC_LANGSMITH_PROJECT="your-project-name"
-
-# Optional
-export CC_LANGSMITH_ENVIRONMENT="production"  # Default: auto-detected
-export CC_LANGSMITH_DEBUG=true                # Enable debug logging
-export CLAUDE_CODE_TEAM="team-name"           # Team identifier for traces
-```
-
-### How It Works
-
-1. **Stop Hook**: After each Claude Code response, `hooks/stop_hook.sh` processes the conversation
-2. **Trace Extraction**: Extracts turns, tool calls, and responses from the session
-3. **LangSmith API**: Sends structured traces to your LangSmith project
-4. **State Management**: Tracks trace IDs for conversation continuity
-
-### Requirements
-
-- `jq` - JSON processing
-- `curl` - HTTP requests
-- LangSmith account with API key
-
-### Files
-
-- `hooks/stop_hook.sh` - Linux/macOS trace hook
-- `hooks/stop_hook.ps1` - Windows PowerShell trace hook
-- `hooks/hooks.json` - Hook configuration
-
-See [LangSmith documentation](https://docs.langchain.com/langsmith) for detailed setup instructions.
 
 ## Naming Convention
 
@@ -871,5 +840,5 @@ See [CHANGELOG.md](CHANGELOG.md) for complete version history.
 
 ---
 
-**Last Updated:** 2025-12-25
+**Last Updated:** 2026-01-02
 **Version:** 4.6.0
