@@ -250,3 +250,9 @@ Requires:
 - [Ollama Documentation](https://github.com/ollama/ollama)
 - [Ollama Model Library](https://ollama.com/library)
 - [Ollama API Reference](https://github.com/ollama/ollama/blob/main/docs/api.md)
+
+---
+
+**Last Updated:** 2026-01-01
+**Version:** 4.6.0
+

@@ -12,7 +12,7 @@ This directory contains Mermaid diagrams visualizing the sandboxxer plugin archi
 
 **Components visualized:**
 - **Commands (5)**: `/quickstart`, `/yolo-vibe-maxxing`, `/troubleshoot`, `/audit`, `/deploy-to-azure`
-- **Skills (2)**: `sandboxxer-troubleshoot`, `sandboxxer-security`
+- **Skills (2)**: `sandboxxer-troubleshoot`, `sandboxxer-audit`
 - **Agents (2)**: `devcontainer-generator`, `devcontainer-validator`
 - **Hooks (1)**: PreToolUse for Docker safety
 - **Shared Resources**: Templates, data catalogs, language partials
@@ -194,7 +194,7 @@ This directory contains Mermaid diagrams visualizing the sandboxxer plugin archi
 11. Dotfiles security
 12. Environment variables security
 
-**Used in:** skills/sandboxxer-security/SKILL.md
+**Used in:** skills/sandboxxer-audit/SKILL.md
 
 ![Security Audit Flow](svg/security-audit-flow.svg)
 

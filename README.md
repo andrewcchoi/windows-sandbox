@@ -346,7 +346,7 @@ Diagnoses and resolves common sandbox issues.
 3. Apply systematic fixes
 4. Verify the fix
 
-### sandboxxer-security
+### sandboxxer-audit
 Performs comprehensive security audits.
 
 **Triggers**:
@@ -464,7 +464,7 @@ sandbox-maxxing/
 │   │           └── vscode-extensions.json
 │   ├── sandboxxer-troubleshoot/ # Troubleshooting assistant
 │   │   └── SKILL.md
-│   └── sandboxxer-security/     # Security auditor
+│   └── sandboxxer-audit/     # Security auditor
 │       └── SKILL.md
 └── docs/                        # Documentation
     ├── examples/                # Working example applications

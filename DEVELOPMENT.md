@@ -104,7 +104,7 @@ sandbox/
 │   │       ├── partials/       # Language-specific sections
 │   │       └── data/           # Configuration data
 │   ├── sandboxxer-troubleshoot/
-│   └── sandboxxer-security/
+│   └── sandboxxer-audit/
 │
 ├── docs/examples/              # Demo applications
 │   ├── docker-compose.yml      # Services for examples ONLY
