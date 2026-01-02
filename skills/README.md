@@ -91,7 +91,7 @@ See also: [Troubleshooting Guide](../docs/features/TROUBLESHOOTING.md)
 
 ---
 
-#### sandboxxer-security
+#### sandboxxer-audit
 **Command:** `/sandboxxer:audit` (or manually invoked)
 **When to use:** You want to audit or harden your sandbox security.
 
@@ -115,7 +115,7 @@ See also: [Troubleshooting Guide](../docs/features/TROUBLESHOOTING.md)
 - Security-conscious development
 - Learning security best practices
 
-**Location:** `skills/sandboxxer-security/SKILL.md`
+**Location:** `skills/sandboxxer-audit/SKILL.md`
 
 See also: [Security Model](../docs/features/SECURITY-MODEL.md)
 
@@ -170,7 +170,7 @@ skills/
 │   │       └── README.md
 ├── sandboxxer-troubleshoot/
 │   └── SKILL.md                       # Troubleshooting workflow
-└── sandboxxer-security/
+└── sandboxxer-audit/
     └── SKILL.md                       # Security audit workflow
 ```
 
@@ -244,7 +244,7 @@ The two remaining skills are utilities invoked by commands:
 | Skill | Command | Purpose |
 |-------|---------|---------|
 | sandboxxer-troubleshoot | `/sandboxxer:troubleshoot` | Diagnose and fix issues |
-| sandboxxer-security | `/sandboxxer:audit` | Security audit and hardening |
+| sandboxxer-audit | `/sandboxxer:audit` | Security audit and hardening |
 
 ## When to Use Each Command
 
@@ -330,7 +330,7 @@ See [Examples README](../docs/examples/README.md) for detailed walkthroughs.
 |---------|-----------|---------|
 | `/sandboxxer:quickstart` | (command-based) | Create/update sandbox configuration |
 | `/sandboxxer:troubleshoot` | sandboxxer-troubleshoot | Diagnose and fix issues |
-| `/sandboxxer:audit` | sandboxxer-security | Security audit and hardening |
+| `/sandboxxer:audit` | sandboxxer-audit | Security audit and hardening |
 
 See [Commands README](../commands/README.md) for full command documentation.
 
